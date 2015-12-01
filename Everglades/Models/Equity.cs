@@ -7,9 +7,20 @@ namespace Everglades.Models
 {
     public class Equity : IAsset
     {
+        private string name;
+
+        public Equity(string name)
+        {
+            this.name = name;
+        }
+        String IAsset.Get_Name()
+        {
+            return name;
+        }
         double IAsset.Get_Price()
         {
-            throw new NotImplementedException();
+            // Should access database for equity price
+            return 1000;
         }
 
         double[] IAsset.Get_Price(DateTime t1, DateTime t2, TimeStep step)

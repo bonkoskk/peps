@@ -8,6 +8,12 @@ namespace Everglades.Models
     public class Derivative : IAsset
     {
 
+
+        String IAsset.Get_Name()
+        {
+             throw new NotImplementedException();
+        }
+
         double IAsset.Get_Price()
         {
             throw new NotImplementedException();

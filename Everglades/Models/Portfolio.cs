@@ -7,16 +7,25 @@ namespace Everglades.Models
 {
     public class Portfolio : IAsset
     {
-        public LinkedList<Tuple<IAsset, uint>> assetList;
+        public Dictionary<IAsset, uint> assetList;
 
         public Portfolio()
         {
-            assetList = new LinkedList<Tuple<IAsset, uint>>();
+            assetList = new Dictionary<IAsset, uint>();
         }
-
-        public bool Add_Asset(IAsset a, uint number)
+        
+        public bool Add_Asset(IAsset asset, uint number)
         {
-            throw new NotImplementedException();
+            if (assetList.ContainsKey(asset))
+            {
+                assetList[asset] += number;
+                return true;
+            }
+            else
+            {
+                assetList[asset] = number;
+                return true;
+            }
         }
 
         public bool Remove_Asset(IAsset a, uint number)
@@ -24,6 +33,10 @@ namespace Everglades.Models
             throw new NotImplementedException();
         }
 
+        String IAsset.Get_Name()
+        {
+            throw new NotImplementedException();
+        }
         double IAsset.Get_Price()
         {
             throw new NotImplementedException();

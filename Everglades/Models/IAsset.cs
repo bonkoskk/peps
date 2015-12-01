@@ -9,6 +9,7 @@ namespace Everglades.Models
 
     public interface IAsset
     {
+        String Get_Name();
         double Get_Price();
         double[] Get_Price(DateTime t1, DateTime t2, TimeStep step);
         double Get_Price(DateTime t);
