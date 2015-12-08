@@ -33,6 +33,19 @@ body {
     text-align: center;
 }
 
+#update {
+    z-index: 100;
+    position:absolute;
+    display:block;
+    right:5%;
+    top:5%;
+}
+
+#update_button {
+    text-align: center;
+    font-size: 5em;
+}
+
 #graph {
     display: block;
 	width: 100%;
@@ -43,6 +56,14 @@ body {
     display: block;
 	width: 250px;
     height: 250px;
+}
+
+#contact {
+    position: relative;
+    display: block;
+    left: 25%;
+    width: 50%;
+    right: 25%;
 }
 
 /* Custom Button Styles */

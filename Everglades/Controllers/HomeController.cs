@@ -22,8 +22,13 @@ namespace Everglades.Controllers
             Mmodel.Assets.Add_Asset(asset3, 6);
             IAsset asset4 = new Equity("startupdekevintheoetbaptiste");
             Mmodel.Assets.Add_Asset(asset4, 3);
+            for (uint i = 5; i <= 20; i++)
+            {
+                IAsset asseti = new Equity("action" + i);
+                Mmodel.Assets.Add_Asset(asseti, i);
+            }
 
-            return View(Mmodel);
+                return View(Mmodel);
         }
 
         private bool Yahoo_Finance_Parsing()
