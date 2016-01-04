@@ -1,4 +1,5 @@
-﻿using Everglades.Models;
+﻿using Everglades.Controllers;
+using Everglades.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace Everglades
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            HomeController.Yahoo_Finance_Parsing();
             Mmodel = new ModelManage();
             IAsset asset1 = new Equity("gougeul");
             Mmodel.Assets.Add_Asset(asset1, 4);

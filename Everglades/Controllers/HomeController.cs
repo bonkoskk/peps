@@ -14,7 +14,7 @@ namespace Everglades.Controllers
             return View(HttpContext.Application["Mmodel"]);
         }
 
-        private bool Yahoo_Finance_Parsing()
+        public static bool Yahoo_Finance_Parsing()
         {
             return false;
         }

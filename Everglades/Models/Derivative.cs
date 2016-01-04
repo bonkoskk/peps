@@ -7,7 +7,7 @@ namespace Everglades.Models
 {
     public class Derivative : IAsset
     {
-
+        private IAsset underlying;
 
         String IAsset.Get_Name()
         {
