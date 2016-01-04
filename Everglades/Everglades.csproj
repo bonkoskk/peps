@@ -171,6 +171,7 @@
     <Content Include="Content\img\portfolio-3.jpg" />
     <Content Include="Content\img\portfolio-4.jpg" />
     <Content Include="Content\js\bootstrap.min.js" />
+    <Content Include="Content\js\index.js" />
     <Content Include="Content\js\jquery.flot.js" />
     <Content Include="Content\js\jquery.flot.pie.js" />
     <Content Include="Content\js\jquery.js" />

@@ -11,7 +11,11 @@ namespace Everglades.Models
         public static List<string> Get_Asset_List()
         {
             LinkedList<string> list = new LinkedList<string>();
-            throw new NotImplementedException();
+            list.AddFirst("apple");
+            list.AddFirst("pineapple");
+            list.AddFirst("cherry");
+            list.AddFirst("orange");
+            return list.ToList();
         }
 
         // return price of an asset from name
