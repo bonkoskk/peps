@@ -1,7 +1,12 @@
+#include "gsl/gsl_matrix.h"
 
-#pragma once
-#define DLLEXP   __declspec( dllexport )
-namespace pricer{
-	DLLEXP void calleuro(double &ic, double &prix, int nb_samples, double T,
-		double S0, double K, double sigma, double r);
-}
+class Everglades
+{
+private:
+	double mVLR;
+public:
+	double payoff(gsl_matrix path) const;
+	double getPrice(gsl_matrix path, Model model);
+	Everglades(const double VLR);
+	~Everglades();
+};

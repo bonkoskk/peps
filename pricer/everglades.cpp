@@ -1,31 +1,33 @@
-#include "Computations.hpp"
-#include "iostream"
-#include "ctime"
-#include "pnl/pnl_random.h"
-
+#include "Everglades.hpp"
 using namespace std;
 
-
-void Computations::calleuro(double &ic, double &prix, int nb_samples, double T,
-	double S0, double K, double sigma, double r)
+Everglades::Everglades(const double VLR)
 {
-	double drift = (r - sigma * sigma / 2.) * T;
-	double sqrt_T = sqrt(T);
-	double sum = 0;
-	double var = 0;
-	PnlRng *rng = pnl_rng_create(PNL_RNG_MERSENNE);
-	pnl_rng_sseed(rng, time(NULL));
-	double payoff;
-	for (int i = 0; i<nb_samples; i++)
-	{
-		payoff = S0 * exp(drift + sigma * sqrt_T * pnl_rng_normal(rng));
-		payoff = MAX(payoff - K, 0.);
-		sum += payoff;
-		var += payoff * payoff;
-	}
+	mVLR = VLR;
+}
 
-	prix = exp(-r*T) * sum / nb_samples;
-	var = exp(-2.*r*T) * var / nb_samples - prix * prix;
-	ic = 1.96 * sqrt(var / nb_samples);
-	pnl_rng_free(&rng);
+
+Everglades::~Everglades()
+{
+}
+
+double Everglades::payoff(const gsl_matrix path) const {
+	gsl_vector *performances = gsl_vector_calloc(path.size1);
+	int nb_timesteps = path.size1;
+	int nb_underlyings = path.size2;
+	double perf;
+	double sum_perf = 0;
+	for (int i = 0; i < nb_timesteps; i++) {
+		perf = 0;
+		for (int j = 1; i < nb_underlyings; i++) {
+			perf += (gsl_matrix_get(&path, i, j) / gsl_matrix_get(&path, 0, j) - 1) / ((double)nb_underlyings);
+			gsl_vector_set(performances, i, perf);
+			sum_perf += perf;
+		}
+		if (i == 7 && sum_perf / 8 >= 0.12) {
+			return (mVLR * 1.09);
+		}
+	}
+	return __max(mVLR * (1 + 0.75*sum_perf / nb_timesteps), mVLR);
+	return 0.0;
 }
