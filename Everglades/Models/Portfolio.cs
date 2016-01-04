@@ -9,9 +9,23 @@ namespace Everglades.Models
     {
         public Dictionary<IAsset, uint> assetList;
 
+        // create initial portfolio containing all assets with number 0
         public Portfolio()
         {
             assetList = new Dictionary<IAsset, uint>();
+            foreach (string name in AccessDB.Get_Asset_List())
+            {
+                IAsset newAsset = new Equity(name);
+                assetList[newAsset] = 0;
+            }
+        }
+
+        public Portfolio(Portfolio initial)
+        {
+            foreach (IAsset ass in initial.assetList.Keys)
+            {
+                assetList[ass] = 0;
+            }
         }
         
         public bool Add_Asset(IAsset asset, uint number)

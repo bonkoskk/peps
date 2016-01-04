@@ -12,8 +12,8 @@ namespace Everglades.Models
 
         public ModelManage()
         {
-            Hedging_Portfolio = new Portfolio();
             Assets = new Portfolio();
+            Hedging_Portfolio = new Portfolio(Assets);
         }
 
     }

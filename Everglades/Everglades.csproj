@@ -150,9 +150,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Derivative.cs" />
+    <Compile Include="Models\IDerivative.cs" />
     <Compile Include="Models\Equity.cs" />
     <Compile Include="Models\ModelManage.cs" />
+    <Compile Include="Models\Option.cs" />
     <Compile Include="Models\Portfolio.cs" />
     <Compile Include="Models\TimeStep.cs" />
     <Compile Include="Models\IAsset.cs" />
