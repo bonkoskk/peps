@@ -1,4 +1,6 @@
 #include "Everglades.hpp"
+#include <time.h>
+
 using namespace std;
 
 Everglades::Everglades(const double VLR)
@@ -30,4 +32,12 @@ double Everglades::payoff(const gsl_matrix path) const {
 	}
 	return __max(mVLR * (1 + 0.75*sum_perf / nb_timesteps), mVLR);
 	return 0.0;
+}
+
+double get_price(double& price, double& ic, const gsl_matrix& data, const time_t& date, const int nbSimu){
+	gsl_matrix path;
+	for (int i = 0; i < nbSimu; i++){
+
+	}
+	return 1.0;
 }
