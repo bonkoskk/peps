@@ -58,14 +58,26 @@
                             <tr>
                                 <th>Asset</th>
                                 <th>Price</th>
+                                <th>Buy</th>
+                                <th>Sell</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Everglades.Models.IAsset a in Model.Assets.assetList.Keys)
+                            @foreach (Everglades.Models.IAsset a in Model.Assets)
                             {
                                 <tr>
                                     <td>@a.Get_Name()</td>
                                     <td>@a.Get_Price()€</td>
+                                    <td>
+                                        <button class="buybutton" asset="@a.Get_Name()" type="button" class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="sellbutton" asset="@a.Get_Name()" type="button" class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -79,17 +91,19 @@
                             <tr>
                                 <th>Asset</th>
                                 <th>Price</th>
+                                <th>Number</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Everglades.Models.IAsset a in Model.Assets.assetList.Keys)
-                            {
-                                <tr>
-                                    <td>@a.Get_Name()</td>
-                                    <td>@a.Get_Price()€</td>
-                                </tr>
-                            }
-                        </tbody>
+                                @foreach (KeyValuePair<Everglades.Models.IAsset,int> entry in Model.Hedging_Portfolio.assetList)
+                                {
+                                    <tr>
+                                        <td>@entry.Key.Get_Name()</td>
+                                        <td>@entry.Key.Get_Price()€</td>
+                                        <td>@entry.Value</td>
+                                    </tr>
+                                }
+</tbody>
                     </table>
                 </div>
                 <div class="col-sm-1"></div>
@@ -103,7 +117,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Everglades.Models.IAsset a in Model.Assets.assetList.Keys)
+                            @foreach (Everglades.Models.IAsset a in Model.Hedging_Portfolio.assetList.Keys)
                             {
                                 <tr>
                                     <td>@a.Get_Name()</td>

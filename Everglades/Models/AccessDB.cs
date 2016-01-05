@@ -7,12 +7,24 @@ namespace Everglades.Models
 {
     public class AccessDB
     {
+        // return list of assets names
+        public static List<string> Get_Asset_List()
+        {
+            LinkedList<string> list = new LinkedList<string>();
+            list.AddFirst("apple");
+            list.AddFirst("pineapple");
+            list.AddFirst("cherry");
+            list.AddFirst("orange");
+            return list.ToList();
+        }
 
+        // return price of an asset from name
         public static double Get_Asset_Price(String assetName)
         {
             throw new NotImplementedException();
         }
 
+        // return delta of an asset from name
         public static double Get_Asset_Delta(String assetName)
         {
             throw new NotImplementedException();

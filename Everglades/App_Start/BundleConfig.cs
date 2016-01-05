@@ -18,7 +18,8 @@ namespace Everglades
                         "~/Content/js/jquery.js",
                         "~/Content/js/jquery.flot.js",
                         "~/Content/js/jquery.flot.pie.js",
-                        "~/Content/js/stylish-portfolio.js"));
+                        "~/Content/js/stylish-portfolio.js",
+                        "~/Content/js/index.js"));
 
             /*
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));

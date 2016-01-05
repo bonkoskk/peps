@@ -7,39 +7,53 @@ namespace Everglades.Models
 {
     public class Portfolio : IAsset
     {
-        public Dictionary<IAsset, uint> assetList;
+        public Dictionary<IAsset, int> assetList;
 
-        public Portfolio()
+        public Portfolio(List<IAsset> list)
         {
-            assetList = new Dictionary<IAsset, uint>();
+            assetList = new Dictionary<IAsset, int>();
+            foreach (IAsset ass in list)
+            {
+                assetList[ass] = 0;
+            }
         }
         
-        public bool Add_Asset(IAsset asset, uint number)
+        public void Add_Asset(IAsset asset, int number)
         {
-            if (assetList.ContainsKey(asset))
+            if (!assetList.ContainsKey(asset))
             {
-                assetList[asset] += number;
-                return true;
+                throw new ArgumentException("Asset not in portfolio");
             }
             else
             {
-                assetList[asset] = number;
-                return true;
+                assetList[asset] += number;
             }
         }
 
-        public bool Remove_Asset(IAsset a, uint number)
+        public void Remove_Asset(IAsset asset, int number)
         {
-            throw new NotImplementedException();
+            if (!assetList.ContainsKey(asset))
+            {
+                throw new ArgumentException("Asset not in portfolio");
+            }
+            else
+            {
+                assetList[asset] -= number;
+            }
         }
 
         String IAsset.Get_Name()
         {
-            throw new NotImplementedException();
+            return "Portfolio of " + assetList.Count + " assets";
         }
         double IAsset.Get_Price()
         {
-            throw new NotImplementedException();
+            double price = 0;
+            foreach (KeyValuePair<IAsset, int> entry in assetList)
+            {
+                price += entry.Value * entry.Key.Get_Price();
+            }
+            return price;
         }
 
         double[] IAsset.Get_Price(DateTime t1, DateTime t2, TimeStep step)
