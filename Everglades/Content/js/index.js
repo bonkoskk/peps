@@ -7,15 +7,32 @@ function isInteger(value) {
 
 // function to buy asset
 function asset_buy(name, number) {
-    $.post("/BuyAsset", function (data) {
-        alert(data);
+    $("button").click(function () {
+        var data = { operation: 'buy', asset: name, number: number };
+        $.ajax({
+            type: "POST",
+            url: "/operations",
+            data: data,
+            datatype: "html",
+            success: function (data) {
+                console.log(data);
+                alert(data);
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            console.log("error : " + textStatus);
+            alert("error");
+        })
+        .always(function () {
+            console.log("complete !");
+              alert("complete");
+        });
     });
-    alert("Operation buy done");
 }
 
 // function to sell asset
 function asset_sell(name, number) {
-    $.post("/SellAsset", function (data) {
+    $.post("/operations", function (data) {
         alert(data);
     });
     alert("Operation sell done");

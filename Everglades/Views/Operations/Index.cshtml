@@ -1,0 +1,26 @@
+﻿@model Everglades.Models.ModelManage
+@{
+    Layout = null;
+    ViewBag.Title = "Operations";
+    string input;
+    using (var reader = new StreamReader(Request.InputStream))
+    {
+        input = reader.ReadToEnd();
+    }
+}
+
+<h2>operations</h2>
+<div>
+    <h3>Input Stream</h3>
+    @Server.UrlDecode(input)
+</div>
+<div>
+    @if (Request.Form.Count > 0)
+    {
+        <h3>Request Form</h3>
+        foreach (string item in Request.Form)
+        {
+            <div>@item  :  @Request[item]</div>
+        }
+    }
+</div>
