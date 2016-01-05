@@ -66,6 +66,41 @@ body {
     right: 25%;
 }
 
+.asset-clickable {
+    cursor: pointer;
+}
+
+.asset-window {
+    position: absolute;
+    display: none;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 50%;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+#asset-graph {
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 5%;
+	width: 90%;
+    height: 90%;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.close-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    background-color: red;
+}
+
 /* Custom Button Styles */
 
 .btn-dark {
