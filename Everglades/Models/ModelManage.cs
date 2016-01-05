@@ -9,6 +9,7 @@ namespace Everglades.Models
     {
         public List<IAsset> Assets;
         public double cash;
+        public Everglades everg;
         public Portfolio Hedging_Portfolio;
 
         public ModelManage()
@@ -19,6 +20,7 @@ namespace Everglades.Models
             {
                 Assets.Add(new Equity(name));
             }
+            everg = new Everglades();
             Hedging_Portfolio = new Portfolio(Assets);
         }
 
