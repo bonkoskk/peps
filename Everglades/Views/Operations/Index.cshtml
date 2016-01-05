@@ -1,4 +1,5 @@
 ﻿@model Everglades.Models.ModelManage
+
 @{
     Layout = null;
     ViewBag.Title = "Operations";
@@ -7,20 +8,47 @@
     {
         input = reader.ReadToEnd();
     }
+    string msg = "";
 }
 
-<h2>operations</h2>
-<div>
-    <h3>Input Stream</h3>
-    @Server.UrlDecode(input)
-</div>
-<div>
-    @if (Request.Form.Count > 0)
+@{
+    if (Request.Form.Count > 0)
     {
-        <h3>Request Form</h3>
-        foreach (string item in Request.Form)
+        if (String.Compare(Request["operation"], "buy") == 0)
         {
-            <div>@item  :  @Request[item]</div>
+            string name = Request["asset"];
+            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.Get_Name(), name) == 0);
+            if (asset == null)
+            {
+                msg = "cannot find asset";
+            }
+            else
+            {
+                try {
+                    Model.buy(asset, Int32.Parse(Request["number"]));
+                    msg = "bought " + Request["number"] + " of " + Request["asset"];
+                }
+                catch(ArgumentOutOfRangeException e)
+                {
+                    msg = e.ParamName;
+                }
+            }
+        }
+        else if (String.Compare(Request["operation"], "sell") == 0)
+        {
+            string name = Request["asset"];
+            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.Get_Name(), name) == 0);
+            if (asset == null)
+            {
+                msg = "cannot find asset";
+            }
+            else
+            {
+                Model.sell(asset, Int32.Parse(Request["number"]));
+                msg = "sold " + Request["number"] + " of " + Request["asset"];
+            }
         }
     }
-</div>
+}
+
+@msg

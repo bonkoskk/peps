@@ -1,4 +1,7 @@
 ﻿@model Everglades.Models.ModelManage
+@{
+    Everglades.Models.IAsset Hedging_Portfolio = Model.Hedging_Portfolio;
+}
 
 <!-- update date -->
 <div id="update" class="update">
@@ -27,7 +30,7 @@
                             </tr>
                             <tr>
                                 <td>Hedging Portfolio Value</td>
-                                <td>42303103</td>
+                                <td>@Hedging_Portfolio.Get_Price()</td>
                             </tr>
                             <tr>
                                 <td>Product Value</td>
@@ -36,6 +39,10 @@
                             <tr>
                                 <td>Margin</td>
                                 <td>10182161</td>
+                            </tr>
+                            <tr>
+                                <td>Cash</td>
+                                <td>@Model.cash</td>
                             </tr>
                         </tbody>
                     </table>

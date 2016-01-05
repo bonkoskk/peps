@@ -7,35 +7,36 @@ function isInteger(value) {
 
 // function to buy asset
 function asset_buy(name, number) {
-    $("button").click(function () {
-        var data = { operation: 'buy', asset: name, number: number };
-        $.ajax({
-            type: "POST",
-            url: "/operations",
-            data: data,
-            datatype: "html",
-            success: function (data) {
-                console.log(data);
-                alert(data);
-            }
-        })
-        .fail(function (jqXHR, textStatus) {
-            console.log("error : " + textStatus);
-            alert("error");
-        })
-        .always(function () {
-            console.log("complete !");
-              alert("complete");
-        });
+    var data = { operation: 'buy', asset: name, number: number };
+    $.ajax({
+        type: "POST",
+        url: "/operations",
+        data: data,
+        datatype: "html",
+        success: function (data) {
+            alert(data);
+        }
+    })
+    .fail(function (jqXHR, textStatus) {
+        alert("Error : could not buy asset");
     });
 }
 
 // function to sell asset
 function asset_sell(name, number) {
-    $.post("/operations", function (data) {
-        alert(data);
+    var data = { operation: 'sell', asset: name, number: number };
+    $.ajax({
+        type: "POST",
+        url: "/operations",
+        data: data,
+        datatype: "html",
+        success: function (data) {
+            alert(data);
+        }
+    })
+    .fail(function (jqXHR, textStatus) {
+        alert("Error : could not sell asset");
     });
-    alert("Operation sell done");
 }
 
 

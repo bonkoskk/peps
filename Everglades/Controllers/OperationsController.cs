@@ -13,7 +13,7 @@ namespace Everglades.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            return View(HttpContext.Application["Mmodel"]);
         }
 
 
