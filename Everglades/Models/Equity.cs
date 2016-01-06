@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+using Wrapping;
+
 namespace Everglades.Models
 {
     public class Equity : IAsset
@@ -19,8 +21,14 @@ namespace Everglades.Models
         }
         double IAsset.Get_Price()
         {
-            // Should access database for equity price
-            return 1000;
+
+            // debug kevin
+            // doit retourner 6.51
+            //WrapperBarrier wc = new WrapperBarrier();
+
+            //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
+            return 100;
+            //return wc.getPrice();
         }
 
         double[] IAsset.Get_Price(DateTime t1, DateTime t2, TimeStep step)

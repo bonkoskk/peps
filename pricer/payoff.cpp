@@ -1,5 +1,6 @@
 #include "simulations.hpp"
 #include "payoff.hpp"
+#include <cmath>
 
 extern double payoff_barrier(struct Params data, int J, double L, gsl_vector* simulations)
 {
@@ -7,19 +8,29 @@ extern double payoff_barrier(struct Params data, int J, double L, gsl_vector* si
 	double S_T = gsl_vector_get(simulations, J);
 	double S_temp;
 
+	double prod = 1;
 
-	for (int i = 0; i <= J; i++)
+	double proba;
+
+
+	if (gsl_vector_get(simulations, 0) < L)
 	{
-		S_temp = gsl_vector_get(simulations, i);
-		if (S_temp < L)
+		return 0;
+	}
+
+	for (int i = 1; i <= J; i++)
+	{
+		if (gsl_vector_get(simulations, i-1) < L || gsl_vector_get(simulations, i) < L)
 		{
 			return 0;
 		}
+		proba = 1 - exp((-2 * J * log(L / gsl_vector_get(simulations, i - 1)) * log(L / gsl_vector_get(simulations, i))) / (data.v*data.v * data.T));
+		prod *= proba;
 	}
 
 	if (S_T - data.K > 0)
 	{
-		return S_T - data.K;
+		return (S_T - data.K)*prod;
 	}
 
 	return 0;

@@ -18,18 +18,33 @@ namespace Everglades
     {
         private ModelManage Mmodel;
 
-        protected void Application_Start()
+        // debug Kevin
+        //protected void Application_Start()
+        protected void Application_Start(object sender, EventArgs e)
         {
+            // debug kevin
+            String _path = String.Concat(System.Environment.GetEnvironmentVariable("PATH"), ";", System.AppDomain.CurrentDomain.RelativeSearchPath);
+            System.Environment.SetEnvironmentVariable("PATH", _path, EnvironmentVariableTarget.Process);
+
             AreaRegistration.RegisterAllAreas();
-            
+
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            
             HomeController.Yahoo_Finance_Parsing();
             Mmodel = new ModelManage();
             Application["Mmodel"] = Mmodel;
+
+
         }
+
+        /*void Application_Start(object sender, EventArgs e)
+        {
+            String _path = String.Concat(System.Environment.GetEnvironmentVariable("PATH"), ";", System.AppDomain.CurrentDomain.RelativeSearchPath);
+            System.Environment.SetEnvironmentVariable("PATH", _path, EnvironmentVariableTarget.Process);
+        }*/
     }
 }
