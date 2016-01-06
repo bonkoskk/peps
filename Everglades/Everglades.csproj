@@ -152,14 +152,16 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Everglades.cs" />
-    <Compile Include="Models\IDerivative.cs" />
-    <Compile Include="Models\Equity.cs" />
+    <Compile Include="Models\Assets\Everglades.cs" />
+    <Compile Include="Models\Assets\IDerivative.cs" />
+    <Compile Include="Models\Assets\Equity.cs" />
+    <Compile Include="Models\Data.cs" />
+    <Compile Include="Models\DataPoint.cs" />
     <Compile Include="Models\ModelManage.cs" />
-    <Compile Include="Models\Option.cs" />
-    <Compile Include="Models\Portfolio.cs" />
+    <Compile Include="Models\Assets\Option.cs" />
+    <Compile Include="Models\Assets\Portfolio.cs" />
     <Compile Include="Models\TimeStep.cs" />
-    <Compile Include="Models\IAsset.cs" />
+    <Compile Include="Models\Assets\IAsset.cs" />
     <Compile Include="Models\AccessDB.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />

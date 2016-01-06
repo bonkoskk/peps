@@ -57,7 +57,10 @@ function draw_asset_graph(div, data, label) {
         }
     };
     try {
-        $.plot(div, data_graph, parameters);
+        var plot = $.plot(div, data_graph, parameters);
+        plot.setData(data_graph);
+        plot.setupGrid(); //only necessary if your new data will change the axes or grid
+        plot.draw();
     } catch (e) {
         alert(e);
     }
@@ -87,8 +90,8 @@ $(function () {
     $(".asset-clickable").click(function () {
         var assetname = $(this).attr("asset");
         $(".asset-window").show();
-        //var data = [[1282688250, 0], [1282788250, 4], [1282888250, 8], [1282988250, 9], [1283088250, 14]];
-
+        $("#asset-graph").html("Loading data ..");
+        var data = { operation: 'get_data', asset: assetname };
         //get_data
         $.ajax({
             type: "POST",
@@ -97,7 +100,7 @@ $(function () {
             datatype: "html",
             success: function (data) {
                 $("#asset-graph").html(data);
-                //draw_asset_graph("#asset-graph", data, assetname);
+                draw_asset_graph("#asset-graph", data, assetname);
             }
         })
         .fail(function (jqXHR, textStatus) {
