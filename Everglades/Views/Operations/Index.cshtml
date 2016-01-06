@@ -14,6 +14,7 @@
 @{
     if (Request.Form.Count > 0)
     {
+        // operation buy
         if (String.Compare(Request["operation"], "buy") == 0)
         {
             string name = Request["asset"];
@@ -34,6 +35,7 @@
                 }
             }
         }
+        // operation sell
         else if (String.Compare(Request["operation"], "sell") == 0)
         {
             string name = Request["asset"];
@@ -48,6 +50,27 @@
                 msg = "sold " + Request["number"] + " of " + Request["asset"];
             }
         }
+        else if (String.Compare(Request["operation"], "get_data") == 0)
+        {
+            string name = Request["asset"];
+            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.Get_Name(), name) == 0);
+            if (asset == null)
+            {
+                msg = "cannot find asset";
+            }
+            else
+            {
+                DateTime end = DateTime.Now;
+                DateTime start = end - TimeSpan.FromDays(30);
+                TimeSpan step = TimeSpan.FromDays(1);
+                msg = asset.Get_Price(start, end, step).ToString();
+            }
+        }
+        else
+        {
+            msg = "unknown operation";
+        }
+        
     }
 }
 

@@ -17,6 +17,7 @@ namespace Everglades
                         "~/Content/js/bootstrap.js",
                         "~/Content/js/jquery.js",
                         "~/Content/js/jquery.flot.js",
+                        "~/Content/js/jquery.flot.time.js",
                         "~/Content/js/jquery.flot.pie.js",
                         "~/Content/js/stylish-portfolio.js",
                         "~/Content/js/index.js"));

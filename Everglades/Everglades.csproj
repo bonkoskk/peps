@@ -177,6 +177,7 @@
     <Content Include="Content\js\index.js" />
     <Content Include="Content\js\jquery.flot.js" />
     <Content Include="Content\js\jquery.flot.pie.js" />
+    <Content Include="Content\js\jquery.flot.time.js" />
     <Content Include="Content\js\jquery.js" />
     <Content Include="Content\js\stylish-portfolio.js" />
     <Content Include="favicon.ico" />

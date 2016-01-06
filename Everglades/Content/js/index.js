@@ -51,6 +51,9 @@ function draw_asset_graph(div, data, label) {
         legend: {
             show: true,
             backgroundOpacity: 0,
+        },
+        xaxis: {
+            mode: "time"
         }
     };
     try {
@@ -84,8 +87,22 @@ $(function () {
     $(".asset-clickable").click(function () {
         var assetname = $(this).attr("asset");
         $(".asset-window").show();
-        var data = [[0, 3], [4, 8], [8, 5], [9, 13], [14, 20]];
-        draw_asset_graph("#asset-graph", data, assetname);
+        //var data = [[1282688250, 0], [1282788250, 4], [1282888250, 8], [1282988250, 9], [1283088250, 14]];
+
+        //get_data
+        $.ajax({
+            type: "POST",
+            url: "/operations",
+            data: data,
+            datatype: "html",
+            success: function (data) {
+                $("#asset-graph").html(data);
+                //draw_asset_graph("#asset-graph", data, assetname);
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            $("#asset-graph").html("Cannot get data");
+        });
     });
 
     $(".asset-window > .close-button").click(function () {

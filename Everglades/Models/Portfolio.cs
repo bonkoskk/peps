@@ -56,7 +56,7 @@ namespace Everglades.Models
             return price;
         }
 
-        double[] IAsset.Get_Price(DateTime t1, DateTime t2, TimeStep step)
+        List<double> IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
         {
             throw new NotImplementedException();
         }

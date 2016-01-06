@@ -27,7 +27,7 @@ namespace Everglades
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            HomeController.Yahoo_Finance_Parsing();
+            //HomeController.Yahoo_Finance_Parsing();
             Mmodel = new ModelManage();
             Application["Mmodel"] = Mmodel;
         }

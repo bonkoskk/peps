@@ -11,7 +11,7 @@ namespace Everglades.Models
     {
         String Get_Name();
         double Get_Price();
-        double[] Get_Price(DateTime t1, DateTime t2, TimeStep step);
+        List<double> Get_Price(DateTime t1, DateTime t2, TimeSpan step);
         double Get_Price(DateTime t);
         double Get_Delta(DateTime t);
     }
