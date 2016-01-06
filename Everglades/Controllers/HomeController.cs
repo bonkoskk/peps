@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using APIFiMag;
-using APIFiMag.Datas;
-using APIFiMag.Exporter;
-using APIFiMag.Importer;
+//using APIFiMag;
+//using APIFiMag.Datas;
+//using APIFiMag.Exporter;
+//using APIFiMag.Importer;
 
 namespace Everglades.Controllers
 {
@@ -18,6 +18,7 @@ namespace Everglades.Controllers
             return View(HttpContext.Application["Mmodel"]);
         }
 
+        /*
         public static bool Yahoo_Finance_Parsing()
         {
           
@@ -36,7 +37,7 @@ namespace Everglades.Controllers
             donnees.Export(new ExportJSON("donnees.json"));
             //System.Console.WriteLine(donnees.ToString());
             return false;
-        }
+        }*/
 
         public bool Buy_Asset()
         {
