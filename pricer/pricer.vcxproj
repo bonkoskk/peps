@@ -22,6 +22,7 @@
     <ProjectGuid>{8798B69F-CDAD-4601-AD62-B0651719AF20}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>pricer</RootNamespace>
+    <ProjectName>Pricer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -95,7 +96,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\ensimag\Documents\peps\gsl-dir\gsl-lib\$(ConfigurationName)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\ensimag\Documents\peps\gsl-dir\gsl-lib\Debug\Win32</AdditionalLibraryDirectories>
       <AdditionalDependencies>gsl.lib;cblas.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -112,8 +113,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\ensimag\Documents\peps\gsl-dir\gsl-lib\$(ConfigurationName)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>x64/gsl.lib;x64/cblas.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\ensimag\Documents\peps\gsl-dir\gsl-lib\Debug\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gsl.lib;cblas.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -153,14 +154,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="computations.hpp" />
-    <ClInclude Include="everglades.hpp" />
+    <ClInclude Include="pricer.hpp" />
     <ClInclude Include="payoff.hpp" />
     <ClInclude Include="simulations.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="computations.cpp" />
-    <ClCompile Include="everglades.cpp" />
+    <ClCompile Include="pricer.cpp" />
     <ClCompile Include="payoff.cpp" />
     <ClCompile Include="simulations.cpp" />
   </ItemGroup>

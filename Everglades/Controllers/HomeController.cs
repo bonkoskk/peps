@@ -10,7 +10,7 @@ using APIFiMag.Datas;
 using APIFiMag.Exporter;
 using APIFiMag.Importer;
 */
-  
+
 namespace Everglades.Controllers
 {
     public class HomeController : Controller
@@ -40,7 +40,7 @@ namespace Everglades.Controllers
             return false;
         }
         */
-        
+
         public bool Buy_Asset()
         {
             return false;
