@@ -29,7 +29,11 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+<<<<<<< HEAD
     <PlatformTarget>AnyCPU</PlatformTarget>
+=======
+    <PlatformTarget>x64</PlatformTarget>
+>>>>>>> 4f1e6f2f001eda458ed542a150cac80ca7ab01d3
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -148,9 +152,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Everglades.cs" />
     <Compile Include="Models\IDerivative.cs" />
     <Compile Include="Models\Equity.cs" />
     <Compile Include="Models\ModelManage.cs" />
@@ -294,10 +300,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+<<<<<<< HEAD
     <Folder Include="bin\Content\img\" />
     <Folder Include="bin\x64\" />
     <Folder Include="obj\Debug\TempPE\" />
     <Folder Include="obj\x64\Debug\TempPE\" />
+=======
+    <Folder Include="Views\Home\App_LocalResources\" />
+>>>>>>> 4f1e6f2f001eda458ed542a150cac80ca7ab01d3
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -309,6 +319,7 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Content Include="bin\Everglades.dll.config" />
   </ItemGroup>
   <ItemGroup>
@@ -328,6 +339,9 @@
       <Project>{c37bfcdf-f5a9-4f03-95d0-c22f86bc361b}</Project>
       <Name>Wrapping</Name>
     </ProjectReference>
+=======
+    <Content Include="Views\Operations\Index.cshtml" />
+>>>>>>> 4f1e6f2f001eda458ed542a150cac80ca7ab01d3
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -341,6 +355,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <IncludeIisSettings>false</IncludeIisSettings>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\</OutputPath>

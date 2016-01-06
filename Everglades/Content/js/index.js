@@ -7,20 +7,58 @@ function isInteger(value) {
 
 // function to buy asset
 function asset_buy(name, number) {
-    $.post("/BuyAsset", function (data) {
-        alert(data);
+    var data = { operation: 'buy', asset: name, number: number };
+    $.ajax({
+        type: "POST",
+        url: "/operations",
+        data: data,
+        datatype: "html",
+        success: function (data) {
+            alert(data);
+            location.reload();
+        }
+    })
+    .fail(function (jqXHR, textStatus) {
+        alert("Connection error : could not buy asset");
     });
-    alert("Operation buy done");
 }
 
 // function to sell asset
 function asset_sell(name, number) {
-    $.post("/SellAsset", function (data) {
-        alert(data);
+    var data = { operation: 'sell', asset: name, number: number };
+    $.ajax({
+        type: "POST",
+        url: "/operations",
+        data: data,
+        datatype: "html",
+        success: function (data) {
+            alert(data);
+            location.reload();
+        }
+    })
+    .fail(function (jqXHR, textStatus) {
+        alert("Connection error : could not sell asset");
     });
-    alert("Operation sell done");
 }
 
+function draw_asset_graph(div, data, label) {
+    var data_graph = [{ label: label, data: data }];
+    var parameters = {
+        series: {
+            lines: { show: true },
+            points: { show: true }
+        },
+        legend: {
+            show: true,
+            backgroundOpacity: 0,
+        }
+    };
+    try {
+        $.plot(div, data_graph, parameters);
+    } catch (e) {
+        alert(e);
+    }
+}
 
 $(function () {
     $(".buybutton").click(function () {
@@ -41,5 +79,16 @@ $(function () {
         } else {
             alert("Error : " + number + " is not an integer");
         }
+    });
+
+    $(".asset-clickable").click(function () {
+        var assetname = $(this).attr("asset");
+        $(".asset-window").show();
+        var data = [[0, 3], [4, 8], [8, 5], [9, 13], [14, 20]];
+        draw_asset_graph("#asset-graph", data, assetname);
+    });
+
+    $(".asset-window > .close-button").click(function () {
+        $(".asset-window").hide();
     });
 });
