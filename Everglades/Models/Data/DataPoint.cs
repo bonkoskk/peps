@@ -25,7 +25,7 @@ namespace Everglades.Models
             return value;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             // date is converted to timestamp (seconds starting 1/1/1970)
             return "[" + (long)(date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds * 1000 + ", " + value + "]";
