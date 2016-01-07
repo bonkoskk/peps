@@ -16,21 +16,25 @@ namespace Everglades.Models
             return "Option on " + underlying.Get_Name();
         }
 
+        //TODO
         double IAsset.Get_Price()
         {
             throw new NotImplementedException();
         }
 
-        List<double> IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
+        //TODO
+        Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
         {
             throw new NotImplementedException();
         }
 
+        //TODO
         double IAsset.Get_Price(DateTime t)
         {
             throw new NotImplementedException();
         }
 
+        //TODO
         double IAsset.Get_Delta(DateTime t)
         {
             throw new NotImplementedException();
