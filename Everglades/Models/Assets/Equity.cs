@@ -26,15 +26,15 @@ namespace Everglades.Models
 
             // debug kevin
             // doit retourner 6.51
-            WrapperBarrier wc = new WrapperBarrier();
+            WrapperQuanto wc = new WrapperQuanto();
 
             //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
 
 
             if (String.Compare(name, "orange") == 0)
             {
-                //wc.getPriceOptionCallQuanto(100, 1.2, 100, 0.02, 0.03, 0.2, 0.2, 0.1, 1);
-                wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
+                wc.getPricePutQuanto(100, 1.2, 100, 0.02, 0.03, 0.2, 0.2, 0.1, 1);
+                //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
                 return wc.getPrice();
             }
             
