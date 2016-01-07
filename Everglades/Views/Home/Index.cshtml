@@ -35,7 +35,7 @@
                             </tr>
                             <tr>
                                 <td>Product Value</td>
-                                <td>32101942</td>
+                                <td>@Product.Get_Price()</td>
                             </tr>
                             <tr>
                                 <td>Margin</td>
@@ -103,14 +103,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                                @foreach (KeyValuePair<Everglades.Models.IAsset,int> entry in Model.Hedging_Portfolio.assetList)
-                                {
-                                    <tr>
-                                        <td class="asset-clickable" asset="@entry.Key.Get_Name()">@entry.Key.Get_Name()</td>
-                                        <td>@entry.Key.Get_Price()€</td>
-                                        <td>@entry.Value</td>
-                                    </tr>
-                                }
+                            @foreach (KeyValuePair<Everglades.Models.IAsset, int> entry in Model.Hedging_Portfolio.assetList)
+                            {
+                                <tr>
+                                    <td class="asset-clickable" asset="@entry.Key.Get_Name()">@entry.Key.Get_Name()</td>
+                                    <td>@entry.Key.Get_Price()€</td>
+                                    <td>@entry.Value</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -136,34 +136,35 @@
                     </table>
                 </div>
             </div>
-            <div class="row">
-                <div id="closed_positions" class="col-sm-12">
-                    <h2>Closed positions</h2>
+            <div class="col-sm-12">
+                <h2>Operations history</h2>
+                <div id="operations_history">
                     <table id="table_closedpositions" class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Asset</th>
+                                <th>Date</th>
                                 <th>Operation</th>
-                                <th>Start date</th>
-                                <th>Start price</th>
-                                <th>End date</th>
-                                <th>End price</th>
-                                <th>PnL</th>
+                                <th>Asset</th>
+                                <th>Number</th>
+                                <th>Price</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Everglades.Models.IAsset a in Model.Hedging_Portfolio.assetList.Keys)
+                            @foreach (Everglades.Models.Operation.Operation a in Model.Operations_History)
                             {
                                 <tr>
-                                    <td class="asset-clickable" asset="@a.Get_Name()">@a.Get_Name()</td>
-                                    <td>@a.Get_Price()€</td>
+                                    <td>@a.getDate().ToShortDateString()</td>
+                                    <td>@a.getOperation()</td>
+                                    <td class="asset-clickable" asset="@a.getAsset().Get_Name()">@a.getAsset().Get_Name()</td>
+                                    <td>@a.getNumber()</td>
+                                    <td>@a.getPrice()€</td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
             </div>
-    </div>
+        </div>
     <div class="asset-window">
         <div id="asset-graph" class="graph"></div>
         <button type="button" class="close-button btn btn-danger">
