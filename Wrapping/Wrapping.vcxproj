@@ -103,7 +103,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Users\ensimag\Documents\peps\pricer;C:\Users\ensimag\Desktop\Everglades\peps\pricer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\ensimag\Documents\peps\pricer;C:\Users\babs\Desktop\Everglades\peps\pricer;C:\Users\ensimag\Desktop\Everglades\peps\pricer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -113,7 +113,8 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin\Wrapping.dll"
-copy "C:\Users\ensimag\Desktop\Everglades\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Desktop\Everglades\peps\Everglades\bin\Wrapping.dll"</Command>
+copy "C:\Users\ensimag\Desktop\Everglades\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Desktop\Everglades\peps\Everglades\bin\Wrapping.dll"
+copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Wrapping.dll" "C:\Users\babs\Desktop\Everglades\peps\Everglades\bin\Wrapping.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
