@@ -17,7 +17,7 @@ namespace Wrapping {
 	}
 
 	void WrapperBarrier::getPriceOptionCallQuanto(double S, double Q, double K, double R, double Rf, double sigma1, double sigma2, double rho, double tau) {
-		double px = 1;
+		double px;
 		call_quanto(px, S, Q, K, R, Rf, sigma1, sigma2, rho, tau);
 		this->confidenceInterval = 0;
 		this->price = px;
