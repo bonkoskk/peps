@@ -19,6 +19,8 @@ namespace Everglades.Models
         {
             return name;
         }
+
+        //TODO
         double IAsset.Get_Price()
         {
 
@@ -31,6 +33,7 @@ namespace Everglades.Models
             //return wc.getPrice();
         }
 
+        //TODO
         Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
         {
             if (t1 > t2)
@@ -44,19 +47,23 @@ namespace Everglades.Models
             DateTime t = t1;
             // TODO : Database access
             Data data = new Data();
+            int test = 123445;
             while (t < t2)
             {
-                data.add(new DataPoint(t, 100));
+                test += 5465541;
+                data.add(new DataPoint(t, test % 488721));
                 t += step;
             }
             return data;
         }
 
+        //TODO
         double IAsset.Get_Price(DateTime t)
         {
-            throw new NotImplementedException();
+            return 1000;
         }
 
+        //TODO
         double IAsset.Get_Delta(DateTime t)
         {
             throw new NotImplementedException();

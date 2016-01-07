@@ -5,6 +5,12 @@ function isInteger(value) {
       Math.floor(value) === value;
 };
 
+// return date format from timestamp*1000
+function formatDate(x) {
+    date = new Date(Math.floor(x));
+    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();// + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+}
+
 // function to buy asset
 function asset_buy(name, number) {
     var data = { operation: 'buy', asset: name, number: number };
@@ -52,21 +58,79 @@ function draw_asset_graph(div, data, label) {
             show: true,
             backgroundOpacity: 0,
         },
+        grid: {
+            hoverable: true
+        },
         xaxis: {
             mode: "time"
         }
     };
     try {
-        var plot = $.plot(div, data_graph, parameters);
-        plot.setData(data_graph);
-        plot.setupGrid(); //only necessary if your new data will change the axes or grid
-        plot.draw();
+        $(div).html("");
+        $.plot(div, data_graph, parameters);
     } catch (e) {
         alert(e);
     }
 }
 
+
+
+
 $(function () {
+    // MAIN GRAPH PLOT (hedging portfolio + product)
+    var data_graph = [
+			{ label: label_graph_hedge, data: data_graph_hedge },
+			{ label: label_graph_product, data: data_graph_product }
+    ];
+    var parameters = {
+        series: {
+            lines: { show: true },
+            points: { show: true }
+        },
+        grid: {
+            hoverable: true
+        },
+        legend: {
+            show: true,
+            backgroundOpacity: 0,
+        },
+        xaxis: {
+            mode: "time"
+        }
+    };
+    try {
+        $.plot("#graph", data_graph, parameters);
+    } catch (e) {
+
+    }
+
+    // DONUT PLOT
+    var donut = $("#donut");
+    $.plot(donut, data_donut, {
+        series: {
+            pie: {
+                show: true,
+                innerRadius: 0.25,
+                label: {
+                    show: true,
+                    radius: 0.75,
+                    background: {
+                        opacity: 0.5,
+                        color: '#000'
+                    }
+                }
+            }
+        },
+        legend: {
+            show: false
+        },
+        grid: {
+            hoverable: true,
+            clickable: true
+        }
+    });
+
+    // function when clicking on an asset's "buy" (+)
     $(".buybutton").click(function () {
         var assetname = $(this).attr("asset");
         var number = parseInt(window.prompt("How many of asset " + assetname + " do you want to buy ?", "1"));
@@ -77,6 +141,7 @@ $(function () {
         }
     });
 
+    // function when clicking on an asset's "sell" (-)
     $(".sellbutton").click(function () {
         var assetname = $(this).attr("asset");
         var number = parseInt(window.prompt("How many of asset " + assetname + " do you want to sell ?", "1"));
@@ -87,6 +152,7 @@ $(function () {
         }
     });
 
+    // function when clicking on an asset (display a graph)
     $(".asset-clickable").click(function () {
         var assetname = $(this).attr("asset");
         $(".asset-window").show();
@@ -99,7 +165,7 @@ $(function () {
             data: data,
             datatype: "html",
             success: function (data) {
-                $("#asset-graph").html(data);
+                data = JSON.parse(data);
                 draw_asset_graph("#asset-graph", data, assetname);
             }
         })
@@ -110,5 +176,19 @@ $(function () {
 
     $(".asset-window > .close-button").click(function () {
         $(".asset-window").hide();
+    });
+
+    // function when mouse is over point of a graph (to display values in tooltip)
+    $(".graph").bind("plothover", function (event, pos, item) {
+        if (item) {
+            var x = item.datapoint[0].toFixed(2),
+                y = item.datapoint[1].toFixed(2);
+
+            $("#tooltip").html(item.series.label + " value at " + formatDate(x) + " : " + y)
+                .css({ top: item.pageY + 5, left: item.pageX + 5 })
+                .fadeIn(200);
+        } else {
+            $("#tooltip").hide();
+        }
     });
 });

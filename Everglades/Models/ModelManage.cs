@@ -11,6 +11,7 @@ namespace Everglades.Models
         public double cash;
         public Everglades everg;
         public Portfolio Hedging_Portfolio;
+        public List<Operation.Operation> Closed_Positions;
 
         public ModelManage()
         {

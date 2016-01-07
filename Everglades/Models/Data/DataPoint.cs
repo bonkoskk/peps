@@ -8,8 +8,8 @@ namespace Everglades.Models
     public class DataPoint
     {
         private DateTime date;
-        private int value;
-        public DataPoint(DateTime date, int value)
+        private double value;
+        public DataPoint(DateTime date, double value)
         {
             this.date = date;
             this.value = value;
@@ -20,7 +20,7 @@ namespace Everglades.Models
             return date;
         }
 
-        public int getValue()
+        public double getValue()
         {
             return value;
         }
