@@ -111,6 +111,12 @@ body {
     opacity: 0.8;
 }
 
+#closed_positions {
+    display: block;
+    height: 20%;
+    overflow-y: auto;
+}
+
 /* Custom Button Styles */
 
 .btn-dark {
