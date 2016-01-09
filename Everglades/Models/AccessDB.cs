@@ -19,13 +19,13 @@ namespace Everglades.Models
         }
 
         // return price of an asset from name
-        public static double Get_Asset_Price(String assetName)
+        public static double Get_Asset_Price(String assetName, DateTime date)
         {
-            throw new NotImplementedException();
+            return 100;
         }
 
         // return delta of an asset from name
-        public static double Get_Asset_Delta(String assetName)
+        public static double Get_Asset_Delta(String assetName, DateTime date)
         {
             throw new NotImplementedException();
         }

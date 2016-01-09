@@ -1,6 +1,7 @@
 ﻿@model Everglades.Models.ModelManage
 @{
     Everglades.Models.IAsset Hedging_Portfolio = Model.Hedging_Portfolio;
+    Everglades.Models.IAsset Product = Model.everg;
 }
 
 <!-- update date -->
@@ -34,7 +35,7 @@
                             </tr>
                             <tr>
                                 <td>Product Value</td>
-                                <td>32101942</td>
+                                <td>@Product.Get_Price()</td>
                             </tr>
                             <tr>
                                 <td>Margin</td>
@@ -48,7 +49,7 @@
                     </table>
                 </div>
                 <div class="col-sm-4">
-                    <div id="graph"></div>
+                    <div id="graph" class="graph"></div>
                 </div>
                 <div class="col-sm-3">
                     <div id="donut"></div>
@@ -102,15 +103,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                                @foreach (KeyValuePair<Everglades.Models.IAsset,int> entry in Model.Hedging_Portfolio.assetList)
-                                {
-                                    <tr>
-                                        <td class="asset-clickable" asset="@entry.Key.Get_Name()">@entry.Key.Get_Name()</td>
-                                        <td>@entry.Key.Get_Price()€</td>
-                                        <td>@entry.Value</td>
-                                    </tr>
-                                }
-</tbody>
+                            @foreach (KeyValuePair<Everglades.Models.IAsset, int> entry in Model.Hedging_Portfolio.assetList)
+                            {
+                                <tr>
+                                    <td class="asset-clickable" asset="@entry.Key.Get_Name()">@entry.Key.Get_Name()</td>
+                                    <td>@entry.Key.Get_Price()€</td>
+                                    <td>@entry.Value</td>
+                                </tr>
+                            }
+                        </tbody>
                     </table>
                 </div>
                 <div class="col-sm-1"></div>
@@ -133,18 +134,44 @@
                             }
                         </tbody>
                     </table>
-
-
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <h2>Operations history</h2>
+                <div id="operations_history">
+                    <table id="table_closedpositions" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Operation</th>
+                                <th>Asset</th>
+                                <th>Number</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Everglades.Models.Operation.Operation a in Model.Operations_History)
+                            {
+                                <tr>
+                                    <td>@a.getDate().ToShortDateString()</td>
+                                    <td>@a.getOperation()</td>
+                                    <td class="asset-clickable" asset="@a.getAsset().Get_Name()">@a.getAsset().Get_Name()</td>
+                                    <td>@a.getNumber()</td>
+                                    <td>@a.getPrice()€</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
     <div class="asset-window">
-        <div id="asset-graph"></div>
+        <div id="asset-graph" class="graph"></div>
         <button type="button" class="close-button btn btn-danger">
             <span class="glyphicon glyphicon-remove"></span>
         </button>
     </div>
+    <div id="tooltip"></div>
 </header>
 <!-- About -->
 <section id="about" class="about">
@@ -187,3 +214,18 @@
         </div>
     </div>
 </footer>
+
+<script>
+    var data_graph_hedge = @Hedging_Portfolio.Get_Price(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var label_graph_hedge = "hedge";
+    var data_graph_product = @Product.Get_Price(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var label_graph_product = "product";
+    var data_donut = [];
+    var series = Math.floor(Math.random() * 6) + 3;
+    for (var i = 0; i < series; i++) {
+        data_donut[i] = {
+            label: "Series" + (i + 1),
+            data: Math.floor(Math.random() * 100) + 1
+        }
+    }
+</script>

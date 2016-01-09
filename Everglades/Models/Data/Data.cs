@@ -19,7 +19,7 @@ namespace Everglades.Models
             data.Add(point);
         }
 
-        public string ToString()
+        public override string ToString()
         {
             string s = "[";
             bool first = true;

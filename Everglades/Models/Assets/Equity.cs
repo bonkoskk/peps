@@ -19,16 +19,10 @@ namespace Everglades.Models
         {
             return name;
         }
+
         double IAsset.Get_Price()
         {
-
-            // debug kevin
-            // doit retourner 6.51
-            //WrapperBarrier wc = new WrapperBarrier();
-
-            //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
-            return 100;
-            //return wc.getPrice();
+            return AccessDB.Get_Asset_Price(this.name, DateTime.Now);
         }
 
         Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
@@ -42,11 +36,10 @@ namespace Everglades.Models
                 throw new ArgumentOutOfRangeException("Step must be strictly positive");
             }
             DateTime t = t1;
-            // TODO : Database access
             Data data = new Data();
             while (t < t2)
             {
-                data.add(new DataPoint(t, 100));
+                data.add(new DataPoint(t, AccessDB.Get_Asset_Price(this.name, t)));
                 t += step;
             }
             return data;
@@ -54,12 +47,12 @@ namespace Everglades.Models
 
         double IAsset.Get_Price(DateTime t)
         {
-            throw new NotImplementedException();
+            return AccessDB.Get_Asset_Price(this.name, t);
         }
 
         double IAsset.Get_Delta(DateTime t)
         {
-            throw new NotImplementedException();
+            return AccessDB.Get_Asset_Delta(this.name, t);
         }
     }
 }

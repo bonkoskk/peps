@@ -8,8 +8,8 @@ namespace Everglades.Models
     public class DataPoint
     {
         private DateTime date;
-        private int value;
-        public DataPoint(DateTime date, int value)
+        private double value;
+        public DataPoint(DateTime date, double value)
         {
             this.date = date;
             this.value = value;
@@ -20,12 +20,12 @@ namespace Everglades.Models
             return date;
         }
 
-        public int getValue()
+        public double getValue()
         {
             return value;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             // date is converted to timestamp (seconds starting 1/1/1970)
             return "[" + (long)(date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds * 1000 + ", " + value + "]";

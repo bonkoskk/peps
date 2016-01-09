@@ -11,6 +11,7 @@ namespace Everglades.Models
         public double cash;
         public Everglades everg;
         public Portfolio Hedging_Portfolio;
+        public LinkedList<Operation.Operation> Operations_History;
 
         public ModelManage()
         {
@@ -22,6 +23,7 @@ namespace Everglades.Models
             }
             everg = new Everglades();
             Hedging_Portfolio = new Portfolio(Assets);
+            Operations_History = new LinkedList<Operation.Operation>();
         }
 
         public void buy(IAsset asset, int number)
@@ -31,6 +33,7 @@ namespace Everglades.Models
             {
                 cash -= price * number;
                 Hedging_Portfolio.Add_Asset(asset, number);
+                Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "buy", asset, number, asset.Get_Price()));
             }
             else
             {
@@ -43,6 +46,7 @@ namespace Everglades.Models
             double price = asset.Get_Price();
             cash += price * number;
             Hedging_Portfolio.Remove_Asset(asset, number);
+            Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "sell", asset, number, asset.Get_Price()));
         }
 
     }
