@@ -42,23 +42,23 @@ namespace Everglades.Models
             }
         }
 
-        String IAsset.Get_Name()
+        String IAsset.getName()
         {
             return "Portfolio of " + assetList.Count + " assets";
         }
 
-        double IAsset.Get_Price()
+        double IAsset.getPrice()
         {
             double price = 0;
             foreach (KeyValuePair<IAsset, int> entry in assetList)
             {
-                price += entry.Value * entry.Key.Get_Price();
+                price += entry.Value * entry.Key.getPrice();
             }
             return price;
         }
 
         //TODO
-        Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
+        Data IAsset.getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
             Data data = new Data();
             DateTime t = t1;
@@ -67,7 +67,7 @@ namespace Everglades.Models
                 double prix = 0;
                 foreach (KeyValuePair<IAsset, int> pair in assetList)
                 {
-                    prix += pair.Value * pair.Key.Get_Price(t);
+                    prix += pair.Value * pair.Key.getPrice(t);
                 }
                 data.add(new DataPoint(t, prix));
                 t += step;
@@ -76,16 +76,22 @@ namespace Everglades.Models
         }
 
         //TODO
-        double IAsset.Get_Price(DateTime t)
+        double IAsset.getPrice(DateTime t)
         {
             throw new NotImplementedException();
         }
 
         //TODO
-        double IAsset.Get_Delta(DateTime t)
+        double IAsset.getDelta(DateTime t)
         {
             throw new NotImplementedException();
         }
 
+
+
+        double IAsset.getVolatility(DateTime t)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

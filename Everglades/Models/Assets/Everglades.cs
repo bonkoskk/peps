@@ -8,19 +8,19 @@ namespace Everglades.Models
     public class Everglades : IAsset
     {
 
-        string IAsset.Get_Name()
+        string IAsset.getName()
         {
             return "Everglades product";
         }
 
         // TODO
-        double IAsset.Get_Price()
+        double IAsset.getPrice()
         {
             return 78;
         }
 
         //TODO
-        Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
+        Data IAsset.getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
             //TODO
             Data data = new Data();
@@ -31,13 +31,19 @@ namespace Everglades.Models
         }
 
         //TODO
-        double IAsset.Get_Price(DateTime t)
+        double IAsset.getPrice(DateTime t)
         {
             throw new NotImplementedException();
         }
 
         //TODO
-        double IAsset.Get_Delta(DateTime t)
+        double IAsset.getDelta(DateTime t)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        double IAsset.getVolatility(DateTime t)
         {
             throw new NotImplementedException();
         }

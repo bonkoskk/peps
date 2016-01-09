@@ -158,6 +158,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Assets\EuropeanCall.cs" />
     <Compile Include="Models\Assets\Everglades.cs" />
     <Compile Include="Models\Assets\IDerivative.cs" />
     <Compile Include="Models\Assets\Equity.cs" />
@@ -167,6 +168,8 @@
     <Compile Include="Models\Assets\Option.cs" />
     <Compile Include="Models\Assets\Portfolio.cs" />
     <Compile Include="Models\Operation\Operation.cs" />
+    <Compile Include="Models\Param.cs" />
+    <Compile Include="Models\ParamType.cs" />
     <Compile Include="Models\TimeStep.cs" />
     <Compile Include="Models\Assets\IAsset.cs" />
     <Compile Include="Models\AccessDB.cs" />

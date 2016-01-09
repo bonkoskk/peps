@@ -44,7 +44,7 @@ namespace Everglades.Models.Operation
 
         public double getPrice()
         {
-            return number;
+            return price;
         }
 
     }

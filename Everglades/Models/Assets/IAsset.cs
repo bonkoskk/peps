@@ -9,10 +9,11 @@ namespace Everglades.Models
 
     public interface IAsset
     {
-        String Get_Name();
-        double Get_Price();
-        Data Get_Price(DateTime t1, DateTime t2, TimeSpan step);
-        double Get_Price(DateTime t);
-        double Get_Delta(DateTime t);
+        String getName();
+        double getPrice();
+        Data getPrice(DateTime t1, DateTime t2, TimeSpan step);
+        double getPrice(DateTime t);
+        double getVolatility(DateTime t);
+        double getDelta(DateTime t);
     }
 }

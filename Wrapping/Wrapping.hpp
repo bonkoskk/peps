@@ -6,6 +6,29 @@ using namespace System;
 
 namespace Wrapping {
 
+	public ref class WrapperVanilla
+	{
+	public:
+		double confidenceInterval;
+		double price;
+		WrapperVanilla() { confidenceInterval = price = 0; };
+		void getPriceOptionEuropeanCall(double T, double S0, double K, double sigma, double r, double q);
+		void getPriceOptionEuropeanPut(double T, double S0, double K, double sigma, double r, double q);
+		double getPrice() { return price; };
+		double getIC() { return confidenceInterval; };
+	};
+
+	public ref class WrapperQuanto
+	{
+	public:
+		double confidenceInterval;
+		double price;
+		WrapperQuanto() { confidenceInterval = price = 0; };
+		void getPriceOptionCallQuanto(double S, double Q, double K, double R, double Rf, double sigma1, double sigma2, double rho, double tau);
+		double getPrice() { return price; };
+		double getIC() { return confidenceInterval; };
+	};
+
 	public ref class WrapperBarrier
 	{
 	public:
@@ -13,10 +36,8 @@ namespace Wrapping {
 		double price;
 		WrapperBarrier() { confidenceInterval = price = 0; };
 		void getPriceOptionBarrier(int sampleNb, double T, double S0, double K, double sigma, double r, double J, double L);
-		void getPriceOptionCallQuanto(double S, double Q, double K, double R, double Rf, double sigma1, double sigma2, double rho, double tau);
 		double getPrice() { return price; };
 		double getIC() { return confidenceInterval; };
-
 	};
 
 }

@@ -18,7 +18,7 @@
         if (String.Compare(Request["operation"], "buy") == 0)
         {
             string name = Request["asset"];
-            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.Get_Name(), name) == 0);
+            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.getName(), name) == 0);
             if (asset == null)
             {
                 msg = "cannot find asset";
@@ -39,7 +39,7 @@
         else if (String.Compare(Request["operation"], "sell") == 0)
         {
             string name = Request["asset"];
-            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.Get_Name(), name) == 0);
+            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.getName(), name) == 0);
             if (asset == null)
             {
                 msg = "cannot find asset";
@@ -50,10 +50,10 @@
                 msg = "sold " + Request["number"] + " of " + Request["asset"];
             }
         }
-        else if (String.Compare(Request["operation"], "get_data") == 0)
+        else if (String.Compare(Request["operation"], "getData") == 0)
         {
             string name = Request["asset"];
-            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.Get_Name(), name) == 0);
+            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.getName(), name) == 0);
             if (asset == null)
             {
                 msg = "cannot find asset";
@@ -63,14 +63,94 @@
                 DateTime end = DateTime.Now;
                 DateTime start = end - TimeSpan.FromDays(30);
                 TimeSpan step = TimeSpan.FromDays(1);
-                msg = asset.Get_Price(start, end, step).ToString();
+                msg = asset.getPrice(start, end, step).ToString();
+            }
+        }
+        else if (String.Compare(Request["operation"], "getParam") == 0)
+        {
+            string name = Request["derivative"];
+            Everglades.Models.IDerivative derivative = Model.derivatives.Find((x => String.Compare(x.getType(), name) == 0));
+            string str = derivative.getType() + "<br/><br/>\n"
+                + "<input type=\"hidden\" name=\"derivative\" value=\"" + derivative.getType() + "\">";
+            foreach(Everglades.Models.Param p in derivative.getParam()) {
+                str = str + p.getName() + " : ";
+                switch(p.getType()) {
+                    case Everglades.Models.ParamType._double:
+                        str = str + "<input name=\"" + p.getName() + "\" type=\"number\"><br/><br/>\n";
+                        break;
+                    case Everglades.Models.ParamType._int:
+                        str = str + "<input name=\"" + p.getName() + "\" type=\"number\"><br/><br/>\n";
+                        break;
+                    case Everglades.Models.ParamType._equity:
+                        str = str + "<select name=\"" + p.getName() + "\" >";
+                        foreach (Everglades.Models.IAsset ass in Model.Assets)
+                        {
+                            str = str + "<option value=\"" + ass.getName() + "\">" + ass.getName() + "</option>";
+                        }
+                        str = str + "</select><br/><br/>\n";
+                        break;
+                    case Everglades.Models.ParamType._equitylist:
+                        str = str + "<select name=\"" + p.getName() + "\" multiple>";
+                        foreach (Everglades.Models.IAsset ass in Model.Assets)
+                        {
+                            str = str + "<option value=\"" + ass.getName() + "\">" + ass.getName() + "</option>";
+                        }
+                        str = str + "</select><br/><br/>\n";
+                        break;
+                    case Everglades.Models.ParamType._date:
+                        str = str + "<input name=\"" + p.getName() + "\" type=\"date\"><br/><br/>\n";
+                        break;
+                    default:
+                        break;
+                }
+            }
+            str = str + "<input type=\"submit\" value=\"buy\"></input><br/><br/>";
+            str = str + "Price : <input id=\"price_derivative\" type=\"text\" readonly>";
+            
+            @Html.Raw(str);
+        }
+        else if (String.Compare(Request["operation"], "getPrice") == 0)
+        {
+            try { 
+                string name = Request["derivative"];
+                Everglades.Models.IDerivative derivative = Model.derivatives.Find(x => String.Compare(x.getType(), name) == 0);
+                List <Everglades.Models.Param> listparam = derivative.getParam();
+                foreach (Everglades.Models.Param param in listparam)
+                {
+                    switch (param.getType())
+                    {
+                        case Everglades.Models.ParamType._int:
+                            param.setInt(Int32.Parse(Request[param.getName()]));
+                            break;
+                        case Everglades.Models.ParamType._double:
+                            param.setDouble(Double.Parse(Request[param.getName()]));
+                            break;
+                        case Everglades.Models.ParamType._date:
+                            param.setDate(DateTime.Parse(Request[param.getName()]));
+                            break;
+                        case Everglades.Models.ParamType._equity:
+                            param.setString(Request[param.getName()]);
+                            break;
+                        case Everglades.Models.ParamType._equitylist:
+                            throw new NotImplementedException();
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                }
+                derivative.setParam(listparam);
+                msg = derivative.getPrice().ToString();
+            }
+            catch (Exception e)
+            {
+                msg = "error";
             }
         }
         else
         {
             msg = "unknown operation";
         }
-        
+
     }
 }
 
