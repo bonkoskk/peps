@@ -11,6 +11,40 @@
     string msg = "";
 }
 
+@functions {
+    public Everglades.Models.IDerivative parseDerivative(HttpRequestBase Request)
+    {
+        string name = Request["derivative"];
+        Everglades.Models.IDerivative derivative = Model.derivatives.Find(x => String.Compare(x.getType(), name) == 0);
+        List <Everglades.Models.Param> listparam = derivative.getParam();
+        foreach (Everglades.Models.Param param in listparam)
+        {
+            switch (param.getType())
+            {
+                case Everglades.Models.ParamType._int:
+                    param.setInt(Int32.Parse(Request[param.getName()]));
+                    break;
+                case Everglades.Models.ParamType._double:
+                    param.setDouble(Double.Parse(Request[param.getName()]));
+                    break;
+                case Everglades.Models.ParamType._date:
+                    param.setDate(DateTime.Parse(Request[param.getName()]));
+                    break;
+                case Everglades.Models.ParamType._equity:
+                    param.setString(Request[param.getName()]);
+                    break;
+                case Everglades.Models.ParamType._equitylist:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+        derivative.setParam(listparam);
+        return derivative;
+    }
+}
+
 @{
     if (Request.Form.Count > 0)
     {
@@ -104,6 +138,7 @@
                         break;
                 }
             }
+            str = str + "Number of derivatives to buy : <input type=\"number\" name=\"number\"></input><br/><br/>";
             str = str + "<input type=\"submit\" value=\"buy\"></input><br/><br/>";
             str = str + "Price : <input id=\"price_derivative\" type=\"text\" readonly>";
             
@@ -112,34 +147,21 @@
         else if (String.Compare(Request["operation"], "getPrice") == 0)
         {
             try { 
-                string name = Request["derivative"];
-                Everglades.Models.IDerivative derivative = Model.derivatives.Find(x => String.Compare(x.getType(), name) == 0);
-                List <Everglades.Models.Param> listparam = derivative.getParam();
-                foreach (Everglades.Models.Param param in listparam)
-                {
-                    switch (param.getType())
-                    {
-                        case Everglades.Models.ParamType._int:
-                            param.setInt(Int32.Parse(Request[param.getName()]));
-                            break;
-                        case Everglades.Models.ParamType._double:
-                            param.setDouble(Double.Parse(Request[param.getName()]));
-                            break;
-                        case Everglades.Models.ParamType._date:
-                            param.setDate(DateTime.Parse(Request[param.getName()]));
-                            break;
-                        case Everglades.Models.ParamType._equity:
-                            param.setString(Request[param.getName()]);
-                            break;
-                        case Everglades.Models.ParamType._equitylist:
-                            throw new NotImplementedException();
-                            break;
-                        default:
-                            throw new NotImplementedException();
-                    }
-                }
-                derivative.setParam(listparam);
+                Everglades.Models.IDerivative derivative = @parseDerivative(Request);
                 msg = derivative.getPrice().ToString();
+            }
+            catch (Exception e)
+            {
+                msg = "error";
+            }
+        }
+        else if (String.Compare(Request["operation"], "buyDerivative") == 0)
+        {
+            try
+            {
+                Everglades.Models.IDerivative derivative = @parseDerivative(Request);
+                Model.buy(derivative, Int32.Parse(Request["number"]));
+                msg = "Derivative bought";
             }
             catch (Exception e)
             {

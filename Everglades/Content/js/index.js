@@ -231,7 +231,19 @@ $(function () {
 
     $("#derivative-form").submit(function () {
         event.preventDefault();
-        var datastring = $("#derivative-form").serialize();
-        console.log(datastring);
+        var data = "operation=buyDerivative&" + $("#derivative-form").serialize();
+        $.ajax({
+            type: "POST",
+            url: "/operations",
+            data: data,
+            datatype: "html",
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            alert("Connection error");
+        });
     });
 });

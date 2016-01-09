@@ -31,6 +31,11 @@ namespace Everglades.Models
             Operations_History = new LinkedList<Operation.Operation>();
             derivatives = new List<IDerivative>();
             derivatives.Add(new EuropeanCall());
+            derivatives.Add(new EuropeanPut());
+            derivatives.Add(new AmericanCall());
+            derivatives.Add(new AmericanPut());
+            derivatives.Add(new AsianCall());
+            derivatives.Add(new AsianPut());
         }
 
         public void buy(IAsset asset, int number)
@@ -38,8 +43,8 @@ namespace Everglades.Models
             double price = asset.getPrice();
             if (price * number < cash)
             {
-                cash -= price * number;
                 Hedging_Portfolio.Add_Asset(asset, number);
+                cash -= price * number;
                 Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "buy", asset, number, asset.getPrice()));
             }
             else
@@ -51,8 +56,8 @@ namespace Everglades.Models
         public void sell(IAsset asset, int number)
         {
             double price = asset.getPrice();
-            cash += price * number;
             Hedging_Portfolio.Remove_Asset(asset, number);
+            cash += price * number;
             Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "sell", asset, number, asset.getPrice()));
         }
 

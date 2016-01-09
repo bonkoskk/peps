@@ -6,25 +6,25 @@ using Wrapping;
 
 namespace Everglades.Models.Assets
 {
-    public class EuropeanCall : IDerivative
+    public class EuropeanPut : IDerivative
     {
         private IAsset underlying;
         private double strike;
         private DateTime maturity;
 
-        public EuropeanCall()
+        public EuropeanPut()
         {
 
         }
 
         public string getType()
         {
-            return "European Call";
+            return "European Put";
         }
 
         public string getName()
         {
-            return "European Call on asset " + underlying.getName();
+            return "European Put on asset " + underlying.getName();
         }
 
         public List<Param> getParam()
@@ -46,7 +46,15 @@ namespace Everglades.Models.Assets
 
         public double getPrice()
         {
-            return getPrice(DateTime.Now);
+            WrapperVanilla wc = new WrapperVanilla();
+            double T = (maturity - DateTime.Now).TotalDays / 365;
+            if (T < 0)
+            {
+                throw new ArgumentOutOfRangeException("Maturity must be in future");
+            }
+            wc.getPriceOptionEuropeanPut(T, underlying.getPrice(), strike, underlying.getVolatility(DateTime.Now), AccessDB.Get_Interest_Rate("euro", DateTime.Now), 0);
+            double price = wc.getPrice();
+            return wc.getPrice();
         }
 
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
@@ -56,15 +64,7 @@ namespace Everglades.Models.Assets
 
         public double getPrice(DateTime t)
         {
-            WrapperVanilla wc = new WrapperVanilla();
-            double T = (maturity - DateTime.Now).TotalDays / 365;
-            if (T < 0)
-            {
-                throw new ArgumentOutOfRangeException("Maturity must be in future");
-            }
-            wc.getPriceOptionEuropeanCall(T, underlying.getPrice(), strike, underlying.getVolatility(t), AccessDB.Get_Interest_Rate("euro", t), 0);
-            double price = wc.getPrice();
-            return wc.getPrice();
+            throw new NotImplementedException();
         }
 
         public double getDelta(DateTime t)

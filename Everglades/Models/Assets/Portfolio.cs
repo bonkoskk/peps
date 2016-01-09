@@ -22,7 +22,7 @@ namespace Everglades.Models
         {
             if (!assetList.ContainsKey(asset))
             {
-                throw new ArgumentException("Asset not in portfolio");
+                assetList[asset] = number;
             }
             else
             {
@@ -34,7 +34,7 @@ namespace Everglades.Models
         {
             if (!assetList.ContainsKey(asset))
             {
-                throw new ArgumentException("Asset not in portfolio");
+                assetList[asset] = - number; ;
             }
             else
             {
@@ -42,12 +42,12 @@ namespace Everglades.Models
             }
         }
 
-        String IAsset.getName()
+        public String getName()
         {
             return "Portfolio of " + assetList.Count + " assets";
         }
 
-        double IAsset.getPrice()
+        public double getPrice()
         {
             double price = 0;
             foreach (KeyValuePair<IAsset, int> entry in assetList)
@@ -58,7 +58,7 @@ namespace Everglades.Models
         }
 
         //TODO
-        Data IAsset.getPrice(DateTime t1, DateTime t2, TimeSpan step)
+        public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
             Data data = new Data();
             DateTime t = t1;
@@ -76,20 +76,18 @@ namespace Everglades.Models
         }
 
         //TODO
-        double IAsset.getPrice(DateTime t)
+        public double getPrice(DateTime t)
         {
             throw new NotImplementedException();
         }
 
         //TODO
-        double IAsset.getDelta(DateTime t)
+        public double getDelta(DateTime t)
         {
             throw new NotImplementedException();
         }
 
-
-
-        double IAsset.getVolatility(DateTime t)
+        public double getVolatility(DateTime t)
         {
             throw new NotImplementedException();
         }

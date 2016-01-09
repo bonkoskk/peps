@@ -1,8 +1,4 @@
 ﻿@model Everglades.Models.ModelManage
-@{
-    Everglades.Models.IAsset Hedging_Portfolio = Model.Hedging_Portfolio;
-    Everglades.Models.IAsset Product = Model.everg;
-}
 
 <!-- update date -->
 <div id="update" class="update">
@@ -31,11 +27,11 @@
                             </tr>
                             <tr>
                                 <td>Hedging Portfolio Value</td>
-                                <td>@Hedging_Portfolio.getPrice()</td>
+                                <td>@Model.Hedging_Portfolio.getPrice()</td>
                             </tr>
                             <tr>
                                 <td>Product Value</td>
-                                <td>@Product.getPrice()</td>
+                                <td>@Model.everg.getPrice()</td>
                             </tr>
                             <tr>
                                 <td>Margin</td>
@@ -239,9 +235,9 @@
 </footer>
 
 <script>
-    var data_graph_hedge = @Hedging_Portfolio.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var data_graph_hedge = @Model.Hedging_Portfolio.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_hedge = "hedge";
-    var data_graph_product = @Product.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_product = "product";
     var data_donut = [];
     var series = Math.floor(Math.random() * 6) + 3;
