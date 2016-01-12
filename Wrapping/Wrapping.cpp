@@ -9,7 +9,7 @@ using namespace Pricer;
 
 namespace Wrapping {
 
-	void WrapperBarrier::getPriceCallBarrierDownOout(int sampleNb, double T, double S0, double K, double sigma, double r, double J, double L) {
+	void WrapperBarrier::getPriceCallBarrierDownOut(int sampleNb, double T, double S0, double K, double sigma, double r, double J, double L) {
 		double ic, px;
 		call_barrier_down_out(ic, px, sampleNb, T, S0, K, sigma, r, J, L);
 		this->confidenceInterval = ic;
@@ -17,7 +17,7 @@ namespace Wrapping {
 	}
 
 	void WrapperQuanto::getPriceCallQuanto(double S, double Q, double K, double R, double Rf, double sigma1, double sigma2, double rho, double tau) {
-		double px = 1;
+		double px;
 		call_quanto(px, S, Q, K, R, Rf, sigma1, sigma2, rho, tau);
 		this->confidenceInterval = 0;
 		this->price = px;

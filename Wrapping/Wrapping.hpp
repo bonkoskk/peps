@@ -12,7 +12,7 @@ namespace Wrapping {
 		double confidenceInterval;
 		double price;
 		WrapperBarrier() { confidenceInterval = price = 0; };
-		void getPriceCallBarrierDownOout(int sampleNb, double T, double S0, double K, double sigma, double r, double J, double L);
+		void getPriceCallBarrierDownOut(int sampleNb, double T, double S0, double K, double sigma, double r, double J, double L);
 		double getPrice() { return price; };
 		double getIC() { return confidenceInterval; };
 

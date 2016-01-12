@@ -13,9 +13,10 @@ namespace Everglades.Models
             return "Everglades product";
         }
 
+        // TODO
         double IAsset.Get_Price()
         {
-            throw new NotImplementedException();
+            return 78;
         }
 
         //TODO

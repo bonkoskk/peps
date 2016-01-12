@@ -9,7 +9,7 @@ namespace Everglades.Models
 {
     public class Equity : IAsset
     {
-        private string name;
+        public string name;
 
         public Equity(string name)
         {
@@ -20,7 +20,6 @@ namespace Everglades.Models
             return name;
         }
 
-        //TODO
         double IAsset.Get_Price()
         {
 
@@ -41,9 +40,9 @@ namespace Everglades.Models
             return 100;
             
             //return wc.getPrice();
+            //return AccessDB.Get_Asset_Price(this.name, DateTime.Now);
         }
 
-        //TODO
         Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
         {
             if (t1 > t2)
@@ -55,28 +54,23 @@ namespace Everglades.Models
                 throw new ArgumentOutOfRangeException("Step must be strictly positive");
             }
             DateTime t = t1;
-            // TODO : Database access
             Data data = new Data();
-            int test = 123445;
             while (t < t2)
             {
-                test += 5465541;
-                data.add(new DataPoint(t, test % 488721));
+                data.add(new DataPoint(t, AccessDB.Get_Asset_Price(this.name, t)));
                 t += step;
             }
             return data;
         }
 
-        //TODO
         double IAsset.Get_Price(DateTime t)
         {
-            return 1000;
+            return AccessDB.Get_Asset_Price(this.name, t);
         }
 
-        //TODO
         double IAsset.Get_Delta(DateTime t)
         {
-            throw new NotImplementedException();
+            return AccessDB.Get_Asset_Delta(this.name, t);
         }
     }
 }

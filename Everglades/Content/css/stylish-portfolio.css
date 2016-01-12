@@ -111,9 +111,9 @@ body {
     opacity: 0.8;
 }
 
-#closed_positions {
+#operations_history {
     display: block;
-    height: 20%;
+    height: 20vh;
     overflow-y: auto;
 }
 
