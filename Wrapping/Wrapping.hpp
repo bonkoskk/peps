@@ -39,5 +39,16 @@ namespace Wrapping {
 		double getPrice() { return price; };
 		double getIC() { return confidenceInterval; };
 	};
-
+	
+	public ref class WrapperEverglades
+	{
+	private:
+		double confidenceInterval;
+		double price;
+	public:
+		WrapperEverglades() { confidenceInterval = price = 0; };
+		void getPriceEverglades(array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, int nb_day_after, double r1, double r2, int sampleNb);
+		double getPrice() { return price; };
+		double getIC() { return confidenceInterval; };
+	};
 }

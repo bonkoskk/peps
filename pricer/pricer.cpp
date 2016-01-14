@@ -30,7 +30,7 @@ void Pricer::put_vanilla(double &prix, double T,
 void Pricer::call_barrier(double &ic, double &prix, int nb_samples, double T,
 	double S0, double K, double sigma, double r, double J, double L)
 {
-	struct Params data;
+	struct simulations::Params data;
 	data.M = nb_samples;
 	data.S = S0;
 	data.K = K;
@@ -50,9 +50,9 @@ void Pricer::call_barrier(double &ic, double &prix, int nb_samples, double T,
 
 	for (int i = 0; i < nb_samples; i++)
 	{
-		simulations = simulate_sj(data, J, L, rng);
+		simulations = simulate_sj(data, J, rng);
 
-		payoff = payoff_barrier(data, J, L, simulations);
+		payoff = payoff_barrier(data.K, data.r, data.v, data.T, J, L, simulations);
 		sum += exp(-r*T) * payoff;
 		var += exp(-2.*r*T) * payoff * payoff;
 	}
