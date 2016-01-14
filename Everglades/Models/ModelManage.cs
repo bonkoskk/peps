@@ -27,7 +27,7 @@ namespace Everglades.Models
             {
                 Assets.Add(new Equity(name, new Currency("$")));
             }
-            everg = new Everglades();
+            everg = new Everglades(Assets);
             Hedging_Portfolio = new Portfolio(Assets);
             Operations_History = new LinkedList<Operation.Operation>();
             derivatives = new List<IDerivative>();
@@ -66,7 +66,7 @@ namespace Everglades.Models
         {
             // TODO
             List<Advice> list = new List<Advice>();
-            list.Add(new Advice(0.34, 0.54, "lion", "buy 45"));
+            list.Add(new Advice(0.54, "lion", "buy 45"));
             return list;
         }
 

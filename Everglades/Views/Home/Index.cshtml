@@ -212,8 +212,7 @@
             <table id="table_closedpositions" class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Product sensibility</th>
-                        <th>Hedge sensibility</th>
+                        <th>Sensibility</th>
                         <th>Relative to</th>
                         <th>Advice</th>
                     </tr>
@@ -222,8 +221,7 @@
                     @foreach (Everglades.Models.Advice adv in hedging_advice)
                     {
                         <tr>
-                            <td>@adv.product_sensibility</td>
-                            <td>@adv.hedge_sensibility</td>
+                            <td>@adv.sensibility</td>
                             <td class="asset-clickable" asset="@adv.relative_to">@adv.relative_to</td>
                             <td>@adv.advice</td>
                         </tr>
@@ -241,8 +239,21 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
-                <h2>Stylish Portfolio is the perfect theme for your next project!</h2>
-                <p class="lead">This theme features some wonderful photography courtesy of <a target="_blank" href="http://join.deathtothestockphoto.com/">Death to the Stock Photo</a>.</p>
+                <h1>The team</h1>
+                <table id="table_team" class="table">
+                    <tbody>
+                        <tr>
+                            <td><img class="profile-img" src="https://intranet.ensimag.fr/zenith/photos/bonkoskk.jpg"></td>
+                            <td><img class="profile-img" src="https://intranet.ensimag.fr/zenith/photos/francest.jpg"></td>
+                            <td><img class="profile-img" src="https://intranet.ensimag.fr/zenith/photos/josib.jpg"></td>
+                            <td><img class="profile-img" src="https://intranet.ensimag.fr/zenith/photos/lom.jpg"></td>
+                            <td><img class="profile-img" src="https://intranet.ensimag.fr/zenith/photos/randont.jpg"></td>
+                            <td><img class="profile-img" src="https://intranet.ensimag.fr/zenith/photos/xuxin.jpg"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <img class="profile-img" src="https://intranet.ensimag.fr/zenith/photos/taram.jpg">
+
             </div>
         </div>
         <!-- /.row -->
@@ -295,4 +306,5 @@
         }
     }
     */
+
 </script>

@@ -72,12 +72,13 @@ namespace Everglades.Models
                 }
             }
 
-            if (assetList.Keys.Count == 0 || (equ == 0 && vanilla == 0 && exo == 0))
+            if (ModelManage.instance.cash == 0 && (assetList.Keys.Count == 0 || (equ == 0 && vanilla == 0 && exo == 0)))
             {
                 str += "{label: \"Empty\", data: 1}";
             }
             else
             {
+                str += "{label: \"Cash\", data: " + ModelManage.instance.cash + "},";
                 str += "{label: \"Equities\", data: " + equ + "},";
                 str += "{label: \"Vanilla Options\", data: " + vanilla + "},";
                 str += "{label: \"Exotic Options\", data: " + exo + "}";
