@@ -16,6 +16,7 @@ namespace Everglades.Models
         // TODO
         public double getPrice()
         {
+            Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
             return 78;
         }
 
