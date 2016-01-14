@@ -5,49 +5,34 @@ using System.Web;
 
 namespace Everglades.Models.Assets
 {
-    public class AmericanPut : IDerivative
+    public class AmericanPut : AVanillaOption
     {
-        public string getType()
+        public override string getType()
         {
             return "American Put";
         }
 
-        public List<Param> getParam()
+        public override string getName()
         {
             throw new NotImplementedException();
         }
 
-        public void setParam(List<Param> param)
+        public override Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
             throw new NotImplementedException();
         }
 
-        public string getName()
+        public override double getPrice(DateTime t)
         {
             throw new NotImplementedException();
         }
 
-        public double getPrice()
+        public override double getVolatility(DateTime t)
         {
             throw new NotImplementedException();
         }
 
-        public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
-        {
-            throw new NotImplementedException();
-        }
-
-        public double getPrice(DateTime t)
-        {
-            throw new NotImplementedException();
-        }
-
-        public double getVolatility(DateTime t)
-        {
-            throw new NotImplementedException();
-        }
-
-        public double getDelta(DateTime t)
+        public override double getDelta(DateTime t)
         {
             throw new NotImplementedException();
         }

@@ -26,6 +26,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>12.0</OldToolsVersion>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -158,6 +159,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Advice.cs" />
     <Compile Include="Models\Assets\AmericanCall.cs" />
     <Compile Include="Models\Assets\AmericanPut.cs" />
     <Compile Include="Models\Assets\AsianCall.cs" />
@@ -167,6 +169,8 @@
     <Compile Include="Models\Assets\Everglades.cs" />
     <Compile Include="Models\Assets\IDerivative.cs" />
     <Compile Include="Models\Assets\Equity.cs" />
+    <Compile Include="Models\Assets\AVanillaOption.cs" />
+    <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\Data\Data.cs" />
     <Compile Include="Models\Data\DataPoint.cs" />
     <Compile Include="Models\ModelManage.cs" />
@@ -275,6 +279,7 @@
     <Content Include="bin\zh-Hant\System.Spatial.resources.dll" />
     <Content Include="Content\css\font-awesome.css" />
     <Content Include="Content\css\stylish-portfolio.css" />
+    <Content Include="Content\css\wobble.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\img\bg.jpg" />
     <Content Include="Content\img\callout.jpg" />

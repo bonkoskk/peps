@@ -1,4 +1,6 @@
-﻿@model Everglades.Models.ModelManage
+﻿@{
+    List<Everglades.Models.Advice> hedging_advice = Model.getHedgingAdvice();
+}
 
 <!-- update date -->
 <div id="update" class="update">
@@ -13,7 +15,7 @@
 <header id="top" class="header">
     <div class="text-vertical-center">
         <h1>Everglades</h1>
-        <h3>Interface de pur bogoss</h3>
+        <h3>product and hedge management</h3>
         <br/>
         <div class="container-fluid">
             <div class="row">
@@ -53,6 +55,14 @@
                 <div class="col-sm-2"></div>
             </div>
         </div>
+        @if (hedging_advice.Count == 0)
+        {
+            <button type="button" class="btn btn-default advice-button">Hedging Advices</button>
+        }
+        else
+        {
+            <button type="button" class="btn btn-warning wobble wobble-wobbling advice-button">Hedging Advices</button>
+        }
         <div class="container">
             <div class="row">
                 <div class="col-sm-3">
@@ -72,7 +82,7 @@
                                 {
                                     <tr>
                                         <td class="asset-clickable" asset="@a.getName()">@a.getName()</td>
-                                        <td>@a.getPrice()€</td>
+                                        <td>@a.getPrice() @a.getCurrency().getSymbol()</td>
                                         <td>
                                             <button class="buybutton btn btn-default btn-xs" asset="@a.getName()" type="button">
                                                 <span class="glyphicon glyphicon-plus"></span>
@@ -135,7 +145,7 @@
                                     {
                                         <tr>
                                             <td class="asset-clickable" asset="@entry.Key.getName()">@entry.Key.getName()</td>
-                                            <td>@entry.Key.getPrice()€</td>
+                                            <td>@entry.Key.getPrice() @entry.Key.getCurrency().getSymbol()</td>
                                             <td>@entry.Value</td>
                                         </tr>
                                     }
@@ -166,7 +176,7 @@
                                     <td>@a.getOperation()</td>
                                     <td class="asset-clickable" asset="@a.getAsset().getName()">@a.getAsset().getName()</td>
                                     <td>@a.getNumber()</td>
-                                    <td>@a.getPrice()€</td>
+                                    <td>@a.getPrice() @a.getAsset().getCurrency().getSymbol()</td>
                                 </tr>
                             }
                         </tbody>
@@ -191,6 +201,40 @@
     </div>
 
     <div id="tooltip"></div>
+
+    <div class="advice-window">
+        @if (hedging_advice.Count == 0)
+        {
+            <span>The hedge seems good</span>
+        }
+        else
+        {
+            <table id="table_closedpositions" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Product sensibility</th>
+                        <th>Hedge sensibility</th>
+                        <th>Relative to</th>
+                        <th>Advice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Everglades.Models.Advice adv in hedging_advice)
+                    {
+                        <tr>
+                            <td>@adv.product_sensibility</td>
+                            <td>@adv.hedge_sensibility</td>
+                            <td class="asset-clickable" asset="@adv.relative_to">@adv.relative_to</td>
+                            <td>@adv.advice</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <button type="button" class="close-button btn btn-danger">
+            <span class="glyphicon glyphicon-remove"></span>
+        </button>
+    </div>
 </header>
 <!-- About -->
 <section id="about" class="about">
@@ -239,7 +283,10 @@
     var label_graph_hedge = "hedge";
     var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_product = "product";
-    var data_donut = [];
+    var data_donut = @Html.Raw(Model.Hedging_Portfolio.portfolioComposition());
+
+
+    /*
     var series = Math.floor(Math.random() * 6) + 3;
     for (var i = 0; i < series; i++) {
         data_donut[i] = {
@@ -247,4 +294,5 @@
             data: Math.floor(Math.random() * 100) + 1
         }
     }
+    */
 </script>

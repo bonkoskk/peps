@@ -6,7 +6,7 @@ using Wrapping;
 
 namespace Everglades.Models.Assets
 {
-    public class EuropeanPut : IDerivative
+    public class EuropeanPut : AVanillaOption
     {
         private IAsset underlying;
         private double strike;
@@ -17,62 +17,40 @@ namespace Everglades.Models.Assets
 
         }
 
-        public string getType()
+        public override string getType()
         {
             return "European Put";
         }
 
-        public string getName()
+        public override string getName()
         {
             return "European Put on asset " + underlying.getName();
         }
 
-        public List<Param> getParam()
+        public override Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
-            List<Param> param = new List<Param>();
-            param.Add(new Param("underlying", ParamType._equity));
-            param.Add(new Param("strike", ParamType._double));
-            param.Add(new Param("maturity", ParamType._date));
-            return param;
+            throw new NotImplementedException();
         }
 
-        public void setParam(List<Param> param)
-        {
-            Param[] P = param.ToArray();
-            underlying = ModelManage.instance.Assets.Find(x => String.Compare(x.getName(), P[0].getString()) == 0);
-            strike = P[1].getDouble();
-            maturity = P[2].getDate();
-        }
-
-        public double getPrice()
+        public override double getPrice(DateTime t)
         {
             WrapperVanilla wc = new WrapperVanilla();
-            double T = (maturity - DateTime.Now).TotalDays / 365;
+            double T = (maturity - t).TotalDays / 365;
             if (T < 0)
             {
                 throw new ArgumentOutOfRangeException("Maturity must be in future");
             }
-            wc.getPriceOptionEuropeanPut(T, underlying.getPrice(), strike, underlying.getVolatility(DateTime.Now), AccessDB.Get_Interest_Rate("euro", DateTime.Now), 0);
+            wc.getPriceOptionEuropeanPut(T, underlying.getPrice(), strike, underlying.getVolatility(t), getCurrency().getInterestRate(t, (maturity-t)), 0);
             double price = wc.getPrice();
             return wc.getPrice();
         }
 
-        public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
+        public override double getDelta(DateTime t)
         {
             throw new NotImplementedException();
         }
 
-        public double getPrice(DateTime t)
-        {
-            throw new NotImplementedException();
-        }
-
-        public double getDelta(DateTime t)
-        {
-            throw new NotImplementedException();
-        }
-
-        public double getVolatility(DateTime t)
+        public override double getVolatility(DateTime t)
         {
             throw new NotImplementedException();
         }
