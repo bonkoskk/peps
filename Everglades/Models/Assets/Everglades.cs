@@ -89,7 +89,6 @@ namespace Everglades.Models
                 ass_i++;
             }
             //correl = HistoricCompute.HistoricCorrelation();
-
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
             /*
