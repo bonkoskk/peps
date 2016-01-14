@@ -34,5 +34,5 @@ namespace Everglades
 	* @param[in] rng : pointeur sur un simulateur de nombre aléatoires.
 	*/
 	DLLEXP void get_price(double& price, double& ic, const gsl_matrix& historic, int nb_day_after, double r1, double r2,
-		const gsl_vector &expected_returns, const gsl_vector &vol, const gsl_matrix &correl, int nbSimu);
+		const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu);
 };

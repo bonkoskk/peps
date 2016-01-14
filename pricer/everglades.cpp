@@ -27,7 +27,7 @@ double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipa
 }
 
 void Everglades::get_price(double& price, double& ic, const gsl_matrix& historic, int nb_day_after, double r1, double r2,
-				const gsl_vector &expected_returns, const gsl_vector &vol, const gsl_matrix &correl, int nbSimu){
+	const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu){
 	
 	int last_index = historic.size2;
 	gsl_matrix* path = gsl_matrix_calloc(historic.size1, 25);
@@ -80,3 +80,4 @@ void Everglades::get_price(double& price, double& ic, const gsl_matrix& historic
 	gsl_vector_free(temp);
 	gsl_matrix_free(path);
 }
+
