@@ -154,11 +154,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="everglades.hpp" />
     <ClInclude Include="pricer.hpp" />
     <ClInclude Include="payoff.hpp" />
     <ClInclude Include="simulations.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="everglades.cpp" />
     <ClCompile Include="pricer.cpp" />
     <ClCompile Include="payoff.cpp" />
     <ClCompile Include="simulations.cpp" />

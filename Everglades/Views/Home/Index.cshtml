@@ -212,8 +212,7 @@
             <table id="table_closedpositions" class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Product sensibility</th>
-                        <th>Hedge sensibility</th>
+                        <th>Sensibility</th>
                         <th>Relative to</th>
                         <th>Advice</th>
                     </tr>
@@ -222,8 +221,7 @@
                     @foreach (Everglades.Models.Advice adv in hedging_advice)
                     {
                         <tr>
-                            <td>@adv.product_sensibility</td>
-                            <td>@adv.hedge_sensibility</td>
+                            <td>@adv.sensibility</td>
                             <td class="asset-clickable" asset="@adv.relative_to">@adv.relative_to</td>
                             <td>@adv.advice</td>
                         </tr>

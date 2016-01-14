@@ -103,13 +103,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Users\ensimag\Documents\peps\pricer;C:\Users\babs\Desktop\Everglades\peps\pricer;C:\Users\ensimag\Desktop\Everglades\peps\pricer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\ensimag\Documents\peps\pricer;C:\Users\babs\Desktop\Everglades\peps\pricer;C:\Users\ensimag\Desktop\Everglades\peps\pricer;C:\Users\babs\Desktop\Everglades\peps\gsl-dir\gsl-include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>gsl.lib;cblas.lib;</AdditionalDependencies>
       <DelayLoadDLLs>Pricer.dll</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>C:\Users\babs\Desktop\Everglades\peps\gsl-dir\gsl-lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Wrapping.dll" "C:\Users\babs\Desktop\Everglades\peps\Everglades\bin\Wrapping.dll"
