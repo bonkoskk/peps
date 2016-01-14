@@ -102,18 +102,18 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Users\ensimag\Documents\peps\pricer;C:\Users\babs\Desktop\Everglades\peps\pricer;C:\Users\ensimag\Desktop\Everglades\peps\pricer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>C:\Users\babs\Desktop\peps\gsl-dir\gsl-include;C:\Users\ensimag\Documents\peps\gsl-dir\gsl-include;C:\Users\ensimag\Desktop\peps\gsl-dir\gsl-include;C:\Users\ensimag\Documents\peps\pricer;C:\Users\babs\Desktop\Everglades\peps\pricer;C:\Users\ensimag\Desktop\peps\pricer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>gsl.lib;cblas.lib;</AdditionalDependencies>
       <DelayLoadDLLs>Pricer.dll</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>C:\Users\babs\Desktop\Everglades\peps\gsl-dir\gsl-lib\Debug\x64;C:\Users\ensimag\Documents\peps\gsl-dir\gsl-lib\Debug\x64;C:\Users\ensimag\Desktop\peps\gsl-dir\gsl-lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Wrapping.dll" "C:\Users\babs\Desktop\Everglades\peps\Everglades\bin\Wrapping.dll"
-copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Pricer.dll" "C:\Users\babs\Desktop\Everglades\peps\Everglades\bin\Pricer.dll"</Command>
+      <Command>copy "C:\Users\ensimag\Desktop\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Desktop\peps\Everglades\bin\Wrapping.dll"
+copy "C:\Users\ensimag\Desktop\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Desktop\peps\Everglades\bin\Pricer.dll"</Command>
       <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin\Wrapping.dll"</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -146,18 +146,13 @@ copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Pricer.dll" "C:\Users\babs
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="managed_gsl.hpp" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Stdafx.h" />
     <ClInclude Include="Wrapping.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="Stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="managed_gsl.cpp" />
     <ClCompile Include="Wrapping.cpp" />
   </ItemGroup>
   <ItemGroup>
