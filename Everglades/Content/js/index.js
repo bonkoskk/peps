@@ -132,6 +132,7 @@ $(function () {
 
     // function when clicking on an asset's "buy" (+)
     $(".buybutton").click(function () {
+        $("#tooltip").hide();
         var assetname = $(this).attr("asset");
         var number = parseInt(window.prompt("How many of asset " + assetname + " do you want to buy ?", "1"));
         if (isInteger(number)) {
@@ -143,6 +144,7 @@ $(function () {
 
     // function when clicking on an asset's "sell" (-)
     $(".sellbutton").click(function () {
+        $("#tooltip").hide();
         var assetname = $(this).attr("asset");
         var number = parseInt(window.prompt("How many of asset " + assetname + " do you want to sell ?", "1"));
         if (isInteger(number)) {
@@ -154,6 +156,7 @@ $(function () {
 
     // function when clicking on an asset (display a graph)
     $(".asset-clickable").click(function () {
+        $("#tooltip").hide();
         var assetname = $(this).attr("asset");
         $(".asset-window").show();
         $("#asset-graph").html("Loading data ..");
@@ -194,6 +197,7 @@ $(function () {
     });
 
     $(".buyderivativebutton").click(function () {
+        $("#tooltip").hide();
         $(".derivative-window").show();
         $("#derivative-form").html('loading ...');
         var data = { operation: 'getParam', derivative: $(this).attr("derivative") };
@@ -245,5 +249,9 @@ $(function () {
         .fail(function (jqXHR, textStatus) {
             alert("Connection error");
         });
+    });
+
+    $(".advice-button").click(function () {
+        $(".advice-window").show();
     });
 });

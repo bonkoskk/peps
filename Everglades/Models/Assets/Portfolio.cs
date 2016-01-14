@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Everglades.Models.Assets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,7 +19,7 @@ namespace Everglades.Models
             }
         }
         
-        public void Add_Asset(IAsset asset, int number)
+        public void addAsset(IAsset asset, int number)
         {
             if (!assetList.ContainsKey(asset))
             {
@@ -30,7 +31,7 @@ namespace Everglades.Models
             }
         }
 
-        public void Remove_Asset(IAsset asset, int number)
+        public void removeAsset(IAsset asset, int number)
         {
             if (!assetList.ContainsKey(asset))
             {
@@ -40,6 +41,49 @@ namespace Everglades.Models
             {
                 assetList[asset] -= number;
             }
+        }
+
+        public string portfolioComposition()
+        {
+            string str = "[";
+            double equ = 0.0, vanilla = 0.0, exo = 0.0;
+
+            foreach (KeyValuePair<IAsset, int> item in assetList)
+            {
+                if (item.Value != 0)
+                {
+                    double price = item.Value * item.Key.getPrice();
+                    if (price < 0)
+                    {
+                        price = -price;
+                    }
+                    if (item.Key is Equity)
+                    {
+                        equ += price;
+                    }
+                    else if (item.Key is AVanillaOption)
+                    {
+                        vanilla += price;
+                    }
+                    else if (item.Key is IDerivative)
+                    {
+                        exo += price;
+                    }
+                }
+            }
+
+            if (assetList.Keys.Count == 0 || (equ == 0 && vanilla == 0 && exo == 0))
+            {
+                str += "{label: \"Empty\", data: 1}";
+            }
+            else
+            {
+                str += "{label: \"Equities\", data: " + equ + "},";
+                str += "{label: \"Vanilla Options\", data: " + vanilla + "},";
+                str += "{label: \"Exotic Options\", data: " + exo + "}";
+            }
+            str += "]";
+            return str;
         }
 
         public String getName()
@@ -88,6 +132,11 @@ namespace Everglades.Models
         }
 
         public double getVolatility(DateTime t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Currency getCurrency()
         {
             throw new NotImplementedException();
         }

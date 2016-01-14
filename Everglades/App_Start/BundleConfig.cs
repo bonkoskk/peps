@@ -9,6 +9,7 @@ namespace Everglades
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new StyleBundle("~/Content/css").Include(
+                "~/Content/css/wobble.css",
                 "~/Content/css/bootstrap.css",
                 "~/Content/css/font-awesome.css",
                 "~/Content/css/stylish-portfolio.css"));

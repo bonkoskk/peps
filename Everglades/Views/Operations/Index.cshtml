@@ -1,6 +1,4 @@
-﻿@model Everglades.Models.ModelManage
-
-@{
+﻿@{
     Layout = null;
     ViewBag.Title = "Operations";
     string input;
@@ -15,7 +13,7 @@
     public Everglades.Models.IDerivative parseDerivative(HttpRequestBase Request)
     {
         string name = Request["derivative"];
-        Everglades.Models.IDerivative derivative = Model.derivatives.Find(x => String.Compare(x.getType(), name) == 0);
+        Everglades.Models.IDerivative derivative = ((List<Everglades.Models.IDerivative>)Model.derivatives).Find(x => String.Compare(x.getType(), name) == 0);
         List <Everglades.Models.Param> listparam = derivative.getParam();
         foreach (Everglades.Models.Param param in listparam)
         {
@@ -52,7 +50,7 @@
         if (String.Compare(Request["operation"], "buy") == 0)
         {
             string name = Request["asset"];
-            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.getName(), name) == 0);
+            Everglades.Models.IAsset asset = ((List<Everglades.Models.IAsset>)Model.Assets).Find(x => String.Compare(x.getName(), name) == 0);
             if (asset == null)
             {
                 msg = "cannot find asset";
@@ -73,7 +71,7 @@
         else if (String.Compare(Request["operation"], "sell") == 0)
         {
             string name = Request["asset"];
-            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.getName(), name) == 0);
+            Everglades.Models.IAsset asset = ((List<Everglades.Models.IAsset>)Model.Assets).Find(x => String.Compare(x.getName(), name) == 0);
             if (asset == null)
             {
                 msg = "cannot find asset";
@@ -87,7 +85,7 @@
         else if (String.Compare(Request["operation"], "getData") == 0)
         {
             string name = Request["asset"];
-            Everglades.Models.IAsset asset = Model.Assets.Find(x => String.Compare(x.getName(), name) == 0);
+            Everglades.Models.IAsset asset = ((List<Everglades.Models.IAsset>)Model.Assets).Find(x => String.Compare(x.getName(), name) == 0);
             if (asset == null)
             {
                 msg = "cannot find asset";
@@ -103,7 +101,7 @@
         else if (String.Compare(Request["operation"], "getParam") == 0)
         {
             string name = Request["derivative"];
-            Everglades.Models.IDerivative derivative = Model.derivatives.Find((x => String.Compare(x.getType(), name) == 0));
+            Everglades.Models.IDerivative derivative = ((List<Everglades.Models.IDerivative>)Model.derivatives).Find((x => String.Compare(x.getType(), name) == 0));
             string str = derivative.getType() + "<br/><br/>\n"
                 + "<input type=\"hidden\" name=\"derivative\" value=\"" + derivative.getType() + "\">";
             foreach(Everglades.Models.Param p in derivative.getParam()) {
@@ -141,18 +139,17 @@
             str = str + "Number of derivatives to buy : <input type=\"number\" name=\"number\"></input><br/><br/>";
             str = str + "<input type=\"submit\" value=\"buy\"></input><br/><br/>";
             str = str + "Price : <input id=\"price_derivative\" type=\"text\" readonly>";
-            
             @Html.Raw(str);
         }
         else if (String.Compare(Request["operation"], "getPrice") == 0)
         {
             try { 
                 Everglades.Models.IDerivative derivative = @parseDerivative(Request);
-                msg = derivative.getPrice().ToString();
+                msg = (derivative.getPrice() * Double.Parse(Request["number"])).ToString() + " " + derivative.getCurrency().getSymbol();
             }
             catch (Exception e)
             {
-                msg = "error";
+                msg = e.Message.ToString();
             }
         }
         else if (String.Compare(Request["operation"], "buyDerivative") == 0)
@@ -176,4 +173,4 @@
     }
 }
 
-@msg
+@Html.Raw(msg)

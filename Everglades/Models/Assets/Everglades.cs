@@ -43,10 +43,15 @@ namespace Everglades.Models
             throw new NotImplementedException();
         }
 
-
         public double getVolatility(DateTime t)
         {
             throw new NotImplementedException();
         }
+
+        public Currency getCurrency()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
