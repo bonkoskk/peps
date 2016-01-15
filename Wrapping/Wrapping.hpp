@@ -52,7 +52,7 @@ namespace Wrapping {
 		double price;
 	public:
 		WrapperEverglades() { confidenceInterval = price = 0; };
-		void getPriceEverglades(h_gsl_matrix historic, h_gsl_vector expected_returns, h_gsl_vector vol, h_gsl_matrix correl, int nb_day_after, double r1, double r2, int sampleNb);
+		void getPriceEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double,2>^ correl, int nb_day_after, double r1, double r2, int sampleNb);
 		double getPrice() { return price; };
 		double getIC() { return confidenceInterval; };
 	};

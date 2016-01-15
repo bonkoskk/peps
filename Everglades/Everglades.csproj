@@ -180,6 +180,7 @@
     <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\Data\Data.cs" />
     <Compile Include="Models\Data\DataPoint.cs" />
+    <Compile Include="Models\HistoricCompute\ContinuouslyCompoundedReturn.cs" />
     <Compile Include="Models\HistoricCompute\HistoricCorrelation.cs" />
     <Compile Include="Models\HistoricCompute\HistoricVolatility.cs" />
     <Compile Include="Models\ModelManage.cs" />

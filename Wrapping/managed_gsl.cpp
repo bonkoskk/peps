@@ -7,6 +7,17 @@ namespace managed_gsl{
 	{
 		_matrix = gsl_matrix_calloc(n1, n2);
 	}
+
+	h_gsl_matrix::h_gsl_matrix(int n1, int n2, array<double, 2>^ values)
+	{
+		_matrix = gsl_matrix_calloc(n1, n2);
+		for (int i = 0; i < n1; i++) {
+			for (int j = 0; j < n2; j++) {
+				gsl_matrix_set(_matrix, i, j, values[i, j]);
+			}
+		}
+	}
+
 	h_gsl_matrix::~h_gsl_matrix()
 	{
 		gsl_matrix_free(_matrix);
@@ -27,6 +38,13 @@ namespace managed_gsl{
 	h_gsl_vector::h_gsl_vector(int n)
 	{
 		_vector = gsl_vector_alloc(n);
+	}
+	h_gsl_vector::h_gsl_vector(int n, array<double>^ values)
+	{
+		_vector = gsl_vector_alloc(n);
+		for (int i = 0; i < n; i++) {
+			gsl_vector_set(_vector, i, values[i]);
+		}
 	}
 	h_gsl_vector::~h_gsl_vector()
 	{

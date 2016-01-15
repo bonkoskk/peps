@@ -1,19 +1,23 @@
-﻿using System;
+﻿using Everglades.Models.HistoricCompute;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Wrapping;
+
 
 namespace Everglades.Models
 {
     public class Everglades : IAsset
     {
 
+        Currency currency;
         private List<IAsset> underlying_list;
 
         public Everglades(List<IAsset> underlying_list)
         {
             this.underlying_list = underlying_list;
+            currency = new Currency("€");
         }
 
         public string getName()
@@ -71,31 +75,47 @@ namespace Everglades.Models
             int nb_day_after = Convert.ToInt32((DateTime.Now - dates.Last.Value).TotalDays); // round to nearest integer (in case of x.9999 -> x and not x+1)
             dates.AddLast(DateTime.Now);
             // create and get data for all arguments
-            Double[,] historic = new Double[underlying_list.Count,dates.Count];
-            Double[] expected_returns = new Double[underlying_list.Count];
-            Double[] vol = new Double[underlying_list.Count];
-            Double[,] correl = new Double[underlying_list.Count, underlying_list.Count];
+            double[,] historic = new double[underlying_list.Count,dates.Count];
+            double[] expected_returns = new double[underlying_list.Count];
+            double[] vol = new double[underlying_list.Count];
+            double[,] correl;
             int ass_i = 0;
             foreach (IAsset ass in underlying_list)
             {
                 int d_i = 0;
                 foreach (DateTime d in dates)
                 {
-                    historic[ass_i, d_i] = ass.getPrice(d);
+                    historic[ass_i,d_i] = ass.getPrice(d);
                     d_i++;
                 }
                 expected_returns[ass_i] = ass.getCurrency().getInterestRate(DateTime.Now, TimeSpan.FromDays(90));
                 vol[ass_i] = ass.getVolatility(DateTime.Now);
                 ass_i++;
             }
-            //correl = HistoricCompute.HistoricCorrelation();
+            // correlation is a bit trickier
+            int date_nb_correl = 100;
+            int asset_nb = underlying_list.Count;
+            double[][] prices = new double[asset_nb][];
+            int j = 0;
+            foreach (IAsset ass in underlying_list)
+            {
+                prices[j] = new double[date_nb_correl];
+                DateTime titer = DateTime.Now - TimeSpan.FromDays(100);
+                for (int i = 0; i < date_nb_correl; i++)
+                {
+                    prices[j][i] = ass.getPrice(titer);
+                    titer += TimeSpan.FromDays(1);
+                }
+                j++;
+            }
+            correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
+            double r1 = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
+            double r2 = this.getCurrency().getInterestRate(new DateTime(2013, 03, 1), new DateTime(2017, 03, 1) - new DateTime(2013, 03, 1));
+            int sampleNb = 100;
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
-            /*
-            array<double, 2>^ tab = gcnew double[1,2];
-            wp.getPriceEverglades(array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, int nb_day_after, double r1, double r2, int sampleNb);
-            */
-            return 78;
+            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r1, r2, sampleNb);
+            return wp.getPrice();
         }
 
         //TODO
@@ -128,7 +148,7 @@ namespace Everglades.Models
 
         public Currency getCurrency()
         {
-            throw new NotImplementedException();
+            return currency;
         }
 
     }

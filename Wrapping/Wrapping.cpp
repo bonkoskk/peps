@@ -42,9 +42,17 @@ namespace Wrapping {
 		put_vanilla(px, T, S0, K, sigma, r, q);
 		this->price = px;
 	}
-	void WrapperEverglades::getPriceEverglades(h_gsl_matrix historic, h_gsl_vector expected_returns, h_gsl_vector vol, h_gsl_matrix correl, int nb_day_after, double r1, double r2, int sampleNb) {
+
+	//void WrapperEverglades::getPriceEverglades(h_gsl_matrix historic, h_gsl_vector expected_returns, h_gsl_vector vol, h_gsl_matrix correl, int nb_day_after, double r1, double r2, int sampleNb) {
+void WrapperEverglades::getPriceEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, int nb_day_after, double r1, double r2, int sampleNb) {
+		h_gsl_matrix historic_matrix(nb_asset, nb_dates, historic);
+		h_gsl_vector expected_returns_vector(nb_asset, expected_returns);
+		h_gsl_vector vol_vector(nb_asset, vol);
+		h_gsl_matrix correl_matrix(nb_asset, nb_asset, correl);
+	
 		double price, ic;
-		Everglades::get_price(price, ic, *historic._matrix, nb_day_after, r1, r2, *expected_returns._vector, *vol._vector, *correl._matrix , sampleNb);
+		Everglades::get_price(price, ic, *historic_matrix._matrix, nb_day_after, r1, r2, *expected_returns_vector._vector,
+								*vol_vector._vector, *correl_matrix._matrix , sampleNb);
 		this->price = price;
 		this->confidenceInterval = ic;
 	}
