@@ -78,5 +78,10 @@ namespace Everglades.Models
         {
             throw new NotImplementedException();
         }
+
+        public Currency getCurrency()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

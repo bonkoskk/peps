@@ -1,23 +1,31 @@
-﻿using System;
+﻿using Everglades.Models.HistoricCompute;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-
 using Wrapping;
 
 namespace Everglades.Models
 {
     public class Equity : IAsset
     {
-        public string name;
+        private string name;
+        private Currency currency;
 
-        public Equity(string name)
+        public Equity(string name, Currency currency)
         {
             this.name = name;
+            this.currency = currency;
         }
+
         public String getName()
         {
             return name;
+        }
+
+        public Currency getCurrency()
+        {
+            return currency;
         }
 
         public double getPrice()
@@ -75,21 +83,18 @@ namespace Everglades.Models
 
         public double getVolatility(DateTime t)
         {
-            // to calculate volatility, we first calculate an historical volatility on 100 days
-            const int N = 100;
-            double sum2 = 0;
-            double temp;
+            // number of observations dates (1 day separated)
+            int date_nb = 100;
+            // get prices for these days
             DateTime titer = t;
-            int i = 0;
-            while (titer > t - TimeSpan.FromDays(100))
+            Double[] prices = new Double[date_nb];
+            for(int i=0; i<100; i++)
             {
-                temp = ((IAsset)this).getPrice(t);
-                sum2 += temp * temp;
+                prices[i] = this.getPrice(titer);
                 titer -= TimeSpan.FromDays(1);
-                i++;
             }
-            double histVol = sum2 / (double)(i - 1);
-            return histVol;
+            // compute and return historic volatility
+            return HistoricVolatility.compute(date_nb, prices);
         }
     }
 }

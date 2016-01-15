@@ -11,6 +11,7 @@ namespace Everglades.Models
     {
         String getName();
         double getPrice();
+        Currency getCurrency();
         Data getPrice(DateTime t1, DateTime t2, TimeSpan step);
         double getPrice(DateTime t);
         double getVolatility(DateTime t);

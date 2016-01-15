@@ -1,4 +1,5 @@
 // Wrapping.h
+#include "managed_gsl.hpp"
 
 #pragma once
 
@@ -42,4 +43,17 @@ namespace Wrapping {
 		double getIC() { return confidenceInterval; };
 	};
 
+	using namespace managed_gsl;
+	
+	public ref class WrapperEverglades
+	{
+	private:
+		double confidenceInterval;
+		double price;
+	public:
+		WrapperEverglades() { confidenceInterval = price = 0; };
+		void getPriceEverglades(h_gsl_matrix historic, h_gsl_vector expected_returns, h_gsl_vector vol, h_gsl_matrix correl, int nb_day_after, double r1, double r2, int sampleNb);
+		double getPrice() { return price; };
+		double getIC() { return confidenceInterval; };
+	};
 }

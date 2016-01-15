@@ -61,9 +61,25 @@ body {
 #contact {
     position: relative;
     display: block;
-    left: 25%;
-    width: 50%;
-    right: 25%;
+    left: 35%;
+    width: 30%;
+    right: 35%;
+    height: 30%;
+}
+
+.profile-img {
+    width: 10vw;
+    border: 100px;
+    border-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+}
+
+.profile-img:hover {
+    -ms-transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
 }
 
 .asset-clickable {
@@ -102,6 +118,22 @@ body {
     width: 40%;
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.9);
+}
+
+.advice-window {
+    position: absolute;
+    display: none;
+    left: 30%;
+    top: 25%;
+    padding:10px;
+    width: 40%;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+.advice-button {
+    margin:10px;
 }
 
 .close-button {

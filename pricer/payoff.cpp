@@ -2,7 +2,7 @@
 #include "payoff.hpp"
 #include <cmath>
 
-extern double payoff_call_barrier_down_out(struct Params data, int J, double L, gsl_vector* simulations)
+extern double payoff_call_barrier_down_out(struct simulations::Params data, int J, double L, gsl_vector* simulations)
 {
 
 	double S_T = gsl_vector_get(simulations, J);
