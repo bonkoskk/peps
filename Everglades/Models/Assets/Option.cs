@@ -29,7 +29,7 @@ namespace Everglades.Models
 
             if (String.Compare(underlying.getName(), "orange") == 0)
             {
-                wc.getPriceOptionCallQuanto(100, 1.2, 100, 0.02, 0.03, 0.2, 0.2, 0.1, 1);
+                wc.getPriceCallQuanto(100, 1.2, 100, 0.02, 0.03, 0.2, 0.2, 0.1, 1);
                 //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
                 return wc.getPrice();
             }

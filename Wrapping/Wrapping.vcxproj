@@ -112,9 +112,15 @@
       <AdditionalLibraryDirectories>C:\Users\babs\Desktop\Everglades\peps\gsl-dir\gsl-lib\Debug\x64;C:\Users\ensimag\Documents\peps\gsl-dir\gsl-lib\Debug\x64;C:\Users\ensimag\Desktop\peps\gsl-dir\gsl-lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Wrapping.dll" "C:\Users\babs\Desktop\Everglades\peps\Everglades\bin\Wrapping.dll"
-copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Pricer.dll" "C:\Users\babs\Desktop\Everglades\peps\Everglades\bin\Pricer.dll"</Command>
-      <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin\Wrapping.dll"</Message>
+      <Command>copy "C:\Users\ensimag\Desktop\everglades\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Desktop\everglades\peps\Everglades\bin"
+copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"
+copy "C:\Users\ensimag\Documents\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"</Command>
+      <Command>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"
+copy "C:\Users\ensimag\Documents\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Documents\peps\x64\Debug\bin"</Command>
+      <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"</Message>
+      <Command>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"
+copy "C:\Users\ensimag\Documents\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"</Command>
+      <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin\Debug\Wrapping.dll"</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

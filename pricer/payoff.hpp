@@ -1,3 +1,3 @@
 #include "gsl/gsl_rng.h"
 
-extern double payoff_barrier(double K, double r, double v, double T, int J, double L, gsl_vector* simulations);
+extern double payoff_call_barrier_down_out(struct simulations::Params data, int J, double L, gsl_vector* simulations);

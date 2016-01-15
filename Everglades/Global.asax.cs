@@ -9,6 +9,10 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
+using System.Text;
+using System.Threading.Tasks;
+
+
 namespace Everglades
 {
     // Remarque : pour obtenir des instructions sur l'activation du mode classique IIS6 ou IIS7, 
@@ -22,6 +26,7 @@ namespace Everglades
         //protected void Application_Start()
         protected void Application_Start(object sender, EventArgs e)
         {
+
             // debug kevin
             String _path = String.Concat(System.Environment.GetEnvironmentVariable("PATH"), ";", System.AppDomain.CurrentDomain.RelativeSearchPath);
             System.Environment.SetEnvironmentVariable("PATH", _path, EnvironmentVariableTarget.Process);
