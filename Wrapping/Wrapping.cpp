@@ -51,12 +51,17 @@ void WrapperEverglades::getPriceEverglades(int nb_dates, int nb_asset, array<dou
 		h_gsl_matrix correl_matrix(nb_asset, nb_asset, correl);
 	
 		double price, ic;
-		h_gsl_vector^ deltas = gcnew h_gsl_vector(nb_asset);
-		Everglades::get_price(price, ic, deltas->_vector, *historic_matrix._matrix, nb_day_after, r1, r2, *expected_returns_vector._vector,
+
+
+		gsl_vector* deltas_temp;
+				
+
+		Everglades::get_price(price, ic, &deltas_temp , *historic_matrix._matrix, nb_day_after, r1, r2, *expected_returns_vector._vector,
 								*vol_vector._vector, *correl_matrix._matrix , sampleNb);
 		this->price = price;
 		this->confidenceInterval = ic;
 
-		this->delta = deltas;
+		System::Runtime::InteropServices::Marshal::Copy(System::IntPtr((*deltas_temp).data), this->delta, 0, nb_asset);
+
 	}
 }
