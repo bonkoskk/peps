@@ -157,7 +157,7 @@ $(function () {
         var assetname = $(this).attr("asset");
         $(".asset-window").show();
         $("#asset-graph").html("Loading data ..");
-        var data = { operation: 'get_data', asset: assetname };
+        var data = { operation: 'getData', asset: assetname };
         //get_data
         $.ajax({
             type: "POST",
@@ -174,8 +174,9 @@ $(function () {
         });
     });
 
-    $(".asset-window > .close-button").click(function () {
-        $(".asset-window").hide();
+    // close graph window
+    $(".close-button").click(function () {
+        $(this).parent().hide();
     });
 
     // function when mouse is over point of a graph (to display values in tooltip)
@@ -190,5 +191,59 @@ $(function () {
         } else {
             $("#tooltip").hide();
         }
+    });
+
+    $(".buyderivativebutton").click(function () {
+        $(".derivative-window").show();
+        $("#derivative-form").html('loading ...');
+        var data = { operation: 'getParam', derivative: $(this).attr("derivative") };
+        $.ajax({
+            type: "POST",
+            url: "/operations",
+            data: data,
+            datatype: "html",
+            success: function (data) {
+                console.log(data);
+                $("#derivative-form").html(data);
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            alert("Connection error");
+        });
+    });
+
+    $("#derivative-form").change(function () {
+        $("#price_derivative").val("Calculating...");
+        var data = "operation=getPrice&" + $("#derivative-form").serialize();
+        $.ajax({
+            type: "POST",
+            url: "/operations",
+            data: data,
+            datatype: "html",
+            success: function (data) {
+                $("#price_derivative").val(data);
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            alert("Connection error : could not buy asset");
+        });
+    });
+
+    $("#derivative-form").submit(function () {
+        event.preventDefault();
+        var data = "operation=buyDerivative&" + $("#derivative-form").serialize();
+        $.ajax({
+            type: "POST",
+            url: "/operations",
+            data: data,
+            datatype: "html",
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            alert("Connection error");
+        });
     });
 });

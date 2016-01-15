@@ -15,12 +15,12 @@ namespace Everglades.Models
         {
             this.name = name;
         }
-        String IAsset.Get_Name()
+        public String getName()
         {
             return name;
         }
 
-        double IAsset.Get_Price()
+        public double getPrice()
         {
 
             // debug kevin
@@ -43,7 +43,7 @@ namespace Everglades.Models
             //return AccessDB.Get_Asset_Price(this.name, DateTime.Now);
         }
 
-        Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
+        public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
             if (t1 > t2)
             {
@@ -63,14 +63,33 @@ namespace Everglades.Models
             return data;
         }
 
-        double IAsset.Get_Price(DateTime t)
+        public double getPrice(DateTime t)
         {
             return AccessDB.Get_Asset_Price(this.name, t);
         }
 
-        double IAsset.Get_Delta(DateTime t)
+        public double getDelta(DateTime t)
         {
             return AccessDB.Get_Asset_Delta(this.name, t);
+        }
+
+        public double getVolatility(DateTime t)
+        {
+            // to calculate volatility, we first calculate an historical volatility on 100 days
+            const int N = 100;
+            double sum2 = 0;
+            double temp;
+            DateTime titer = t;
+            int i = 0;
+            while (titer > t - TimeSpan.FromDays(100))
+            {
+                temp = ((IAsset)this).getPrice(t);
+                sum2 += temp * temp;
+                titer -= TimeSpan.FromDays(1);
+                i++;
+            }
+            double histVol = sum2 / (double)(i - 1);
+            return histVol;
         }
     }
 }

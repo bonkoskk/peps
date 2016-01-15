@@ -27,6 +27,17 @@ namespace Wrapping {
 		double px = 1;
 		put_quanto(px, S, Q, K, R, Rf, sigma1, sigma2, rho, tau);
 		this->confidenceInterval = 0;
+	}
+
+	void WrapperVanilla::getPriceOptionEuropeanCall(double T, double S0, double K, double sigma, double r, double q) {
+		double px;
+		call_vanilla(px, T, S0, K, sigma, r, q);
+		this->price = px;
+	}
+
+	void WrapperVanilla::getPriceOptionEuropeanPut(double T, double S0, double K, double sigma, double r, double q) {
+		double px;
+		put_vanilla(px, T, S0, K, sigma, r, q);
 		this->price = px;
 	}
 

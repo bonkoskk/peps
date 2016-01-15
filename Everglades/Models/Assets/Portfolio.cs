@@ -22,7 +22,7 @@ namespace Everglades.Models
         {
             if (!assetList.ContainsKey(asset))
             {
-                throw new ArgumentException("Asset not in portfolio");
+                assetList[asset] = number;
             }
             else
             {
@@ -34,7 +34,7 @@ namespace Everglades.Models
         {
             if (!assetList.ContainsKey(asset))
             {
-                throw new ArgumentException("Asset not in portfolio");
+                assetList[asset] = - number; ;
             }
             else
             {
@@ -42,23 +42,23 @@ namespace Everglades.Models
             }
         }
 
-        String IAsset.Get_Name()
+        public String getName()
         {
             return "Portfolio of " + assetList.Count + " assets";
         }
 
-        double IAsset.Get_Price()
+        public double getPrice()
         {
             double price = 0;
             foreach (KeyValuePair<IAsset, int> entry in assetList)
             {
-                price += entry.Value * entry.Key.Get_Price();
+                price += entry.Value * entry.Key.getPrice();
             }
             return price;
         }
 
         //TODO
-        Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
+        public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
             Data data = new Data();
             DateTime t = t1;
@@ -67,7 +67,7 @@ namespace Everglades.Models
                 double prix = 0;
                 foreach (KeyValuePair<IAsset, int> pair in assetList)
                 {
-                    prix += pair.Value * pair.Key.Get_Price(t);
+                    prix += pair.Value * pair.Key.getPrice(t);
                 }
                 data.add(new DataPoint(t, prix));
                 t += step;
@@ -76,16 +76,20 @@ namespace Everglades.Models
         }
 
         //TODO
-        double IAsset.Get_Price(DateTime t)
+        public double getPrice(DateTime t)
         {
             throw new NotImplementedException();
         }
 
         //TODO
-        double IAsset.Get_Delta(DateTime t)
+        public double getDelta(DateTime t)
         {
             throw new NotImplementedException();
         }
 
+        public double getVolatility(DateTime t)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

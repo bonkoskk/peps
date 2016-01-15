@@ -20,6 +20,12 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>12.0</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -159,6 +165,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Assets\AmericanCall.cs" />
+    <Compile Include="Models\Assets\AmericanPut.cs" />
+    <Compile Include="Models\Assets\AsianCall.cs" />
+    <Compile Include="Models\Assets\AsianPut.cs" />
+    <Compile Include="Models\Assets\EuropeanCall.cs" />
+    <Compile Include="Models\Assets\EuropeanPut.cs" />
     <Compile Include="Models\Assets\Everglades.cs" />
     <Compile Include="Models\Assets\IDerivative.cs" />
     <Compile Include="Models\Assets\Equity.cs" />
@@ -168,6 +180,8 @@
     <Compile Include="Models\Assets\Option.cs" />
     <Compile Include="Models\Assets\Portfolio.cs" />
     <Compile Include="Models\Operation\Operation.cs" />
+    <Compile Include="Models\Param.cs" />
+    <Compile Include="Models\ParamType.cs" />
     <Compile Include="Models\TimeStep.cs" />
     <Compile Include="Models\Assets\IAsset.cs" />
     <Compile Include="Models\AccessDB.cs" />
@@ -357,6 +371,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <IncludeIisSettings>false</IncludeIisSettings>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\</OutputPath>

@@ -12,13 +12,13 @@ namespace Everglades.Models
         public Option(IAsset underlying) {
             this.underlying = underlying;
         }
-        String IAsset.Get_Name()
+        String IAsset.getName()
         {
-            return "Option on " + underlying.Get_Name();
+            return "Option on " + underlying.getName();
         }
 
         //TODO
-        double IAsset.Get_Price()
+        double IAsset.getPrice()
         {
             // debug kevin
             // doit retourner 6.51
@@ -27,7 +27,7 @@ namespace Everglades.Models
             //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
 
 
-            if (String.Compare(underlying.Get_Name(), "orange") == 0)
+            if (String.Compare(underlying.getName(), "orange") == 0)
             {
                 wc.getPriceCallQuanto(100, 1.2, 100, 0.02, 0.03, 0.2, 0.2, 0.1, 1);
                 //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
@@ -41,19 +41,40 @@ namespace Everglades.Models
         }
 
         //TODO
-        Data IAsset.Get_Price(DateTime t1, DateTime t2, TimeSpan step)
+        Data IAsset.getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
             throw new NotImplementedException();
         }
 
         //TODO
-        double IAsset.Get_Price(DateTime t)
+        double IAsset.getPrice(DateTime t)
         {
             throw new NotImplementedException();
         }
 
         //TODO
-        double IAsset.Get_Delta(DateTime t)
+        double IAsset.getDelta(DateTime t)
+        {
+            throw new NotImplementedException();
+        }
+
+        string IDerivative.getType()
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Param> IDerivative.getParam()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDerivative.setParam(List<Param> param)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        double IAsset.getVolatility(DateTime t)
         {
             throw new NotImplementedException();
         }

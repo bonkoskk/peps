@@ -1,8 +1,4 @@
 ﻿@model Everglades.Models.ModelManage
-@{
-    Everglades.Models.IAsset Hedging_Portfolio = Model.Hedging_Portfolio;
-    Everglades.Models.IAsset Product = Model.everg;
-}
 
 <!-- update date -->
 <div id="update" class="update">
@@ -31,11 +27,11 @@
                             </tr>
                             <tr>
                                 <td>Hedging Portfolio Value</td>
-                                <td>@Hedging_Portfolio.Get_Price()</td>
+                                <td>@Model.Hedging_Portfolio.getPrice()</td>
                             </tr>
                             <tr>
                                 <td>Product Value</td>
-                                <td>@Product.Get_Price()</td>
+                                <td>@Model.everg.getPrice()</td>
                             </tr>
                             <tr>
                                 <td>Margin</td>
@@ -61,79 +57,92 @@
             <div class="row">
                 <div class="col-sm-3">
                     <h2>Equities</h2>
-                    <table id="table_equities" class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Asset</th>
-                                <th>Price</th>
-                                <th>Buy</th>
-                                <th>Sell</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (Everglades.Models.IAsset a in Model.Assets)
-                            {
+                    <div id="equities">
+                        <table id="table_equities" class="table table-hover">
+                            <thead>
                                 <tr>
-                                    <td class="asset-clickable" asset="@a.Get_Name()">@a.Get_Name()</td>
-                                    <td>@a.Get_Price()€</td>
-                                    <td>
-                                        <button class="buybutton btn btn-default btn-xs" asset="@a.Get_Name()" type="button">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button class="sellbutton btn btn-default btn-xs" asset="@a.Get_Name()" type="button">
-                                            <span class="glyphicon glyphicon-minus"></span>
-                                        </button>
-                                    </td>
+                                    <th>Asset</th>
+                                    <th>Price</th>
+                                    <th>Buy</th>
+                                    <th>Sell</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (Everglades.Models.IAsset a in Model.Assets)
+                                {
+                                    <tr>
+                                        <td class="asset-clickable" asset="@a.getName()">@a.getName()</td>
+                                        <td>@a.getPrice()€</td>
+                                        <td>
+                                            <button class="buybutton btn btn-default btn-xs" asset="@a.getName()" type="button">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="sellbutton btn btn-default btn-xs" asset="@a.getName()" type="button">
+                                                <span class="glyphicon glyphicon-minus"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-1"></div>
+                <div class="col-sm-3">
+                    <h2>Derivatives</h2>
+                    <div id="derivatives">
+                        <table id="table_derivatives" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Derivative</th>
+                                    <th>Buy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Everglades.Models.IDerivative a in Model.derivatives)
+                                {
+                                    <tr>
+                                        <td>@a.getType()</td>
+                                        <td>
+                                            <button class="buyderivativebutton btn btn-default btn-xs" derivative="@a.getType()" type="button">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="col-sm-1"></div>
                 <div class="col-sm-4">
                     <h2>Hedging Portfolio</h2>
-                    <table id="table_hedgeportfolio" class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Asset</th>
-                                <th>Price</th>
-                                <th>Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (KeyValuePair<Everglades.Models.IAsset, int> entry in Model.Hedging_Portfolio.assetList)
-                            {
+                    <div id="hedging_portfolio">
+                        <table id="table_hedgeportfolio" class="table table-hover">
+                            <thead>
                                 <tr>
-                                    <td class="asset-clickable" asset="@entry.Key.Get_Name()">@entry.Key.Get_Name()</td>
-                                    <td>@entry.Key.Get_Price()€</td>
-                                    <td>@entry.Value</td>
+                                    <th>Asset</th>
+                                    <th>Price</th>
+                                    <th>Number</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-sm-1"></div>
-                <div class="col-sm-3">
-                    <h2>Closed positions</h2>
-                    <table id="table_closedpositions" class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Asset</th>
-                                <th>Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (Everglades.Models.IAsset a in Model.Hedging_Portfolio.assetList.Keys)
-                            {
-                                <tr>
-                                    <td class="asset-clickable" asset="@a.Get_Name()">@a.Get_Name()</td>
-                                    <td>@a.Get_Price()€</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (KeyValuePair<Everglades.Models.IAsset, int> entry in Model.Hedging_Portfolio.assetList)
+                                {
+                                    if (entry.Value != 0)
+                                    {
+                                        <tr>
+                                            <td class="asset-clickable" asset="@entry.Key.getName()">@entry.Key.getName()</td>
+                                            <td>@entry.Key.getPrice()€</td>
+                                            <td>@entry.Value</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-12">
@@ -155,7 +164,7 @@
                                 <tr>
                                     <td>@a.getDate().ToShortDateString()</td>
                                     <td>@a.getOperation()</td>
-                                    <td class="asset-clickable" asset="@a.getAsset().Get_Name()">@a.getAsset().Get_Name()</td>
+                                    <td class="asset-clickable" asset="@a.getAsset().getName()">@a.getAsset().getName()</td>
                                     <td>@a.getNumber()</td>
                                     <td>@a.getPrice()€</td>
                                 </tr>
@@ -165,12 +174,22 @@
                 </div>
             </div>
         </div>
+
     <div class="asset-window">
         <div id="asset-graph" class="graph"></div>
         <button type="button" class="close-button btn btn-danger">
             <span class="glyphicon glyphicon-remove"></span>
         </button>
     </div>
+
+    <div class="derivative-window">
+        <form id="derivative-form">
+        </form>
+        <button type="button" class="close-button btn btn-danger">
+            <span class="glyphicon glyphicon-remove"></span>
+        </button>
+    </div>
+
     <div id="tooltip"></div>
 </header>
 <!-- About -->
@@ -216,9 +235,9 @@
 </footer>
 
 <script>
-    var data_graph_hedge = @Hedging_Portfolio.Get_Price(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var data_graph_hedge = @Model.Hedging_Portfolio.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_hedge = "hedge";
-    var data_graph_product = @Product.Get_Price(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_product = "product";
     var data_donut = [];
     var series = Math.floor(Math.random() * 6) + 3;

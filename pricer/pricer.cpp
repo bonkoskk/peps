@@ -5,6 +5,28 @@
 #include <ctime>
 #include <gsl/gsl_cdf.h>
 
+void Pricer::call_vanilla(double &prix, double T,
+	double S0, double K, double sigma, double r, double q)
+{
+	const double sigma2sur2 = sigma*sigma / 2;
+	const double logs0surK = log(S0 / K);
+	const double sigmasqrtT = sigma*sqrt(T);
+	const double d1 = (logs0surK + (r - q + sigma2sur2)*T) / sigmasqrtT;
+	const double d2 = d1 - sigmasqrtT;
+	prix = exp(-q*T)*S0*gsl_cdf_ugaussian_P(d1) - exp(-r*T)*K*gsl_cdf_ugaussian_P(d2);
+}
+
+void Pricer::put_vanilla(double &prix, double T,
+	double S0, double K, double sigma, double r, double q)
+{
+	const double sigma2sur2 = sigma*sigma / 2;
+	const double logs0surK = log(S0 / K);
+	const double sigmasqrtT = sigma*sqrt(T);
+	const double d1 = (logs0surK + (r - q + sigma2sur2)*T) / sigmasqrtT;
+	const double d2 = d1 - sigmasqrtT;
+	prix = exp(-r*T)*K*gsl_cdf_ugaussian_P(-d2) - exp(-q*T)*S0*gsl_cdf_ugaussian_P(-d1);
+}
+
 void Pricer::call_barrier_down_out(double &ic, double &prix, int nb_samples, double T,
 	double S0, double K, double sigma, double r, double J, double L)
 {
