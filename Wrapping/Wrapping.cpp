@@ -44,8 +44,12 @@ namespace Wrapping {
 	}
 	void WrapperEverglades::getPriceEverglades(h_gsl_matrix historic, h_gsl_vector expected_returns, h_gsl_vector vol, h_gsl_matrix correl, int nb_day_after, double r1, double r2, int sampleNb) {
 		double price, ic;
-		Everglades::get_price(price, ic, *historic._matrix, nb_day_after, r1, r2, *expected_returns._vector, *vol._vector, *correl._matrix , sampleNb);
+		h_gsl_vector^ deltas;
+
+		Everglades::get_price(price, ic, deltas->_vector, *historic._matrix, nb_day_after, r1, r2, *expected_returns._vector, *vol._vector, *correl._matrix , sampleNb);
 		this->price = price;
 		this->confidenceInterval = ic;
+
+		this->delta = deltas;
 	}
 }

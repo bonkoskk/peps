@@ -50,9 +50,14 @@ namespace Wrapping {
 	private:
 		double confidenceInterval;
 		double price;
+		h_gsl_vector^ delta;
+
 	public:
-		WrapperEverglades() { confidenceInterval = price = 0; };
 		void getPriceEverglades(h_gsl_matrix historic, h_gsl_vector expected_returns, h_gsl_vector vol, h_gsl_matrix correl, int nb_day_after, double r1, double r2, int sampleNb);
+		WrapperEverglades() { 
+			confidenceInterval = price = 0; 
+			delta = gcnew h_gsl_vector(20);
+		};
 		double getPrice() { return price; };
 		double getIC() { return confidenceInterval; };
 	};
