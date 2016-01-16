@@ -111,7 +111,7 @@ namespace Everglades.Models
             correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
             double r1 = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             double r2 = this.getCurrency().getInterestRate(new DateTime(2013, 03, 1), new DateTime(2017, 03, 1) - new DateTime(2013, 03, 1));
-            int sampleNb = 100;
+            int sampleNb = 5;
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r1, r2, sampleNb);

@@ -26,13 +26,13 @@ double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipa
 	return __max(vlr * (1.0 + 0.75*sum_perf / nb_timesteps), vlr);
 }
 
-void Everglades::get_price(double& price, double& ic, gsl_vector* delta, const gsl_matrix& historic, int nb_day_after, double r1, double r2,
+void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r1, double r2,
 	const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu){
 	
 	double espsilon = 0.01;
 
 	int nb_sj = 25;
-	delta = gsl_vector_calloc(nb_sj);
+	*delta = gsl_vector_calloc(nb_sj);
 
 	int last_index = historic.size2;
 	gsl_matrix* path = gsl_matrix_calloc(historic.size1, 25);
@@ -54,8 +54,6 @@ void Everglades::get_price(double& price, double& ic, gsl_vector* delta, const g
 	double phi;
 	bool anticipated;
 
-	gsl_matrix* path_up = NULL;
-	gsl_matrix* path_down = NULL;
 	double s_temp;
 	double payoff_up;
 	double payoff_down;
@@ -70,17 +68,18 @@ void Everglades::get_price(double& price, double& ic, gsl_vector* delta, const g
 
 		for (int sj = 0; sj < nb_sj; sj++)
 		{
-			*path_up = gsl_matrix(*path);
-			*path_down = gsl_matrix(*path);
+			gsl_matrix path_up(*path);
+			gsl_matrix path_down(*path);
 
-			for (int t = last_index; t < historic.size1; t++)
+			
+			for (int t = last_index; t < historic.size2; t++)
 			{
 				s_temp = gsl_matrix_get(path, t, sj);
-				gsl_matrix_set(path_up, t, sj, s_temp + espsilon);
-				gsl_matrix_set(path_down, t, sj, s_temp - espsilon);
+				gsl_matrix_set(&path_up, t, sj, s_temp + espsilon);
+				gsl_matrix_set(&path_down, t, sj, s_temp - espsilon);
 			}
 
-			payoff_up = Everglades::get_payoff(*path_up, VLR, anticipated);
+			payoff_up = Everglades::get_payoff(path_up, VLR, anticipated);
 
 			if (anticipated) {
 				payoff_up *= exp(-r1*(25 - last_index + 1) * (PERIODE - nb_day_after) / DAY);
@@ -89,7 +88,7 @@ void Everglades::get_price(double& price, double& ic, gsl_vector* delta, const g
 			}
 			payoff_up /= ((double)nbSimu);
 
-			payoff_down = Everglades::get_payoff(*path_up, VLR, anticipated);
+			payoff_down = Everglades::get_payoff(path_up, VLR, anticipated);
 
 			if (anticipated) {
 				payoff_down *= exp(-r1*(25 - last_index + 1) * (PERIODE - nb_day_after) / DAY);
@@ -99,8 +98,8 @@ void Everglades::get_price(double& price, double& ic, gsl_vector* delta, const g
 			}
 			payoff_down /= ((double)nbSimu);
 
-			delta_temp = gsl_vector_get(delta, sj);
-			gsl_vector_set(delta, sj, delta_temp + (payoff_up - payoff_down) / (2 * espsilon));
+			delta_temp = gsl_vector_get(*delta, sj);
+			gsl_vector_set(*delta, sj, delta_temp + (payoff_up - payoff_down) / (2 * espsilon));
 
 		}
 
@@ -132,7 +131,5 @@ void Everglades::get_price(double& price, double& ic, gsl_vector* delta, const g
 	//libération mémoire
 	gsl_vector_free(temp);
 	gsl_matrix_free(path);
-	gsl_matrix_free(path_down);
-	gsl_matrix_free(path_up);
 }
 
