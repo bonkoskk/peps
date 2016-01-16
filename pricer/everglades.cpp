@@ -15,8 +15,8 @@ double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipa
 		perf = 0.0;
 		for (int j = 0; j < nb_underlyings; j++) {
 			perf += (gsl_matrix_get(&path, j, i) / gsl_matrix_get(&path, j, 0) - 1.0);
-			sum_perf += perf / ((double)nb_underlyings);
 		}
+		sum_perf += perf / ((double)nb_underlyings);
 		if (i == 7 && sum_perf / 8 >= 0.12) {
 			anticipated = true;
 			return (vlr * 1.09);
