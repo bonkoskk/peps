@@ -78,7 +78,7 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 			for (int t = last_index; t < path->size2; t++)
 			{
 				s_temp = gsl_matrix_get(path, sj, t);
-				gsl_matrix_set(path_up, sj, t, (1+epsilon)*s_temp);
+				gsl_matrix_set(path_up, sj, t, (1+1000)*s_temp);
 			//	gsl_matrix_set(path_down, sj, t, s_temp - epsilon);
 			}
 
