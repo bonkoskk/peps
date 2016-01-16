@@ -24,6 +24,7 @@ namespace Everglades.Models
         {
             this.underlying_list = underlying_list;
             currency = new Currency("€");
+            last_update = DateTime.MinValue;
         }
 
         public string getName()
@@ -71,6 +72,11 @@ namespace Everglades.Models
 
         public double getPrice()
         {
+            double price = getPrice(new DateTime(2011, 12, 1));
+            double[] delta = this.last_requested_delta;
+
+
+
             // if last update done more than one minute ago, we recalculate
             if ((DateTime.Now - last_update).TotalMinutes > 1.0)
             {
@@ -99,14 +105,16 @@ namespace Everglades.Models
 
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
-            foreach (DateTime d in getObservationDates())
+            foreach (DateTime d in getObservationDates()) 
             {
+            
                 if (d > t)
                 {
                     break;
                 }
                 dates.AddLast(d);
             }
+            
             int nb_day_after = Convert.ToInt32((t - dates.Last.Value).TotalDays); // round to nearest integer (in case of x.9999 -> x and not x+1)
             if (nb_day_after != 0)
             {
@@ -147,12 +155,11 @@ namespace Everglades.Models
                 j++;
             }
             correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
-            double r1 = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
-            double r2 = this.getCurrency().getInterestRate(new DateTime(2013, 03, 1), new DateTime(2017, 03, 1) - new DateTime(2013, 03, 1));
+            double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             int sampleNb = 5;
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
-            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r1, r2, sampleNb);
+            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
             last_requested_delta = wp.getDelta();
             return wp.getPrice();
         }

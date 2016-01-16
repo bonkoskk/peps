@@ -53,10 +53,9 @@ namespace Wrapping {
 		array<double>^ delta;
 
 	public:
-		void getPriceEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double,2>^ correl, int nb_day_after, double r1, double r2, int sampleNb);
+		void getPriceEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double,2>^ correl, int nb_day_after, double r, int sampleNb);
 		WrapperEverglades() { 
 			confidenceInterval = price = 0; 
-			delta = gcnew array<double>(25);
 		};
 		double getPrice() { return price; };
 		double getIC() { return confidenceInterval; };
