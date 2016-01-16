@@ -66,7 +66,22 @@ namespace Everglades.Models
         {
             // TODO
             List<Advice> list = new List<Advice>();
-            list.Add(new Advice(0.54, "lion", "buy 45"));
+            Portfolio deltas = everg.getDelta();
+            int i = 0;
+            foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
+            {
+                string assetname = item.Key.getName();
+                double difference = Hedging_Portfolio.assetList[item.Key] -  item.Value;
+                if (difference > 0.01)
+                {
+                    list.Add(new Advice(difference, assetname, "sell " + difference.ToString() + " of " + assetname));
+                }
+                else if (difference < - 0.01)
+                {
+                    list.Add(new Advice(-difference, assetname, "buy " + (-difference).ToString() + " of " + assetname));
+                }
+
+            }
             return list;
         }
 

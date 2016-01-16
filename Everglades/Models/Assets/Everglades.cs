@@ -11,8 +11,12 @@ namespace Everglades.Models
     public class Everglades : IAsset
     {
 
-        Currency currency;
+        private Currency currency;
         private List<IAsset> underlying_list;
+
+        private double current_price;
+        private double[] current_delta;
+        private DateTime last_update;
 
         public Everglades(List<IAsset> underlying_list)
         {
@@ -57,10 +61,7 @@ namespace Everglades.Models
             return list;
         }
 
-
-
-        // TODO
-        public double getPrice()
+        private void update_current()
         {
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
@@ -75,7 +76,7 @@ namespace Everglades.Models
             int nb_day_after = Convert.ToInt32((DateTime.Now - dates.Last.Value).TotalDays); // round to nearest integer (in case of x.9999 -> x and not x+1)
             dates.AddLast(DateTime.Now);
             // create and get data for all arguments
-            double[,] historic = new double[underlying_list.Count,dates.Count];
+            double[,] historic = new double[underlying_list.Count, dates.Count];
             double[] expected_returns = new double[underlying_list.Count];
             double[] vol = new double[underlying_list.Count];
             double[,] correl;
@@ -85,7 +86,7 @@ namespace Everglades.Models
                 int d_i = 0;
                 foreach (DateTime d in dates)
                 {
-                    historic[ass_i,d_i] = ass.getPrice(d);
+                    historic[ass_i, d_i] = ass.getPrice(d);
                     d_i++;
                 }
                 expected_returns[ass_i] = ass.getCurrency().getInterestRate(DateTime.Now, TimeSpan.FromDays(90));
@@ -115,7 +116,21 @@ namespace Everglades.Models
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r1, r2, sampleNb);
-            return wp.getPrice();
+            this.current_delta = wp.getDelta();
+            this.current_price = wp.getPrice();
+        }
+
+
+
+        // TODO
+        public double getPrice()
+        {
+            // if last update done more than one minute ago, we recalculate
+            if ((DateTime.Now - last_update).TotalMinutes > 1.0)
+            {
+                update_current();
+            }
+            return current_price;
         }
 
         //TODO
@@ -136,6 +151,23 @@ namespace Everglades.Models
         }
 
         //TODO
+        public Portfolio getDelta()
+        {
+            // if last update done more than one minute ago, we recalculate
+            if ((DateTime.Now - last_update).TotalMinutes > 1.0)
+            {
+                update_current();
+            }
+            Portfolio port = new Portfolio(underlying_list);
+            int i = 0;
+            foreach (IAsset ass in underlying_list)
+            {
+                port.addAsset(ass, current_delta[i]);
+                i++;
+            }
+            return port;
+        }
+
         public double getDelta(DateTime t)
         {
             throw new NotImplementedException();

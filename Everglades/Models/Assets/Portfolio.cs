@@ -8,18 +8,18 @@ namespace Everglades.Models
 {
     public class Portfolio : IAsset
     {
-        public Dictionary<IAsset, int> assetList;
+        public Dictionary<IAsset, double> assetList;
 
         public Portfolio(List<IAsset> list)
         {
-            assetList = new Dictionary<IAsset, int>();
+            assetList = new Dictionary<IAsset, double>();
             foreach (IAsset ass in list)
             {
-                assetList[ass] = 0;
+                assetList[ass] = 0.0;
             }
         }
         
-        public void addAsset(IAsset asset, int number)
+        public void addAsset(IAsset asset, double number)
         {
             if (!assetList.ContainsKey(asset))
             {
@@ -48,7 +48,7 @@ namespace Everglades.Models
             string str = "[";
             double equ = 0.0, vanilla = 0.0, exo = 0.0;
 
-            foreach (KeyValuePair<IAsset, int> item in assetList)
+            foreach (KeyValuePair<IAsset, double> item in assetList)
             {
                 if (item.Value != 0)
                 {
@@ -95,7 +95,7 @@ namespace Everglades.Models
         public double getPrice()
         {
             double price = 0;
-            foreach (KeyValuePair<IAsset, int> entry in assetList)
+            foreach (KeyValuePair<IAsset, double> entry in assetList)
             {
                 price += entry.Value * entry.Key.getPrice();
             }
@@ -110,7 +110,7 @@ namespace Everglades.Models
             while (t <= t2)
             {
                 double prix = 0;
-                foreach (KeyValuePair<IAsset, int> pair in assetList)
+                foreach (KeyValuePair<IAsset, double> pair in assetList)
                 {
                     prix += pair.Value * pair.Key.getPrice(t);
                 }

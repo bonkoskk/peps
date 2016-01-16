@@ -60,6 +60,7 @@ namespace Wrapping {
 		};
 		double getPrice() { return price; };
 		double getIC() { return confidenceInterval; };
+		array<double>^ getDelta() { return delta; };
 
 	};
 }
