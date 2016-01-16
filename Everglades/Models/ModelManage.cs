@@ -87,7 +87,7 @@ namespace Everglades.Models
             return list;
         }
 
-        public void simulateHedgeEvolution()
+        public Data simulateHedgeEvolution()
         {
             RandomNormal rand = new RandomNormal();
             LinkedList<DateTime> list_dates = everg.getObservationDates();
@@ -100,18 +100,21 @@ namespace Everglades.Models
             }
             Everglades everg_simul = new Everglades(simulated_list);
 
-            double cash = 0;
             Portfolio hedge_simul = new Portfolio(simulated_list);
-            List<double> list_cash = new List<double>();
-            list_cash.Add(cash);
+            Data tracking_error = new Data();
+            tracking_error.add(new DataPoint(first, 0));
             foreach (DateTime date in list_dates)
             {
-                cash += hedge_simul.getPrice(date);
+                if (date == list_dates.First())
+                {
+                    continue;
+                }
+                double portvalue = everg_simul.getPrice(date);
+                double err = (hedge_simul.getPrice(date) - portvalue) / portvalue;
                 hedge_simul = everg_simul.getDeltaPortfolio(date);
-                cash -= hedge_simul.getPrice(date);
-                list_cash.Add(cash);
+                tracking_error.add(new DataPoint(date, err));
             }
-            double test = list_cash.Count;
+            return tracking_error;
         }
 
     }

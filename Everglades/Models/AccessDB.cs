@@ -29,7 +29,7 @@ namespace Everglades.Models
         // return price of an asset from name
         public static double Get_Asset_Price(String assetName, DateTime date)
         {
-            return Rand.Next();
+            return Rand.Next() / 1000000.0;
         }
 
         // return delta of an asset from name

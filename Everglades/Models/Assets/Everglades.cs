@@ -139,7 +139,7 @@ namespace Everglades.Models
             {
                 correl = new double[asset_nb,asset_nb];
                 for(int i = 0; i < asset_nb ; i++) {
-                    for (int j = 1; j < asset_nb; j++)
+                    for (int j = 0; j < asset_nb; j++)
                     {
                         if (i == j)
                         {
@@ -147,7 +147,7 @@ namespace Everglades.Models
                         }
                         else
                         {
-                            correl[i, j] = 0.1;
+                            correl[i, j] = 0.0;
                         }
                     }
                 }
