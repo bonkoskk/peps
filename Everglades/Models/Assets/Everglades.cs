@@ -99,7 +99,8 @@ namespace Everglades.Models
 
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
-            foreach (DateTime d in getObservationDates())
+            foreach (DateTime d in getObservationDates()) 
+            {
             
                 if (d > t)
                 {
@@ -107,6 +108,7 @@ namespace Everglades.Models
                 }
                 dates.AddLast(d);
             }
+            
             int nb_day_after = Convert.ToInt32((t - dates.Last.Value).TotalDays); // round to nearest integer (in case of x.9999 -> x and not x+1)
             dates.AddLast(t);
             // create and get data for all arguments
