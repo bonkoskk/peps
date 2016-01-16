@@ -24,6 +24,7 @@ namespace Everglades.Models
         {
             this.underlying_list = underlying_list;
             currency = new Currency("€");
+            last_update = DateTime.MinValue;
         }
 
         public string getName()
@@ -71,6 +72,11 @@ namespace Everglades.Models
 
         public double getPrice()
         {
+            double price = getPrice(new DateTime(2011, 12, 1));
+            double[] delta = this.last_requested_delta;
+
+
+
             // if last update done more than one minute ago, we recalculate
             if ((DateTime.Now - last_update).TotalMinutes > 1.0)
             {
@@ -147,7 +153,6 @@ namespace Everglades.Models
             }
             correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
-            double r2 = this.getCurrency().getInterestRate(new DateTime(2013, 03, 1), new DateTime(2017, 03, 1) - new DateTime(2013, 03, 1));
             int sampleNb = 5;
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
