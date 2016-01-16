@@ -171,12 +171,14 @@
     <Compile Include="Models\Assets\AmericanPut.cs" />
     <Compile Include="Models\Assets\AsianCall.cs" />
     <Compile Include="Models\Assets\AsianPut.cs" />
+    <Compile Include="Models\Assets\AssetSimulated.cs" />
     <Compile Include="Models\Assets\EuropeanCall.cs" />
     <Compile Include="Models\Assets\EuropeanPut.cs" />
     <Compile Include="Models\Assets\Everglades.cs" />
     <Compile Include="Models\Assets\IDerivative.cs" />
     <Compile Include="Models\Assets\Equity.cs" />
     <Compile Include="Models\Assets\AVanillaOption.cs" />
+    <Compile Include="Models\RandomNormal.cs" />
     <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\Data\Data.cs" />
     <Compile Include="Models\Data\DataPoint.cs" />

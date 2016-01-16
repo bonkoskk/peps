@@ -98,11 +98,6 @@ namespace Everglades.Models
 
         public double getPrice(DateTime t)
         {
-            if (DateTime.Now < t)
-            {
-                throw new ArgumentOutOfRangeException("Cannot price product in the future");
-            }
-
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             foreach (DateTime d in getObservationDates()) 
@@ -139,22 +134,40 @@ namespace Everglades.Models
                 ass_i++;
             }
             // correlation is a bit trickier
-            int date_nb_correl = 100;
             int asset_nb = underlying_list.Count;
-            double[][] prices = new double[asset_nb][];
-            int j = 0;
-            foreach (IAsset ass in underlying_list)
+            if (1 == 1)
             {
-                prices[j] = new double[date_nb_correl];
-                DateTime titer = t - TimeSpan.FromDays(date_nb_correl);
-                for (int i = 0; i < date_nb_correl; i++)
-                {
-                    prices[j][i] = ass.getPrice(titer);
-                    titer += TimeSpan.FromDays(1);
+                correl = new double[asset_nb,asset_nb];
+                for(int i = 0; i < asset_nb ; i++) {
+                    for (int j = 1; j < asset_nb; j++)
+                    {
+                        if (i == j)
+                        {
+                            correl[i, j] = 1;
+                        }
+                        else
+                        {
+                            correl[i, j] = 0.1;
+                        }
+                    }
                 }
-                j++;
+            } else {
+                int date_nb_correl = 100;
+                double[][] prices = new double[asset_nb][];
+                int j = 0;
+                foreach (IAsset ass in underlying_list)
+                {
+                    prices[j] = new double[date_nb_correl];
+                    DateTime titer = t - TimeSpan.FromDays(date_nb_correl);
+                    for (int i = 0; i < date_nb_correl; i++)
+                    {
+                        prices[j][i] = ass.getPrice(titer);
+                        titer += TimeSpan.FromDays(1);
+                    }
+                    j++;
+                }
+                correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
             }
-            correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             int sampleNb = 5;
             // price
