@@ -108,7 +108,10 @@ namespace Everglades.Models
                 dates.AddLast(d);
             }
             int nb_day_after = Convert.ToInt32((t - dates.Last.Value).TotalDays); // round to nearest integer (in case of x.9999 -> x and not x+1)
-            dates.AddLast(t);
+            if (nb_day_after != 0)
+            {
+                dates.AddLast(t);
+            }
             // create and get data for all arguments
             double[,] historic = new double[underlying_list.Count, dates.Count];
             double[] expected_returns = new double[underlying_list.Count];
@@ -135,7 +138,7 @@ namespace Everglades.Models
             foreach (IAsset ass in underlying_list)
             {
                 prices[j] = new double[date_nb_correl];
-                DateTime titer = t - TimeSpan.FromDays(100);
+                DateTime titer = t - TimeSpan.FromDays(date_nb_correl);
                 for (int i = 0; i < date_nb_correl; i++)
                 {
                     prices[j][i] = ass.getPrice(titer);
@@ -155,7 +158,7 @@ namespace Everglades.Models
         }
 
         //TODO
-        public Portfolio getDelta()
+        public Portfolio getDeltaPortfolio()
         {
             // if last update done more than one minute ago, we recalculate
             if ((DateTime.Now - last_update).TotalMinutes > 1.0)
@@ -167,6 +170,20 @@ namespace Everglades.Models
             foreach (IAsset ass in underlying_list)
             {
                 port.addAsset(ass, current_delta[i]);
+                i++;
+            }
+            return port;
+        }
+
+        public Portfolio getDeltaPortfolio(DateTime t)
+        {
+            getPrice(t);
+            double[] delta = last_requested_delta;
+            Portfolio port = new Portfolio(underlying_list);
+            int i = 0;
+            foreach (IAsset ass in underlying_list)
+            {
+                port.addAsset(ass, delta[i]);
                 i++;
             }
             return port;
