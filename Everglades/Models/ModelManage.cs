@@ -64,7 +64,6 @@ namespace Everglades.Models
 
         public List<Advice> getHedgingAdvice()
         {
-            // TODO
             List<Advice> list = new List<Advice>();
             Portfolio deltas = everg.getDelta();
             int i = 0;
@@ -83,6 +82,11 @@ namespace Everglades.Models
 
             }
             return list;
+        }
+
+        public void simulateHedgeEvolution()
+        {
+            
         }
 
     }
