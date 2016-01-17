@@ -37,9 +37,6 @@ namespace Everglades.Models
             derivatives.Add(new AmericanPut());
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
-
-
-            simulateHedgeEvolution();
         }
 
         public void buy(IAsset asset, int number)
@@ -87,7 +84,17 @@ namespace Everglades.Models
             return list;
         }
 
-        public Data simulateHedgeEvolution()
+        /**
+         * simulate an everglades product and it's underlying portfolio
+         * evolution with the adviced hedging portfolio, and return a list
+         * of Data :
+         * * Data of product price evolution
+         * * Data of hedging portfolio price evolution
+         * * Data of tracking error evolution
+         * * Data of cash spent for hedging portfolio evolution
+         * 
+         */
+        public List<Data> simulateHedgeEvolution()
         {
             RandomNormal rand = new RandomNormal();
             LinkedList<DateTime> list_dates = everg.getObservationDates();
@@ -102,19 +109,36 @@ namespace Everglades.Models
 
             Portfolio hedge_simul = new Portfolio(simulated_list);
             Data tracking_error = new Data();
+            Data everglades_price = new Data();
+            Data hedge_price = new Data();
+            Data cash_price = new Data();
             tracking_error.add(new DataPoint(first, 0));
+            double cash_change = 0;
             foreach (DateTime date in list_dates)
             {
                 if (date == list_dates.First())
                 {
                     continue;
                 }
-                double portvalue = everg_simul.getPrice(date);
-                double err = (hedge_simul.getPrice(date) - portvalue) / portvalue;
-                hedge_simul = everg_simul.getDeltaPortfolio(date);
+                double evergvalue = everg_simul.getPrice(date);
+                double portvalue = hedge_simul.getPrice(date);
+                double err = (evergvalue - portvalue) / evergvalue;
+                everglades_price.add(new DataPoint(date, evergvalue));
+                hedge_price.add(new DataPoint(date, portvalue));
                 tracking_error.add(new DataPoint(date, err));
+                hedge_simul = everg_simul.getDeltaPortfolio(date);
+                cash_change += portvalue - hedge_simul.getPrice(date);
+                if (!double.IsInfinity(cash_change))
+                {
+                    cash_price.add(new DataPoint(date, cash_change));
+                }
             }
-            return tracking_error;
+            List<Data> list = new List<Data>();
+            list.Add(everglades_price);
+            list.Add(hedge_price);
+            list.Add(tracking_error);
+            list.Add(cash_price);
+            return list;
         }
 
     }

@@ -47,8 +47,39 @@ function asset_sell(name, number) {
     });
 }
 
-function draw_asset_graph(div, data, label) {
+// function to draw an asset's graph
+function draw_graph(div, data, label) {
     var data_graph = [{ label: label, data: data }];
+    var parameters = {
+        series: {
+            lines: { show: true },
+            points: { show: true }
+        },
+        legend: {
+            show: true,
+            backgroundOpacity: 0,
+        },
+        grid: {
+            hoverable: true
+        },
+        xaxis: {
+            mode: "time"
+        }
+    };
+    try {
+        $(div).html("");
+        $.plot(div, data_graph, parameters);
+    } catch (e) {
+        alert(e);
+    }
+}
+
+// function to draw multi asset graph
+function draw_multi_graph(div, data, label, nb_asset) {
+    var data_graph = [];
+    for (var i = 0; i < nb_asset; i++) {
+        data_graph.push({ label: label[i], data: data[i] });
+    }
     var parameters = {
         series: {
             lines: { show: true },
@@ -168,8 +199,9 @@ $(function () {
             data: data,
             datatype: "html",
             success: function (data) {
+                console.log(data);
                 data = JSON.parse(data);
-                draw_asset_graph("#asset-graph", data, assetname);
+                draw_graph("#asset-graph", data, assetname);
             }
         })
         .fail(function (jqXHR, textStatus) {
@@ -196,6 +228,7 @@ $(function () {
         }
     });
 
+    // function to open a form to choose parameters of a derivative to buy or price
     $(".buyderivativebutton").click(function () {
         $("#tooltip").hide();
         $(".derivative-window").show();
@@ -216,6 +249,7 @@ $(function () {
         });
     });
 
+    // function to update price of derivative when an information on form change
     $("#derivative-form").change(function () {
         $("#price_derivative").val("Calculating...");
         var data = "operation=getPrice&" + $("#derivative-form").serialize();
@@ -233,6 +267,7 @@ $(function () {
         });
     });
 
+    // function to buy derivative
     $("#derivative-form").submit(function () {
         event.preventDefault();
         var data = "operation=buyDerivative&" + $("#derivative-form").serialize();
@@ -251,7 +286,29 @@ $(function () {
         });
     });
 
+    // function to open a window for hedging advices
     $(".advice-button").click(function () {
         $(".advice-window").show();
+    });
+
+    $("#simulate-button").click(function () {
+        $(".simulation-window").show();
+        var data = "operation=simulation";
+        $.ajax({
+            type: "POST",
+            url: "/operations",
+            data: data,
+            datatype: "html",
+            success: function (data) {
+                var data = JSON.parse(data);
+                draw_multi_graph("#simulation-graph-prices", [data["simulation-graph-prices-everg"], data["simulation-graph-prices-hedge"]],
+                    ["Everglades", "Hedging portfolio"], 2);
+                draw_graph("#simulation-graph-trackingerror", data["simulation-graph-trackingerror"], "tracking error");
+                draw_graph("#simulation-graph-cash", data["simulation-graph-cash"], "cash");
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            alert("Connection error");
+        });
     });
 });
