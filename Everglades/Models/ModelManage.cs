@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using TestAccessBD;
 
 namespace Everglades.Models
 {
@@ -20,6 +21,9 @@ namespace Everglades.Models
 
         public ModelManage()
         {
+            System.Data.Entity.Database.SetInitializer<smweyoke>(new YahooData());
+            smweyoke db = new smweyoke();
+
             instance = this;
             cash = 10000;
             Assets = new List<IAsset>();
