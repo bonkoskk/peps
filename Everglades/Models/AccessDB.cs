@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Everglades.Models.Assets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,7 +9,7 @@ namespace Everglades.Models
 {
     public class AccessDB
     {
-        private static Random Rand = new Random();
+        private static RandomNormal rand = new RandomNormal();
 
         // return list of assets names
         public static List<string> Get_Asset_List()
