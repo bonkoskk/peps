@@ -66,6 +66,8 @@ namespace Everglades.Models
 
         public double getVolatility(DateTime t)
         {
+
+            /*
             // number of observations dates (1 day separated)
             int date_nb = 100;
             // get prices for these days
@@ -77,7 +79,9 @@ namespace Everglades.Models
                 titer -= TimeSpan.FromDays(1);
             }
             // compute and return historic volatility
-            return HistoricVolatility.compute(date_nb, prices);
+            return HistoricVolatility.compute(date_nb, prices);*/
+
+            return 0.4;
         }
 
         public double getCovariance(IAsset a, DateTime t)
