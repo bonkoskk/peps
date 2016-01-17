@@ -21,8 +21,8 @@ namespace Everglades.Models
 
         public ModelManage()
         {
-            System.Data.Entity.Database.SetInitializer<smweyoke>(new YahooData());
             smweyoke db = new smweyoke();
+            DBInitialisation.DBInit(db);
 
             instance = this;
             cash = 10000;
@@ -68,9 +68,8 @@ namespace Everglades.Models
 
         public List<Advice> getHedgingAdvice()
         {
-            // TODO
             List<Advice> list = new List<Advice>();
-            Portfolio deltas = everg.getDelta();
+            Portfolio deltas = everg.getDeltaPortfolio();
             int i = 0;
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
@@ -86,6 +85,63 @@ namespace Everglades.Models
                 }
 
             }
+            return list;
+        }
+
+        /**
+         * simulate an everglades product and it's underlying portfolio
+         * evolution with the adviced hedging portfolio, and return a list
+         * of Data :
+         * * Data of product price evolution
+         * * Data of hedging portfolio price evolution
+         * * Data of tracking error evolution
+         * * Data of cash spent for hedging portfolio evolution
+         * 
+         */
+        public List<Data> simulateHedgeEvolution()
+        {
+            RandomNormal rand = new RandomNormal();
+            LinkedList<DateTime> list_dates = everg.getObservationDates();
+            DateTime first = list_dates.First();
+
+            List<IAsset> simulated_list = new List<IAsset>();
+            foreach (IAsset ass in Assets)
+            {
+                simulated_list.Add(new AssetSimulated(ass, list_dates, rand));
+            }
+            Everglades everg_simul = new Everglades(simulated_list);
+
+            Portfolio hedge_simul = new Portfolio(simulated_list);
+            Data tracking_error = new Data();
+            Data everglades_price = new Data();
+            Data hedge_price = new Data();
+            Data cash_price = new Data();
+            tracking_error.add(new DataPoint(first, 0));
+            double cash_change = 0;
+            foreach (DateTime date in list_dates)
+            {
+                if (date == list_dates.First())
+                {
+                    continue;
+                }
+                double evergvalue = everg_simul.getPrice(date);
+                double portvalue = hedge_simul.getPrice(date);
+                double err = (evergvalue - portvalue) / evergvalue;
+                everglades_price.add(new DataPoint(date, evergvalue));
+                hedge_price.add(new DataPoint(date, portvalue));
+                tracking_error.add(new DataPoint(date, err));
+                hedge_simul = everg_simul.getDeltaPortfolio(date);
+                cash_change += portvalue - hedge_simul.getPrice(date);
+                if (!double.IsInfinity(cash_change))
+                {
+                    cash_price.add(new DataPoint(date, cash_change));
+                }
+            }
+            List<Data> list = new List<Data>();
+            list.Add(everglades_price);
+            list.Add(hedge_price);
+            list.Add(tracking_error);
+            list.Add(cash_price);
             return list;
         }
 

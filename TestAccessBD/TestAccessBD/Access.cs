@@ -10,7 +10,7 @@ namespace TestAccessBD
 {
     public class Access
     {
-        public void AccessData()
+        /*public void AccessData()
         {
             using (var context = new smweyoke())
             {
@@ -34,8 +34,7 @@ namespace TestAccessBD
                     Console.WriteLine(p.close);
                 }
             }
-        }
-
+        }*/
         public static List<string> Get_List_Assets()
         {
             List<string> list_assets = new List<string>(); 
@@ -70,6 +69,7 @@ namespace TestAccessBD
             }
             return id;
         }
+
         public static Dictionary<string, double> Get_Price(int id, DateTime date)
         {
             DateTime datelocal = date;
@@ -90,5 +90,12 @@ namespace TestAccessBD
             }
             return P;
         }
+
+        public static DateTime GetLastConnection(smweyoke context)
+        {
+                var d = context.DbConnections.FirstOrDefault(p => p.date == context.DbConnections.Max(x => x.date));
+                return d.date;
+        }
+        
     }
 }

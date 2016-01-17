@@ -94,12 +94,7 @@ namespace Everglades.Models
 
         public double getPrice()
         {
-            double price = 0;
-            foreach (KeyValuePair<IAsset, double> entry in assetList)
-            {
-                price += entry.Value * entry.Key.getPrice();
-            }
-            return price;
+            return getPrice(DateTime.Now);
         }
 
         //TODO
@@ -120,10 +115,14 @@ namespace Everglades.Models
             return data;
         }
 
-        //TODO
         public double getPrice(DateTime t)
         {
-            throw new NotImplementedException();
+            double price = 0;
+            foreach (KeyValuePair<IAsset, double> entry in assetList)
+            {
+                price += entry.Value * entry.Key.getPrice(t);
+            }
+            return price;
         }
 
         //TODO

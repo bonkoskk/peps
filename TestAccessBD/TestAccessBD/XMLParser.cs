@@ -74,6 +74,12 @@ namespace TestAccessBD.XMLParser
                     return "UBS GROUP N";
                 case "VOD.L":
                     return "Vodafone Group Plc";
+                case "GS":
+                    return "The Goldman Sachs Group, Inc.";
+                case "RNO.PA":
+                    return "Renault SA";
+                case "PERH.EX":
+                    return "PERNOD RICARD";
                 default:
                     return "";
             }

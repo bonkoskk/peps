@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Xml;
 
 namespace Everglades.Models
 {
@@ -28,7 +29,7 @@ namespace Everglades.Models
         public override string ToString()
         {
             // date is converted to timestamp (seconds starting 1/1/1970)
-            return "[" + (long)(date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds * 1000 + ", " + value + "]";
+            return "[" + (long)(date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds * 1000 + ", " + XmlConvert.ToString(value) + "]";
         }
 
     }
