@@ -98,15 +98,24 @@ namespace Everglades.Models
         {
             RandomNormal rand = new RandomNormal();
             LinkedList<DateTime> list_dates = everg.getObservationDates();
+            /*
+            LinkedList<DateTime> list_dates_obs = everg.getObservationDates();
+            LinkedList<DateTime> list_dates = new LinkedList<DateTime>();
+            list_dates.AddLast(list_dates_obs.First());
+            DateTime dateiter = list_dates_obs.First().AddDays(1);
+            while (dateiter < list_dates_obs.Last())
+            {
+                list_dates.AddLast(dateiter);
+                dateiter = dateiter.AddDays(1);
+            }
+            */
             DateTime first = list_dates.First();
-
             List<IAsset> simulated_list = new List<IAsset>();
             foreach (IAsset ass in Assets)
             {
                 simulated_list.Add(new AssetSimulated(ass, list_dates, rand));
             }
             Everglades everg_simul = new Everglades(simulated_list);
-
             Portfolio hedge_simul = new Portfolio(simulated_list);
             Data tracking_error = new Data();
             Data everglades_price = new Data();
@@ -123,12 +132,21 @@ namespace Everglades.Models
                 double evergvalue = everg_simul.getPrice(date);
                 double portvalue = hedge_simul.getPrice(date);
                 double err = (evergvalue - portvalue) / evergvalue;
-                everglades_price.add(new DataPoint(date, evergvalue));
-                hedge_price.add(new DataPoint(date, portvalue));
-                tracking_error.add(new DataPoint(date, err));
+                if (!double.IsInfinity(evergvalue) && !double.IsNaN(evergvalue))
+                {
+                    everglades_price.add(new DataPoint(date, evergvalue));
+                }
+                if (!double.IsInfinity(portvalue) && !double.IsNaN(portvalue))
+                {
+                    hedge_price.add(new DataPoint(date, portvalue));
+                }
+                if (!double.IsInfinity(err) && !double.IsNaN(err))
+                {
+                    tracking_error.add(new DataPoint(date, err));
+                }
                 hedge_simul = everg_simul.getDeltaPortfolio(date);
                 cash_change += portvalue - hedge_simul.getPrice(date);
-                if (!double.IsInfinity(cash_change))
+                if (!double.IsInfinity(cash_change) && !double.IsNaN(cash_change))
                 {
                     cash_price.add(new DataPoint(date, cash_change));
                 }

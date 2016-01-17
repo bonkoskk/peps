@@ -228,6 +228,20 @@ $(function () {
         }
     });
 
+    // function when mouse is over point of a graph (to display values in tooltip)
+    $(".mini-graph").bind("plothover", function (event, pos, item) {
+        if (item) {
+            var x = item.datapoint[0].toFixed(2),
+                y = item.datapoint[1].toFixed(2);
+
+            $("#tooltip").html(item.series.label + " value at " + formatDate(x) + " : " + y)
+                .css({ top: item.pageY + 5, left: item.pageX + 5 })
+                .fadeIn(200);
+        } else {
+            $("#tooltip").hide();
+        }
+    });
+
     // function to open a form to choose parameters of a derivative to buy or price
     $(".buyderivativebutton").click(function () {
         $("#tooltip").hide();
@@ -293,6 +307,7 @@ $(function () {
 
     $("#simulate-button").click(function () {
         $(".simulation-window").show();
+        $("#simulation-graph-prices").html("loading...");
         var data = "operation=simulation";
         $.ajax({
             type: "POST",
@@ -300,6 +315,7 @@ $(function () {
             data: data,
             datatype: "html",
             success: function (data) {
+                console.log(data);
                 var data = JSON.parse(data);
                 draw_multi_graph("#simulation-graph-prices", [data["simulation-graph-prices-everg"], data["simulation-graph-prices-hedge"]],
                     ["Everglades", "Hedging portfolio"], 2);

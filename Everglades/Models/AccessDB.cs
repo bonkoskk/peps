@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Everglades.Models.Assets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,7 +8,7 @@ namespace Everglades.Models
 {
     public class AccessDB
     {
-        private static Random Rand = new Random();
+        private static RandomNormal rand = new RandomNormal();
 
         // return list of assets names
         public static List<string> Get_Asset_List()
@@ -29,7 +30,7 @@ namespace Everglades.Models
         // return price of an asset from name
         public static double Get_Asset_Price(String assetName, DateTime date)
         {
-            return Rand.Next() / 1000000.0;
+            return 100 + rand.NextNormal()*20;
         }
 
         // return delta of an asset from name
