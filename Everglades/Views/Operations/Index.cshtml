@@ -1,0 +1,205 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "Operations";
+    string input;
+    using (var reader = new StreamReader(Request.InputStream))
+    {
+        input = reader.ReadToEnd();
+    }
+    string msg = "";
+}
+
+@functions {
+    public Everglades.Models.IDerivative parseDerivative(HttpRequestBase Request)
+    {
+        string name = Request["derivative"];
+        Everglades.Models.IDerivative derivative = ((List<Everglades.Models.IDerivative>)Model.derivatives).Find(x => String.Compare(x.getType(), name) == 0);
+        List <Everglades.Models.Param> listparam = derivative.getParam();
+        foreach (Everglades.Models.Param param in listparam)
+        {
+            switch (param.getType())
+            {
+                case Everglades.Models.ParamType._int:
+                    param.setInt(Int32.Parse(Request[param.getName()]));
+                    break;
+                case Everglades.Models.ParamType._double:
+                    param.setDouble(Double.Parse(Request[param.getName()]));
+                    break;
+                case Everglades.Models.ParamType._date:
+                    param.setDate(DateTime.Parse(Request[param.getName()]));
+                    break;
+                case Everglades.Models.ParamType._equity:
+                    param.setString(Request[param.getName()]);
+                    break;
+                case Everglades.Models.ParamType._equitylist:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+        derivative.setParam(listparam);
+        return derivative;
+    }
+}
+
+@{
+    if (Request.Form.Count > 0)
+    {
+        // operation buy asset
+        if (String.Compare(Request["operation"], "buy") == 0)
+        {
+            string name = Request["asset"];
+            Everglades.Models.IAsset asset = ((List<Everglades.Models.IAsset>)Model.Assets).Find(x => String.Compare(x.getName(), name) == 0);
+            if (asset == null)
+            {
+                msg = "cannot find asset";
+            }
+            else
+            {
+                try {
+                    Model.buy(asset, Int32.Parse(Request["number"]));
+                    msg = "bought " + Request["number"] + " of " + Request["asset"];
+                }
+                catch(ArgumentOutOfRangeException e)
+                {
+                    msg = e.ParamName;
+                }
+            }
+        }
+        // operation sell asset
+        else if (String.Compare(Request["operation"], "sell") == 0)
+        {
+            string name = Request["asset"];
+            Everglades.Models.IAsset asset = ((List<Everglades.Models.IAsset>)Model.Assets).Find(x => String.Compare(x.getName(), name) == 0);
+            if (asset == null)
+            {
+                msg = "cannot find asset";
+            }
+            else
+            {
+                Model.sell(asset, Int32.Parse(Request["number"]));
+                msg = "sold " + Request["number"] + " of " + Request["asset"];
+            }
+        }
+        // operation get data (prices) of an asset
+        else if (String.Compare(Request["operation"], "getData") == 0)
+        {
+            string name = Request["asset"];
+            Everglades.Models.IAsset asset = ((List<Everglades.Models.IAsset>)Model.Assets).Find(x => String.Compare(x.getName(), name) == 0);
+            if (asset == null)
+            {
+                msg = "cannot find asset";
+            }
+            else
+            {
+                DateTime end = DateTime.Now;
+                DateTime start = end - TimeSpan.FromDays(30);
+                TimeSpan step = TimeSpan.FromDays(1);
+                msg = asset.getPrice(start, end, step).ToString();
+            }
+        }
+        // operation get parameters needed for a derivative
+        else if (String.Compare(Request["operation"], "getParam") == 0)
+        {
+            string name = Request["derivative"];
+            Everglades.Models.IDerivative derivative = ((List<Everglades.Models.IDerivative>)Model.derivatives).Find((x => String.Compare(x.getType(), name) == 0));
+            string str = derivative.getType() + "<br/><br/>\n"
+                + "<input type=\"hidden\" name=\"derivative\" value=\"" + derivative.getType() + "\">";
+            foreach(Everglades.Models.Param p in derivative.getParam()) {
+                str = str + p.getName() + " : ";
+                switch(p.getType()) {
+                    case Everglades.Models.ParamType._double:
+                        str = str + "<input name=\"" + p.getName() + "\" type=\"number\"><br/><br/>\n";
+                        break;
+                    case Everglades.Models.ParamType._int:
+                        str = str + "<input name=\"" + p.getName() + "\" type=\"number\"><br/><br/>\n";
+                        break;
+                    case Everglades.Models.ParamType._equity:
+                        str = str + "<select name=\"" + p.getName() + "\" >";
+                        foreach (Everglades.Models.IAsset ass in Model.Assets)
+                        {
+                            str = str + "<option value=\"" + ass.getName() + "\">" + ass.getName() + "</option>";
+                        }
+                        str = str + "</select><br/><br/>\n";
+                        break;
+                    case Everglades.Models.ParamType._equitylist:
+                        str = str + "<select name=\"" + p.getName() + "\" multiple>";
+                        foreach (Everglades.Models.IAsset ass in Model.Assets)
+                        {
+                            str = str + "<option value=\"" + ass.getName() + "\">" + ass.getName() + "</option>";
+                        }
+                        str = str + "</select><br/><br/>\n";
+                        break;
+                    case Everglades.Models.ParamType._date:
+                        str = str + "<input name=\"" + p.getName() + "\" type=\"date\"><br/><br/>\n";
+                        break;
+                    default:
+                        break;
+                }
+            }
+            str = str + "Number of derivatives to buy : <input type=\"number\" name=\"number\"></input><br/><br/>";
+            str = str + "<input type=\"submit\" value=\"buy\"></input><br/><br/>";
+            str = str + "Price : <input id=\"price_derivative\" type=\"text\" readonly>";
+            @Html.Raw(str);
+        }
+        // operation to get price of a derivative
+        else if (String.Compare(Request["operation"], "getPrice") == 0)
+        {
+            try { 
+                Everglades.Models.IDerivative derivative = @parseDerivative(Request);
+                msg = (derivative.getPrice() * Double.Parse(Request["number"])).ToString() + " " + derivative.getCurrency().getSymbol();
+            }
+            catch (Exception e)
+            {
+                msg = e.Message.ToString();
+            }
+        }
+        // operation to buy a derivative
+        else if (String.Compare(Request["operation"], "buyDerivative") == 0)
+        {
+            try
+            {
+                Everglades.Models.IDerivative derivative = @parseDerivative(Request);
+                Model.buy(derivative, Int32.Parse(Request["number"]));
+                msg = "Derivative bought";
+            }
+            catch (Exception e)
+            {
+                msg = "error";
+            }
+        }
+        // simulate a product evolution and edging
+        else if (String.Compare(Request["operation"], "simulation") == 0)
+        {
+            int nb = 0;
+            foreach(Everglades.Models.Data dat in Model.simulateHedgeEvolution()) {
+                switch (nb)
+                {
+                    case 0:
+                        msg += "{\"simulation-graph-prices-everg\": ";
+                        break;
+                    case 1:
+                        msg += ", \"simulation-graph-prices-hedge\": ";
+                        break;
+                    case 2:
+                        msg += ", \"simulation-graph-trackingerror\": ";
+                        break;
+                    case 3:
+                        msg += ", \"simulation-graph-cash\": ";
+                        break;
+                }
+                msg += dat.ToString();
+                nb++;
+            }
+            msg += "}";
+        }
+        else
+        {
+            msg = "unknown operation";
+        }
+
+    }
+}
+
+@Html.Raw(msg)

@@ -1,0 +1,410 @@
+/*!
+ * Start Bootstrap - Stylish Portfolio Bootstrap Theme (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+/* Global Styles */
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.text-vertical-center {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.text-vertical-center h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 4.5em;
+    font-weight: 700;
+}
+
+.table > thead > tr > th {
+    text-align: center;
+}
+
+#big_buttons {
+    z-index: 100;
+    position:absolute;
+    display:block;
+    right:5%;
+    top:5%;
+}
+
+#update-button {
+    text-align: center;
+    font-size: 5em;
+}
+
+#simulate-button {
+    text-align: center;
+    font-size: 5em;
+}
+
+#graph {
+    display: block;
+	width: 100%;
+    height: 250px;
+}
+
+.mini-graph {
+    display: block;
+	width: 100%;
+    height: 150px;
+}
+
+#donut {
+    display: block;
+	width: 250px;
+    height: 250px;
+}
+
+#contact {
+    position: relative;
+    display: block;
+    left: 35%;
+    width: 30%;
+    right: 35%;
+    height: 30%;
+}
+
+.profile-img {
+    width: 10vw;
+    border: 100px;
+    border-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+}
+
+.profile-img:hover {
+    -ms-transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
+}
+
+.asset-clickable {
+    cursor: pointer;
+}
+
+.asset-window {
+    position: absolute;
+    display: none;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 50%;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+#asset-graph {
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 5%;
+	width: 90%;
+    height: 90%;
+    min-width: 20px;
+    min-height: 20px;
+    color: white;
+}
+
+.derivative-window {
+    position: absolute;
+    display: none;
+    left: 30%;
+    top: 25%;
+    padding:10px;
+    width: 40%;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.advice-window {
+    position: absolute;
+    display: none;
+    left: 30%;
+    top: 25%;
+    padding:10px;
+    width: 40%;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+.advice-button {
+    margin:10px;
+}
+
+.simulation-window {
+    position: absolute;
+    display: none;
+    left: 25%;
+    top: 20%;
+    width: 50%;
+    height: 50%;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.close-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    background-color: red;
+}
+
+#tooltip {
+    position: absolute;
+    display: none;
+    border: 1px solid rgb(255, 221, 221);
+    padding: 2px;
+    background-color: rgb(255, 238, 238);
+    opacity: 0.8;
+}
+
+#operations_history {
+    display: block;
+    height: 20vh;
+    overflow-y: auto;
+}
+
+#equities {
+    display: block;
+    height: 30vh;
+    overflow-y: auto;
+}
+
+#derivatives {
+    display: block;
+    height: 30vh;
+    overflow-y: auto;
+}
+
+#hedging_portfolio {
+    display: block;
+    height: 30vh;
+    overflow-y: auto;
+}
+
+/* Custom Button Styles */
+
+.btn-dark {
+    border-radius: 0;
+    color: #fff;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.btn-dark:hover,
+.btn-dark:focus,
+.btn-dark:active {
+    color: #fff;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.btn-light {
+    border-radius: 0;
+    color: #333;
+    background-color: rgb(255,255,255);
+}
+
+.btn-light:hover,
+.btn-light:focus,
+.btn-light:active {
+    color: #333;
+    background-color: rgba(255,255,255,0.8);
+}
+
+/* Custom Horizontal Rule */
+
+hr.small {
+    max-width: 100px;
+}
+
+/* Side Menu */
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    right: 0;
+    width: 250px;
+    height: 100%;
+    margin-right: -250px;
+    overflow-y: auto;
+    background: #222;
+    -webkit-transition: all 0.4s ease 0s;
+    -moz-transition: all 0.4s ease 0s;
+    -ms-transition: all 0.4s ease 0s;
+    -o-transition: all 0.4s ease 0s;
+    transition: all 0.4s ease 0s;
+}
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 20px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    text-decoration: none;
+    color: #999;
+}
+
+.sidebar-nav li a:hover {
+    text-decoration: none;
+    color: #fff;
+    background: rgba(255,255,255,0.2);
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 55px;
+    font-size: 18px;
+    line-height: 55px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    color: #fff;
+    background: none;
+}
+
+#menu-toggle {
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+#sidebar-wrapper.active {
+    right: 250px;
+    width: 250px;
+    -webkit-transition: all 0.4s ease 0s;
+    -moz-transition: all 0.4s ease 0s;
+    -ms-transition: all 0.4s ease 0s;
+    -o-transition: all 0.4s ease 0s;
+    transition: all 0.4s ease 0s;
+}
+
+.toggle {
+    margin: 5px 5px 0 0;
+}
+
+/* Header */
+
+.header {
+    display: table;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: url(../img/bg.jpg) no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+/* About */
+
+.about {
+    padding: 50px 0;
+}
+
+/* Services */
+
+.services {
+    padding: 50px 0;
+}
+
+.service-item {
+    margin-bottom: 30px;
+}
+
+/* Callout */
+
+.callout {
+    display: table;
+    width: 100%;
+    height: 400px;
+    color: #fff;
+    background: url(../img/callout.jpg) no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+/* Portfolio */
+
+.portfolio {
+    padding: 50px 0;
+}
+
+.portfolio-item {
+    margin-bottom: 30px;
+}
+
+.img-portfolio {
+    margin: 0 auto;
+}
+
+.img-portfolio:hover {
+    opacity: 0.8;
+}
+
+/* Call to Action */
+
+.call-to-action {
+    padding: 50px 0;
+}
+
+.call-to-action .btn {
+    margin: 10px;
+}
+
+/* Map */
+
+.map {
+    height: 500px;
+}
+
+@media(max-width:768px) {
+    .map {
+        height: 75%;
+    }
+}
+
+/* Footer */
+
+footer {
+    padding: 100px 0;
+}
