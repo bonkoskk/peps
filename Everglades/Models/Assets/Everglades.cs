@@ -98,11 +98,6 @@ namespace Everglades.Models
 
         public double getPrice(DateTime t)
         {
-            if (DateTime.Now < t)
-            {
-                throw new ArgumentOutOfRangeException("Cannot price product in the future");
-            }
-
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             foreach (DateTime d in getObservationDates()) 
@@ -116,7 +111,10 @@ namespace Everglades.Models
             }
             
             int nb_day_after = Convert.ToInt32((t - dates.Last.Value).TotalDays); // round to nearest integer (in case of x.9999 -> x and not x+1)
-            dates.AddLast(t);
+            if (nb_day_after != 0)
+            {
+                dates.AddLast(t);
+            }
             // create and get data for all arguments
             double[,] historic = new double[underlying_list.Count, dates.Count];
             double[] expected_returns = new double[underlying_list.Count];
@@ -136,22 +134,40 @@ namespace Everglades.Models
                 ass_i++;
             }
             // correlation is a bit trickier
-            int date_nb_correl = 100;
             int asset_nb = underlying_list.Count;
-            double[][] prices = new double[asset_nb][];
-            int j = 0;
-            foreach (IAsset ass in underlying_list)
+            if (1 == 1)
             {
-                prices[j] = new double[date_nb_correl];
-                DateTime titer = t - TimeSpan.FromDays(100);
-                for (int i = 0; i < date_nb_correl; i++)
-                {
-                    prices[j][i] = ass.getPrice(titer);
-                    titer += TimeSpan.FromDays(1);
+                correl = new double[asset_nb,asset_nb];
+                for(int i = 0; i < asset_nb ; i++) {
+                    for (int j = 0; j < asset_nb; j++)
+                    {
+                        if (i == j)
+                        {
+                            correl[i, j] = 1;
+                        }
+                        else
+                        {
+                            correl[i, j] = 0.0;
+                        }
+                    }
                 }
-                j++;
+            } else {
+                int date_nb_correl = 100;
+                double[][] prices = new double[asset_nb][];
+                int j = 0;
+                foreach (IAsset ass in underlying_list)
+                {
+                    prices[j] = new double[date_nb_correl];
+                    DateTime titer = t - TimeSpan.FromDays(date_nb_correl);
+                    for (int i = 0; i < date_nb_correl; i++)
+                    {
+                        prices[j][i] = ass.getPrice(titer);
+                        titer += TimeSpan.FromDays(1);
+                    }
+                    j++;
+                }
+                correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
             }
-            correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             int sampleNb = 5;
             // price
@@ -162,7 +178,7 @@ namespace Everglades.Models
         }
 
         //TODO
-        public Portfolio getDelta()
+        public Portfolio getDeltaPortfolio()
         {
             // if last update done more than one minute ago, we recalculate
             if ((DateTime.Now - last_update).TotalMinutes > 1.0)
@@ -174,6 +190,20 @@ namespace Everglades.Models
             foreach (IAsset ass in underlying_list)
             {
                 port.addAsset(ass, current_delta[i]);
+                i++;
+            }
+            return port;
+        }
+
+        public Portfolio getDeltaPortfolio(DateTime t)
+        {
+            getPrice(t);
+            double[] delta = last_requested_delta;
+            Portfolio port = new Portfolio(underlying_list);
+            int i = 0;
+            foreach (IAsset ass in underlying_list)
+            {
+                port.addAsset(ass, delta[i]);
                 i++;
             }
             return port;

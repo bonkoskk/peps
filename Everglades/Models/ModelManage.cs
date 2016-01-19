@@ -37,6 +37,9 @@ namespace Everglades.Models
             derivatives.Add(new AmericanPut());
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
+
+
+            simulateHedgeEvolution();
         }
 
         public void buy(IAsset asset, int number)
@@ -65,7 +68,7 @@ namespace Everglades.Models
         public List<Advice> getHedgingAdvice()
         {
             List<Advice> list = new List<Advice>();
-            Portfolio deltas = everg.getDelta();
+            Portfolio deltas = everg.getDeltaPortfolio();
             int i = 0;
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
@@ -84,9 +87,34 @@ namespace Everglades.Models
             return list;
         }
 
-        public void simulateHedgeEvolution()
+        public Data simulateHedgeEvolution()
         {
-            
+            RandomNormal rand = new RandomNormal();
+            LinkedList<DateTime> list_dates = everg.getObservationDates();
+            DateTime first = list_dates.First();
+
+            List<IAsset> simulated_list = new List<IAsset>();
+            foreach (IAsset ass in Assets)
+            {
+                simulated_list.Add(new AssetSimulated(ass, list_dates, rand));
+            }
+            Everglades everg_simul = new Everglades(simulated_list);
+
+            Portfolio hedge_simul = new Portfolio(simulated_list);
+            Data tracking_error = new Data();
+            tracking_error.add(new DataPoint(first, 0));
+            foreach (DateTime date in list_dates)
+            {
+                if (date == list_dates.First())
+                {
+                    continue;
+                }
+                double portvalue = everg_simul.getPrice(date);
+                double err = (hedge_simul.getPrice(date) - portvalue) / portvalue;
+                hedge_simul = everg_simul.getDeltaPortfolio(date);
+                tracking_error.add(new DataPoint(date, err));
+            }
+            return tracking_error;
         }
 
     }

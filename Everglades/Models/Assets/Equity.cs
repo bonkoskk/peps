@@ -96,5 +96,10 @@ namespace Everglades.Models
             // compute and return historic volatility
             return HistoricVolatility.compute(date_nb, prices);
         }
+
+        public double getCovariance(IAsset a, DateTime t)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
