@@ -46,7 +46,7 @@
 @{
     if (Request.Form.Count > 0)
     {
-        // operation buy
+        // operation buy asset
         if (String.Compare(Request["operation"], "buy") == 0)
         {
             string name = Request["asset"];
@@ -67,7 +67,7 @@
                 }
             }
         }
-        // operation sell
+        // operation sell asset
         else if (String.Compare(Request["operation"], "sell") == 0)
         {
             string name = Request["asset"];
@@ -82,6 +82,7 @@
                 msg = "sold " + Request["number"] + " of " + Request["asset"];
             }
         }
+        // operation get data (prices) of an asset
         else if (String.Compare(Request["operation"], "getData") == 0)
         {
             string name = Request["asset"];
@@ -98,6 +99,7 @@
                 msg = asset.getPrice(start, end, step).ToString();
             }
         }
+        // operation get parameters needed for a derivative
         else if (String.Compare(Request["operation"], "getParam") == 0)
         {
             string name = Request["derivative"];
@@ -141,6 +143,7 @@
             str = str + "Price : <input id=\"price_derivative\" type=\"text\" readonly>";
             @Html.Raw(str);
         }
+        // operation to get price of a derivative
         else if (String.Compare(Request["operation"], "getPrice") == 0)
         {
             try { 
@@ -152,6 +155,7 @@
                 msg = e.Message.ToString();
             }
         }
+        // operation to buy a derivative
         else if (String.Compare(Request["operation"], "buyDerivative") == 0)
         {
             try
@@ -164,6 +168,31 @@
             {
                 msg = "error";
             }
+        }
+        // simulate a product evolution and edging
+        else if (String.Compare(Request["operation"], "simulation") == 0)
+        {
+            int nb = 0;
+            foreach(Everglades.Models.Data dat in Model.simulateHedgeEvolution()) {
+                switch (nb)
+                {
+                    case 0:
+                        msg += "{\"simulation-graph-prices-everg\": ";
+                        break;
+                    case 1:
+                        msg += ", \"simulation-graph-prices-hedge\": ";
+                        break;
+                    case 2:
+                        msg += ", \"simulation-graph-trackingerror\": ";
+                        break;
+                    case 3:
+                        msg += ", \"simulation-graph-cash\": ";
+                        break;
+                }
+                msg += dat.ToString();
+                nb++;
+            }
+            msg += "}";
         }
         else
         {

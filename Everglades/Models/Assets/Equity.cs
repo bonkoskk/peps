@@ -14,6 +14,7 @@ namespace Everglades.Models
 
         public Equity(string name, Currency currency)
         {
+            Console.WriteLine(name);
             this.name = name;
             this.currency = currency;
         }
@@ -30,25 +31,7 @@ namespace Everglades.Models
 
         public double getPrice()
         {
-
-            // debug kevin
-            // doit retourner 6.51
-            WrapperQuanto wc = new WrapperQuanto();
-
-            //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
-
-
-            if (String.Compare(name, "orange") == 0)
-            {
-                wc.getPricePutQuanto(100, 1.2, 100, 0.02, 0.03, 0.2, 0.2, 0.1, 1);
-                //wc.getPriceOptionBarrier(50000, 1, 100, 105, 0.25, 0.02, 100, 90);
-                return wc.getPrice();
-            }
-            
-            return 100;
-            
-            //return wc.getPrice();
-            //return AccessDB.Get_Asset_Price(this.name, DateTime.Now);
+            return getPrice(DateTime.Now);
         }
 
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
@@ -83,6 +66,8 @@ namespace Everglades.Models
 
         public double getVolatility(DateTime t)
         {
+
+            /*
             // number of observations dates (1 day separated)
             int date_nb = 100;
             // get prices for these days
@@ -94,7 +79,9 @@ namespace Everglades.Models
                 titer -= TimeSpan.FromDays(1);
             }
             // compute and return historic volatility
-            return HistoricVolatility.compute(date_nb, prices);
+            return HistoricVolatility.compute(date_nb, prices);*/
+
+            return 0.4;
         }
 
         public double getCovariance(IAsset a, DateTime t)

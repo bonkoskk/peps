@@ -1,35 +1,28 @@
-﻿using System;
+﻿using Everglades.Models.Assets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using TestAccessBD;
 
 namespace Everglades.Models
 {
     public class AccessDB
     {
-        private static Random Rand = new Random();
+        private static RandomNormal rand = new RandomNormal();
 
         // return list of assets names
         public static List<string> Get_Asset_List()
         {
-            LinkedList<string> list = new LinkedList<string>();
-            list.AddFirst("apple");
-            list.AddFirst("pineapple");
-            list.AddFirst("cherry");
-            list.AddFirst("orange");
-            list.AddFirst("lion");
-            list.AddFirst("kaboul");
-            list.AddFirst("balis");
-            list.AddFirst("azfve");
-            list.AddFirst("bagoul");
-            list.AddFirst("patus");
-            return list.ToList();
+            return Access.Get_List_Assets();
         }
 
         // return price of an asset from name
         public static double Get_Asset_Price(String assetName, DateTime date)
         {
-            return Rand.Next() / 1000000.0;
+            int id = Access.GetIdFromName(assetName);
+            Dictionary<string, double> P = Access.Get_Price(id, new DateTime(date.Year, date.Month, date.Day));
+            return P["close"];
         }
 
         // return delta of an asset from name

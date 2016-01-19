@@ -2,13 +2,17 @@
     List<Everglades.Models.Advice> hedging_advice = Model.getHedgingAdvice();
 }
 
-<!-- update date -->
-<div id="update" class="update">
+<!-- buttons for update and simulate -->
+<div id="big_buttons">
     last update :
-    <br/>
+    <br />
     <span id="update_date">@DateTime.Now.ToString("h:mm:ss tt")</span>
-    <br/>
-    <a href="/"><span id="update_button" class="glyphicon glyphicon-refresh"></span></a>
+    <br />
+    <a id="update-button" href="/"><span class="glyphicon glyphicon-refresh"></span></a>
+    <br/><br/>
+    Run a simulation
+    <br />
+    <button id="simulate-button"><span class="glyphicon glyphicon-circle-arrow-right"></span></button>
 </div>
 
 <!-- Header -->
@@ -187,6 +191,15 @@
 
     <div class="asset-window">
         <div id="asset-graph" class="graph"></div>
+        <button type="button" class="close-button btn btn-danger">
+            <span class="glyphicon glyphicon-remove"></span>
+        </button>
+    </div>
+
+    <div class="simulation-window">
+        <div id="simulation-graph-prices" class="mini-graph"></div>
+        <div id="simulation-graph-trackingerror" class="mini-graph"></div>
+        <div id="simulation-graph-cash" class="mini-graph"></div>
         <button type="button" class="close-button btn btn-danger">
             <span class="glyphicon glyphicon-remove"></span>
         </button>

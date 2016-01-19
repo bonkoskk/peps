@@ -47,7 +47,7 @@ namespace Everglades.Models
             list.AddLast(new DateTime(2013, 03, 1)); // observation 8
             list.AddLast(new DateTime(2013, 05, 31)); // observation 9
             list.AddLast(new DateTime(2013, 08, 30)); // observation 10
-            list.AddLast(new DateTime(2013, 11, 30)); // observation 11
+            list.AddLast(new DateTime(2013, 11, 29)); // observation 11
             list.AddLast(new DateTime(2014, 02, 28)); // observation 12
             list.AddLast(new DateTime(2014, 05, 30)); // observation 13
             list.AddLast(new DateTime(2014, 09, 1)); // observation 14
