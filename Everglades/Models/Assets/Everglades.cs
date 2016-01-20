@@ -98,6 +98,7 @@ namespace Everglades.Models
 
         public double getPrice(DateTime t)
         {
+            
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             foreach (DateTime d in getObservationDates()) 
@@ -170,11 +171,14 @@ namespace Everglades.Models
             }
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             int sampleNb = 5;
+             
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
             last_requested_delta = wp.getDelta();
             return wp.getPrice();
+
+
         }
 
         //TODO

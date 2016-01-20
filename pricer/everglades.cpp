@@ -66,7 +66,6 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 
 		simulations::simulate_n_sj(*path, last_index, nb_day_after, expected_returns, vol, correl, rng);
 
-
 		for (int sj = 0; sj < nb_sj; sj++)
 		{
 			gsl_matrix* path_up = gsl_matrix_alloc(path->size1, path->size2);
@@ -106,12 +105,12 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 			payoff_down /= ((double)nbSimu);
 
 			delta_temp = gsl_vector_get(*delta, sj);
-			//gsl_vector_set(*delta, sj, delta_temp + (payoff_up));
 			gsl_vector_set(*delta, sj, delta_temp + (payoff_up - payoff_down) / (2.0 * epsilon));
 
 			gsl_matrix_free(path_up);
 			gsl_matrix_free(path_down);
 		}
+		
 
 		phi = Everglades::get_payoff(*path, VLR, anticipated);
 
@@ -123,9 +122,6 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 			sumPayoff_final += phi;
 			sumIc_final += phi*phi;
 		}
-		gsl_matrix_free(path);
-		gsl_vector_free(temp);
-		gsl_rng_free(rng);
 	}
 
 	//calcul du prix
@@ -143,5 +139,6 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 	//libération mémoire
 	gsl_vector_free(temp);
 	gsl_matrix_free(path);
+	gsl_rng_free(rng);
 }
 

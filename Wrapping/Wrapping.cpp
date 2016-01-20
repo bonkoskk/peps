@@ -43,8 +43,7 @@ namespace Wrapping {
 		this->price = px;
 	}
 
-	//void WrapperEverglades::getPriceEverglades(h_gsl_matrix historic, h_gsl_vector expected_returns, h_gsl_vector vol, h_gsl_matrix correl, int nb_day_after, double r1, double r2, int sampleNb) {
-void WrapperEverglades::getPriceEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, int nb_day_after, double r, int sampleNb) {
+	void WrapperEverglades::getPriceEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, int nb_day_after, double r, int sampleNb) {
 		h_gsl_matrix historic_matrix(nb_asset, nb_dates, historic);
 		h_gsl_vector expected_returns_vector(nb_asset, expected_returns);
 		h_gsl_vector vol_vector(nb_asset, vol);
@@ -68,6 +67,5 @@ void WrapperEverglades::getPriceEverglades(int nb_dates, int nb_asset, array<dou
 		{
 			this->delta[i] = gsl_vector_get(deltas_temp, i);
 		}
-
 	}
 }
