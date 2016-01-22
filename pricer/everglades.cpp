@@ -1,7 +1,9 @@
-#include "Everglades.hpp"
-#include "simulations.hpp"
 #include <time.h>
-#include "iostream"
+#include <iostream>
+#include <cmath>
+
+#include "everglades.hpp"
+#include "simulations.hpp"
 
 using namespace std;
 
@@ -22,11 +24,10 @@ double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipa
 			return (vlr * 1.09);
 		}
 	}
-	double res = __max(vlr * (1.0 + 0.75*sum_perf / nb_timesteps), vlr);
-	return __max(vlr * (1.0 + 0.75*sum_perf / nb_timesteps), vlr);
+	return std::max(vlr * (1.0 + 0.75*sum_perf / nb_timesteps), vlr);
 }
 
-void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
+int Everglades::get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
 	const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu){
 
 
@@ -39,13 +40,13 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 	gsl_rng *rng = gsl_rng_alloc(gsl_rng_default);
 	gsl_rng_set(rng, (unsigned long int)time(NULL));
 
-	//Copie d'historic dans le début du path
+	//Copie d'historic dans le dï¿½but du path
 	for (int i = 0; i < last_index; i++) {
 		gsl_matrix_get_col(temp, &historic, i);
 		gsl_matrix_set_col(path, i, temp);
 	}
 
-	//Initialisation valeurs intermédiaires du calcul du prix et de l'intervalle de confiance
+	//Initialisation valeurs intermï¿½diaires du calcul du prix et de l'intervalle de confiance
 	double sumPayoff_anticipated = 0.0;
 	double sumIc_anticipated = 0.0;
 	double sumPayoff_final = 0.0;
@@ -62,7 +63,7 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 
 	//Simulations de Monte-Carlo
 	for (int i = 0; i < nbSimu; i++){
-		gsl_matrix_set_col(path, last_index - 1, temp); //Remise à sa valeur initiale de la valeur actuelle des sous-jacents
+		gsl_matrix_set_col(path, last_index - 1, temp); //Remise ï¿½ sa valeur initiale de la valeur actuelle des sous-jacents
 
 		simulations::simulate_n_sj(*path, last_index, nb_day_after, expected_returns, vol, correl, rng);
 
@@ -77,7 +78,7 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 
 			epsilon = 0.1 * gsl_matrix_get(path, sj, last_index);
 
-			for (int t = last_index; t < path->size2; t++)
+			for (uint t = last_index; t < path->size2; t++)
 			{
 				s_temp = gsl_matrix_get(path, sj, t);
 				gsl_matrix_set(path_up, sj, t, (s_temp + epsilon));
@@ -136,9 +137,9 @@ void Everglades::get_price(double& price, double& ic, gsl_vector** delta, const 
 	double xi2 = sumIc / ((double)nbSimu) - (price)*(price);
 	ic = 1.96*sqrt(xi2) / sqrt((double)nbSimu);
 
-	//libération mémoire
+	//libï¿½ration mï¿½moire
 	gsl_vector_free(temp);
 	gsl_matrix_free(path);
 	gsl_rng_free(rng);
+	return 0;
 }
-

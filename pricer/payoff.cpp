@@ -1,4 +1,3 @@
-#include "simulations.hpp"
 #include "payoff.hpp"
 #include <cmath>
 
@@ -6,12 +5,8 @@ extern double payoff_call_barrier_down_out(struct simulations::Params data, int 
 {
 
 	double S_T = gsl_vector_get(simulations, J);
-	double S_temp;
-
 	double prod = 1;
-
 	double proba;
-
 
 	if (gsl_vector_get(simulations, 0) < L)
 	{

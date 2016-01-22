@@ -1,7 +1,9 @@
+#include <iostream>
+#include <cmath>
+#include <stdexcept>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_blas.h>
 #include "simulations.hpp"
-#include "iostream"
-#include "gsl\gsl_randist.h"
-#include "gsl\gsl_blas.h"
 #include "everglades.hpp"
 
 
@@ -40,7 +42,6 @@ extern gsl_matrix* simulations::fact_cholesky(gsl_matrix &cov) {
 	double sum1 = 0.0;
 	double sum2 = 0.0;
 	double sum3 = 0.0;
-	double tmp;
 	gsl_matrix *l = gsl_matrix_calloc(n,n);
 	gsl_matrix_set(l, 0, 0, sqrt(gsl_matrix_get(&cov, 0, 0)));
 	for (int j = 1; j <= n - 1; j++)
@@ -104,6 +105,8 @@ extern void simulations::simulate_n_sj(gsl_matrix &path, int last_index, int nb_
 		gsl_matrix_set(&path, j, last_index-1, curr_val);
 	}
 
+	gsl_vector_free(Brownien);
+
 	for (int i = last_index; i < size; i++) {
 		Brownien = simulate_n_brownian(nb_stocks, rng);
 		for (int j = 0; j < nb_stocks; j++){
@@ -114,7 +117,7 @@ extern void simulations::simulate_n_sj(gsl_matrix &path, int last_index, int nb_
 			curr_val = prev_val * exp((gsl_vector_get(&expected_returns, j) - sigmad*sigmad / 2)*(PERIODE) / DAY + sigmad*sqrt(PERIODE / DAY)*lg);
 			gsl_matrix_set(&path, j, i, curr_val);
 		}
+		gsl_vector_free(Brownien);
 	}
 	gsl_vector_free(Ld);
-	gsl_vector_free(Brownien);
 }
