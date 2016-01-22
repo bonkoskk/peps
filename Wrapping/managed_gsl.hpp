@@ -1,6 +1,6 @@
-#include "gsl\gsl_matrix.h"
-#include "gsl\gsl_vector.h"
-#include "gsl\gsl_blas.h"
+#include <gsl\gsl_matrix.h>
+#include <gsl\gsl_vector.h>
+#include <gsl\gsl_blas.h>
 
 namespace managed_gsl {
 	// handled gsl_matrix class

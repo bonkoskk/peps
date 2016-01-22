@@ -1,1 +1,5 @@
 Everglades/bin/
+Everglades.sdf
+Everglades.sln
+pricer/pricer.vcxproj
+pricer/Wrapping.vcxproj

@@ -1,5 +1,9 @@
-#include "gsl/gsl_matrix.h"
-#include "gsl/gsl_rng.h"
+#ifndef EVERGLADES_HPP
+#define EVERGLADES_HPP
+#pragma once
+
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_rng.h>
 #define DAY 252.0
 #define VLR 200.0
 #define PERIODE 63.0
@@ -29,10 +33,11 @@ namespace Everglades
 	* @param[in] r2 : taux d'intérêt (en cas d'exercice NON anticipé) jusqu'à la date de fin du produit.
 	* @param[in] expected_returns : performances attendues des sous-jacents.
 	* @param[in] vol : vecteur de volatilité des actifs sous jacents.
-	* @param[in] correl : matrice de corrélation des actofs sous jacents.
+	* @param[in] correl : matrice de corrélation des actifs sous jacents.
 	* @param[in] nbSimu : nombre de simulation.
-	* @param[in] rng : pointeur sur un simulateur de nombre aléatoires.
 	*/
-	DLLEXP void get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
+	int get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
 		const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu);
 };
+
+#endif // EVERGLADES_HPP
