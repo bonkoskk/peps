@@ -31,7 +31,8 @@ namespace Everglades.Models.Assets
             this.real = real;
             prices = new Dictionary<DateTime, double>();
             first_date = dates_simul.First();
-            r = real.getCurrency().getInterestRate(first_date, TimeSpan.Zero);
+            r = 0.04;
+                //real.getCurrency().getInterestRate(first_date, TimeSpan.Zero);
             // TODO
             //sigma = real.getVolatility(first_date);
             sigma = 0.2;

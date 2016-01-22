@@ -10,6 +10,7 @@ namespace Everglades.Models.Assets
         protected IAsset underlying;
         protected double strike;
         protected DateTime maturity;
+        protected double volatility;
 
         public List<Param> getParam()
         {
@@ -44,5 +45,6 @@ namespace Everglades.Models.Assets
         public abstract Data getPrice(DateTime t1, DateTime t2, TimeSpan step);
         public abstract string getType();
         public abstract double getVolatility(DateTime t);
+
     }
 }

@@ -16,6 +16,16 @@ void Pricer::call_vanilla(double &prix, double T,
 	prix = exp(-q*T)*S0*gsl_cdf_ugaussian_P(d1) - exp(-r*T)*K*gsl_cdf_ugaussian_P(d2);
 }
 
+void Pricer::call_vanilla_delta(double &delta, double T,
+	double S0, double K, double sigma, double r, double q)
+{
+	const double sigma2sur2 = sigma*sigma / 2;
+	const double logs0surK = log(S0 / K);
+	const double sigmasqrtT = sigma*sqrt(T);
+	const double d1 = (logs0surK + (r - q + sigma2sur2)*T) / sigmasqrtT;
+	delta = exp(-q*T)*gsl_cdf_ugaussian_P(d1);
+}
+
 void Pricer::put_vanilla(double &prix, double T,
 	double S0, double K, double sigma, double r, double q)
 {

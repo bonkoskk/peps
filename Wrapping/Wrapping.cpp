@@ -32,9 +32,11 @@ namespace Wrapping {
 	}
 
 	void WrapperVanilla::getPriceOptionEuropeanCall(double T, double S0, double K, double sigma, double r, double q) {
-		double px;
+		double px, delta;
 		call_vanilla(px, T, S0, K, sigma, r, q);
 		this->price = px;
+		call_vanilla_delta(delta, T, S0, K, sigma, r, q);
+		this->delta = delta;
 	}
 
 	void WrapperVanilla::getPriceOptionEuropeanPut(double T, double S0, double K, double sigma, double r, double q) {

@@ -100,8 +100,86 @@ namespace Everglades.Models
          */
         public List<Data> simulateHedgeEvolution()
         {
+
+           
             RandomNormal rand = new RandomNormal();
             LinkedList<DateTime> list_dates = everg.getObservationDates();
+
+            DateTime first = list_dates.First();
+            List<IAsset> simulated_list = new List<IAsset>();
+
+            simulated_list.Add(new AssetSimulated(Assets[0], list_dates, rand));
+
+            EuropeanCall everg_simul = new EuropeanCall(Assets[0], new DateTime(2018, 01, 01), 100, 0.25);
+            Portfolio hedge_simul = new Portfolio(simulated_list);
+            Data tracking_error = new Data();
+            Data everglades_price = new Data();
+            Data hedge_price = new Data();
+            Data cash_price = new Data();
+            double cash_change = 0;
+
+            double portvalue;
+            double evergvalue;
+
+            double r = 0.0125;
+            
+            DateTime date_prev = list_dates.First();
+
+            evergvalue = everg_simul.getPrice(list_dates.First());
+            hedge_simul = everg_simul.getDeltaPortfolio(list_dates.First());
+            cash_change = 45 - hedge_simul.getPrice(list_dates.First());
+
+            foreach (DateTime date in list_dates)
+            {
+                if (date == list_dates.First())
+                {
+                    continue;
+                }
+                evergvalue = everg_simul.getPrice(date);
+
+                double t = (date - date_prev).TotalDays / 360;
+
+                cash_change *= Math.Exp(r * t);
+
+                portvalue = hedge_simul.getPrice(date) + cash_change;
+
+                double err = (evergvalue - portvalue) / evergvalue;
+                if (!double.IsInfinity(evergvalue) && !double.IsNaN(evergvalue))
+                {
+                    everglades_price.add(new DataPoint(date, evergvalue));
+                }
+                if (!double.IsInfinity(portvalue) && !double.IsNaN(portvalue))
+                {
+                    hedge_price.add(new DataPoint(date, hedge_simul.getPrice(date)));
+                }
+                if (!double.IsInfinity(err) && !double.IsNaN(err))
+                {
+                    tracking_error.add(new DataPoint(date, err));
+                }
+
+                if (date != list_dates.Last())
+                {
+                    hedge_simul = everg_simul.getDeltaPortfolio(date);
+                    cash_change = portvalue - hedge_simul.getPrice(date);
+                }
+                else
+                {
+                    cash_change = portvalue;
+                }
+ 
+                if (!double.IsInfinity(cash_change) && !double.IsNaN(cash_change))
+                {
+                    cash_price.add(new DataPoint(date, cash_change));
+                }
+                date_prev = date;
+            }
+            List<Data> list = new List<Data>();
+            list.Add(everglades_price);
+            list.Add(hedge_price);
+            list.Add(tracking_error);
+            list.Add(cash_price);
+            return list;
+
             /*
             LinkedList<DateTime> list_dates_obs = everg.getObservationDates();
             LinkedList<DateTime> list_dates = new LinkedList<DateTime>();
@@ -113,6 +191,8 @@ namespace Everglades.Models
                 dateiter = dateiter.AddDays(1);
             }
             */
+
+            /*
             DateTime first = list_dates.First();
             List<IAsset> simulated_list = new List<IAsset>();
             foreach (IAsset ass in Assets)
@@ -125,16 +205,33 @@ namespace Everglades.Models
             Data everglades_price = new Data();
             Data hedge_price = new Data();
             Data cash_price = new Data();
-            tracking_error.add(new DataPoint(first, 0));
             double cash_change = 0;
+
+            double portvalue;
+            double evergvalue;
+
+            double r = 0.0125;
+            
+            DateTime date_prev = list_dates.First();
+
+            evergvalue = everg_simul.getPrice(list_dates.First());
+            hedge_simul = everg_simul.getDeltaPortfolio(list_dates.First());
+            cash_change = 200 - hedge_simul.getPrice(list_dates.First());
+
             foreach (DateTime date in list_dates)
             {
                 if (date == list_dates.First())
                 {
                     continue;
                 }
-                double evergvalue = everg_simul.getPrice(date);
-                double portvalue = hedge_simul.getPrice(date);
+                evergvalue = everg_simul.getPrice(date);
+
+                double t = (date - date_prev).TotalDays / 360;
+
+                cash_change *= Math.Exp(r * t);
+
+                portvalue = hedge_simul.getPrice(date) + cash_change;
+
                 double err = (evergvalue - portvalue) / evergvalue;
                 if (!double.IsInfinity(evergvalue) && !double.IsNaN(evergvalue))
                 {
@@ -142,25 +239,41 @@ namespace Everglades.Models
                 }
                 if (!double.IsInfinity(portvalue) && !double.IsNaN(portvalue))
                 {
-                    hedge_price.add(new DataPoint(date, portvalue));
+                    hedge_price.add(new DataPoint(date, hedge_simul.getPrice(date)));
                 }
                 if (!double.IsInfinity(err) && !double.IsNaN(err))
                 {
                     tracking_error.add(new DataPoint(date, err));
                 }
-                hedge_simul = everg_simul.getDeltaPortfolio(date);
-                cash_change += portvalue - hedge_simul.getPrice(date);
+
+                if (date != list_dates.Last())
+                {
+                    hedge_simul = everg_simul.getDeltaPortfolio(date);
+                    cash_change = portvalue - hedge_simul.getPrice(date);
+                }
+                else
+                {
+                    cash_change = portvalue;
+                }
+ 
                 if (!double.IsInfinity(cash_change) && !double.IsNaN(cash_change))
                 {
                     cash_price.add(new DataPoint(date, cash_change));
                 }
+                date_prev = date;
             }
             List<Data> list = new List<Data>();
             list.Add(everglades_price);
             list.Add(hedge_price);
             list.Add(tracking_error);
             list.Add(cash_price);
-            return list;
+            return list;*/
+
+
+        
+
+            
+          
         }
 
     }

@@ -6,6 +6,9 @@ namespace Pricer{
 	
 	DLLEXP void call_vanilla(double &prix, double T,
 		double S0, double K, double sigma, double r, double q);
+
+	DLLEXP void call_vanilla_delta(double &delta, double T,
+		double S0, double K, double sigma, double r, double q);
 	
 	DLLEXP void put_vanilla(double &prix, double T,
 		double S0, double K, double sigma, double r, double q);
