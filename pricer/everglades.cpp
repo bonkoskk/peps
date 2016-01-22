@@ -24,7 +24,7 @@ double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipa
 			return (vlr * 1.09);
 		}
 	}
-	return std::max(vlr * (1.0 + 0.75*sum_perf / nb_timesteps), vlr);
+	return __max(vlr * (1.0 + 0.75*sum_perf / nb_timesteps), vlr);
 }
 
 int Everglades::get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
@@ -78,7 +78,7 @@ int Everglades::get_price(double& price, double& ic, gsl_vector** delta, const g
 
 			epsilon = 0.1 * gsl_matrix_get(path, sj, last_index);
 
-			for (uint t = last_index; t < path->size2; t++)
+			for (int t = last_index; t < path->size2; t++)
 			{
 				s_temp = gsl_matrix_get(path, sj, t);
 				gsl_matrix_set(path_up, sj, t, (s_temp + epsilon));
