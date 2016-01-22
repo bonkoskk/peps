@@ -36,7 +36,7 @@ namespace Everglades
 	* @param[in] correl : matrice de corrélation des actifs sous jacents.
 	* @param[in] nbSimu : nombre de simulation.
 	*/
-	int get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
+	DLLEXP int get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
 		const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu);
 };
 
