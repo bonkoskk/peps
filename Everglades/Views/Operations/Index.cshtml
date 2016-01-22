@@ -94,8 +94,8 @@
             else
             {
                 DateTime end = DateTime.Now;
-                DateTime start = end - TimeSpan.FromDays(30);
-                TimeSpan step = TimeSpan.FromDays(1);
+                DateTime start = new DateTime(2011, 01, 01);
+                TimeSpan step = TimeSpan.FromDays(365);
                 msg = asset.getPrice(start, end, step).ToString();
             }
         }
