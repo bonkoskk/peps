@@ -23,7 +23,7 @@ namespace TestAccessBD
             //List<string> list = new List<string> { "AAPL", "SAN", "0939.HK", "0941.HK", "GS", "XOM", "HSBA.L", "1398.HK", "JNJ", "MSFT", "NESN.VX", "RNO.PA", "PG", "ROG.VX", "SAN.PA", "SIE.DE", "PERH.EX", "FP.PA", "UBSG.VX", "VOD.L" };
             List<string> list = new List<string> { "AAPL", "SAN", "0939.HK", "0941.HK", "XOM", "HSBA.L", "1398.HK", "JNJ", "MSFT", "NESN.VX", "PG", "ROG.VX", "SAN.PA", "SIE.DE", "FP.PA", "UBSG.VX", "VOD.L" };
             //List<string> list = new List<string> { "AAPL", "SAN" };
-            if (DateTime.Compare(lastConn, DateTime.Today) < 0)
+            if (DateTime.Compare(lastConn, DateTime.Today) < 0 && DateTime.Today.DayOfWeek != DayOfWeek.Saturday && DateTime.Today.DayOfWeek != DayOfWeek.Sunday)
             {
                 XMLParser.XMLParser.CreateXML(list, lastConn, DateTime.Today, "C:/Users/ensimag/Desktop/Everglades/peps/Everglades/bin/YahooDataPeps.xml");
                 XMLParser.XMLParser parserXML = new XMLParser.XMLParser();

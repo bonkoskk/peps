@@ -100,27 +100,24 @@ namespace Everglades.Models
          */
         public List<Data> simulateHedgeEvolution()
         {
-
-           
             RandomNormal rand = new RandomNormal();
             LinkedList<DateTime> list_dates = everg.getObservationDates();
 
             DateTime first = list_dates.First();
             List<IAsset> simulated_list = new List<IAsset>();
 
-            simulated_list.Add(new AssetSimulated(Assets[0], list_dates, rand));
+            IAsset asset_simulated = new AssetSimulated(Assets[0], list_dates, rand);
+            simulated_list.Add(asset_simulated);
 
-            EuropeanCall everg_simul = new EuropeanCall(Assets[0], new DateTime(2018, 01, 01), 100, 0.25);
+            EuropeanCall everg_simul = new EuropeanCall(asset_simulated, new DateTime(2018, 01, 01), 100, 0.25);
             Portfolio hedge_simul = new Portfolio(simulated_list);
             Data tracking_error = new Data();
             Data everglades_price = new Data();
             Data hedge_price = new Data();
             Data cash_price = new Data();
             double cash_change = 0;
-
             double portvalue;
             double evergvalue;
-
             double r = 0.0125;
             
             DateTime date_prev = list_dates.First();
@@ -131,19 +128,18 @@ namespace Everglades.Models
 
             foreach (DateTime date in list_dates)
             {
+                /*
                 if (date == list_dates.First())
                 {
                     continue;
                 }
+                */
                 evergvalue = everg_simul.getPrice(date);
-
                 double t = (date - date_prev).TotalDays / 360;
-
                 cash_change *= Math.Exp(r * t);
-
                 portvalue = hedge_simul.getPrice(date) + cash_change;
-
                 double err = (evergvalue - portvalue) / evergvalue;
+                
                 if (!double.IsInfinity(evergvalue) && !double.IsNaN(evergvalue))
                 {
                     everglades_price.add(new DataPoint(date, evergvalue));
@@ -156,7 +152,6 @@ namespace Everglades.Models
                 {
                     tracking_error.add(new DataPoint(date, err));
                 }
-
                 if (date != list_dates.Last())
                 {
                     hedge_simul = everg_simul.getDeltaPortfolio(date);

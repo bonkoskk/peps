@@ -36,7 +36,10 @@ namespace Everglades.Models.Assets
             // TODO
             //sigma = real.getVolatility(first_date);
             sigma = 0.2;
-            double S0 = real.getPrice(first_date);
+
+            // debug kevin
+            double S0 = 100;
+            //double S0 = real.getPrice(first_date);
             foreach (DateTime date in dates_simul)
             {
                 double T = (date - first_date).TotalDays / 365; // time in year
