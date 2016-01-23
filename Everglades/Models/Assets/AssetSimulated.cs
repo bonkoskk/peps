@@ -38,13 +38,16 @@ namespace Everglades.Models.Assets
             sigma = 0.2;
 
             // debug kevin
-            double S0 = 100;
+            double St = 100;
+            DateTime lastDate = first_date;
             //double S0 = real.getPrice(first_date);
             foreach (DateTime date in dates_simul)
             {
-                double T = (date - first_date).TotalDays / 365; // time in year
+                double T = (date - lastDate).TotalDays / 365; // time in year
                 double WT = Math.Sqrt(T) * rand.NextNormal();
-                prices[date] = S0 * Math.Exp((r - sigma * sigma / 2) * T + sigma * WT);
+                St = St * Math.Exp((r - sigma * sigma / 2) * T + sigma * WT);
+                prices[date] = St;
+                lastDate = date;
             }
         }
 

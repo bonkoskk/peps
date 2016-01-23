@@ -9,8 +9,6 @@ namespace Everglades.Models
     public class Portfolio : IAsset
     {
 
-        private double quantity_zc;
-
         public Dictionary<IAsset, double> assetList;
 
         public Portfolio(List<IAsset> list)

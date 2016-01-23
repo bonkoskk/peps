@@ -13,12 +13,11 @@ namespace Everglades.Models.Assets
 
         }
 
-        public EuropeanCall(IAsset asset, DateTime T, double K, double sigma)
+        public EuropeanCall(IAsset asset, DateTime T, double K)
         {
             this.underlying = asset;
             this.maturity = T;
             this.strike = K;
-            this.volatility = sigma;
         }
         
 
@@ -69,17 +68,10 @@ namespace Everglades.Models.Assets
 
         public Portfolio getDeltaPortfolio(DateTime t)
         {
-            getPrice(t);
-            double[] delta = new double[1]{this.getDelta(t)};
-
-            List<IAsset> underlying_list = new List<IAsset>{underlying};
-            Portfolio port = new Portfolio(underlying_list);
-            int i = 0;
-            foreach (IAsset ass in underlying_list)
-            {
-                port.addAsset(ass, delta[i]);
-                i++;
-            }
+            List<IAsset> list_asset = new List<IAsset>();
+            list_asset.Add(underlying);
+            Portfolio port = new Portfolio(list_asset);
+            port.addAsset(underlying, this.getDelta(t));
             return port;
         }
     }
