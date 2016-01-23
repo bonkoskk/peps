@@ -29,23 +29,23 @@
                         <tbody>
                             <tr>
                                 <td>Shares</td>
-                                <td>240104</td>
+                                <td>@Model.shares_everg.ToString("F")</td>
                             </tr>
                             <tr>
                                 <td>Hedging Portfolio Value</td>
-                                <td>@Model.Hedging_Portfolio.getPrice()</td>
+                                <td>@Model.Hedging_Portfolio.getPrice().ToString("F")</td>
                             </tr>
                             <tr>
                                 <td>Product Value</td>
-                                <td>@Model.everg.getPrice()</td>
+                                <td>@Model.everg.getPrice().ToString("F")</td>
                             </tr>
                             <tr>
-                                <td>Margin</td>
-                                <td>10182161</td>
+                                <td>P&L</td>
+                                <td>@Model.getPnL().ToString("F")</td>
                             </tr>
                             <tr>
                                 <td>Cash</td>
-                                <td>@Model.cash</td>
+                                <td>@Model.cash.ToString("F")</td>
                             </tr>
                         </tbody>
                     </table>
@@ -69,7 +69,7 @@
         }
         <div class="container">
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <h2>Equities</h2>
                     <div id="equities">
                         <table id="table_equities" class="table table-hover">
@@ -86,7 +86,7 @@
                                 {
                                     <tr>
                                         <td class="asset-clickable" asset="@a.getName()">@a.getName()</td>
-                                        <td>@a.getPrice() @a.getCurrency().getSymbol()</td>
+                                        <td>@a.getPrice().ToString("F") @a.getCurrency().getSymbol()</td>
                                         <td>
                                             <button class="buybutton btn btn-default btn-xs" asset="@a.getName()" type="button">
                                                 <span class="glyphicon glyphicon-plus"></span>
@@ -103,8 +103,8 @@
                         </table>
                     </div>
                 </div>
-                <div class="col-sm-1"></div>
-                <div class="col-sm-3">
+
+                <div class="col-sm-4">
                     <h2>Derivatives</h2>
                     <div id="derivatives">
                         <table id="table_derivatives" class="table table-hover">
@@ -130,7 +130,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="col-sm-1"></div>
+
                 <div class="col-sm-4">
                     <h2>Hedging Portfolio</h2>
                     <div id="hedging_portfolio">
@@ -149,7 +149,7 @@
                                     {
                                         <tr>
                                             <td class="asset-clickable" asset="@entry.Key.getName()">@entry.Key.getName()</td>
-                                            <td>@entry.Key.getPrice() @entry.Key.getCurrency().getSymbol()</td>
+                                            <td>@entry.Key.getPrice().ToString("F") @entry.Key.getCurrency().getSymbol()</td>
                                             <td>@entry.Value</td>
                                         </tr>
                                     }
@@ -180,7 +180,7 @@
                                     <td>@a.getOperation()</td>
                                     <td class="asset-clickable" asset="@a.getAsset().getName()">@a.getAsset().getName()</td>
                                     <td>@a.getNumber()</td>
-                                    <td>@a.getPrice() @a.getAsset().getCurrency().getSymbol()</td>
+                                    <td>@a.getPrice().ToString("F") @a.getAsset().getCurrency().getSymbol()</td>
                                 </tr>
                             }
                         </tbody>
@@ -303,7 +303,7 @@
 </footer>
 
 <script>
-    var data_graph_hedge = @Model.Hedging_Portfolio.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var data_graph_hedge = @Model.getHedgeForOne(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_hedge = "hedge";
     var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_product = "product";

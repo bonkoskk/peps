@@ -1,4 +1,5 @@
-﻿using Everglades.Models.HistoricCompute;
+﻿using Everglades.Models.DataBase;
+using Everglades.Models.HistoricCompute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +15,10 @@ namespace Everglades.Models
         private Currency currency;
         private List<IAsset> underlying_list;
 
-        private double current_price;
-        private double[] current_delta;
-        private DateTime last_update;
-
-        private double[] last_requested_delta;
-
         public Everglades(List<IAsset> underlying_list)
         {
             this.underlying_list = underlying_list;
             currency = new Currency("€");
-            last_update = DateTime.MinValue;
         }
 
         public string getName()
@@ -64,41 +58,41 @@ namespace Everglades.Models
             return list;
         }
 
-        private void update_current()
-        {
-            this.current_price = getPrice(DateTime.Now);
-            this.current_delta = this.last_requested_delta;
-        }
-
         public double getPrice()
         {
-            double price = getPrice(new DateTime(2011, 12, 1));
-            double[] delta = this.last_requested_delta;
-
-
-
-            // if last update done more than one minute ago, we recalculate
-            if ((DateTime.Now - last_update).TotalMinutes > 1.0)
-            {
-                update_current();
-            }
-            return current_price;
+            return getPrice(DateTime.Now);
         }
 
-        //TODO
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
-            //TODO
             Data data = new Data();
-            data.add(new DataPoint(DateTime.Now - TimeSpan.FromDays(30), 56));
-            data.add(new DataPoint(DateTime.Now - TimeSpan.FromDays(15), 124));
-            data.add(new DataPoint(DateTime.Now, 78));
+            DateTime t = t1;
+            while (t < t2)
+            {
+                data.add(new DataPoint(t, getPrice(t)));
+                t += step;
+            }
+            data.add(new DataPoint(t2, getPrice(t2)));
             return data;
         }
 
         public double getPrice(DateTime t)
         {
-            
+            try
+            {
+                return AccessDB.getEvergladesPrice(t);
+            }
+            catch (NoDataException)
+            {
+                double price = computePrice(t).Item1;
+                AccessDB.setEvergladesPrice(t, price);
+                return price;
+            }
+        }
+
+
+        public Tuple<double, double[]> computePrice(DateTime t)
+        {
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             foreach (DateTime d in getObservationDates()) 
@@ -175,34 +169,18 @@ namespace Everglades.Models
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
-            last_requested_delta = wp.getDelta();
-            return wp.getPrice();
-
-
+            return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
         }
 
         //TODO
         public Portfolio getDeltaPortfolio()
         {
-            // if last update done more than one minute ago, we recalculate
-            if ((DateTime.Now - last_update).TotalMinutes > 1.0)
-            {
-                update_current();
-            }
-            Portfolio port = new Portfolio(underlying_list);
-            int i = 0;
-            foreach (IAsset ass in underlying_list)
-            {
-                port.addAsset(ass, current_delta[i]);
-                i++;
-            }
-            return port;
+            return getDeltaPortfolio(DateTime.Now);
         }
 
         public Portfolio getDeltaPortfolio(DateTime t)
         {
-            getPrice(t);
-            double[] delta = last_requested_delta;
+            double[] delta = computePrice(t).Item2;
             Portfolio port = new Portfolio(underlying_list);
             int i = 0;
             foreach (IAsset ass in underlying_list)

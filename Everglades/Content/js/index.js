@@ -307,7 +307,9 @@ $(function () {
 
     $("#simulate-button").click(function () {
         $(".simulation-window").show();
-        $("#simulation-graph-prices").html("loading...");
+        $("#simulation-graph-prices").html("");
+        $("#simulation-graph-trackingerror").html("loading ...");
+        $("#simulation-graph-cash").html("");
         var data = "operation=simulation";
         $.ajax({
             type: "POST",
