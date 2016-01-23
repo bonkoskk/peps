@@ -135,9 +135,11 @@ body {
     position: absolute;
     display: none;
     left: 30%;
-    top: 25%;
+    top: 20%;
     padding:10px;
     width: 40%;
+    height: 50%;
+    overflow-y: auto;
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.9);
     color: black;

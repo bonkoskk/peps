@@ -170,7 +170,7 @@ namespace Everglades.Models
                 correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
             }
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
-            int sampleNb = 1000;
+            int sampleNb = 10;
              
             // price
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();

@@ -25,7 +25,7 @@ namespace TestAccessBD.XMLParser
             columns.Add(HistoricalColumn.Volume);
             columns.Add(HistoricalColumn.Low);
             DataActif donnees = new DataActif(list_equities, columns, beginning, end);
-            Environment.CurrentDirectory = "C:/Users/ensimag/Desktop/Everglades/peps/Everglades/bin";
+            Environment.CurrentDirectory = System.AppDomain.CurrentDomain.BaseDirectory + "bin"; //"C:/Users/babs/Desktop/Everglades/peps/Everglades/bin";
             donnees.ImportData(new ImportYahoo());
             donnees.Export(new ExportXML(xmlfilePath));
         }
