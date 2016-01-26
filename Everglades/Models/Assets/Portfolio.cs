@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Xml;
 
 namespace Everglades.Models
 {
@@ -79,10 +80,10 @@ namespace Everglades.Models
             }
             else
             {
-                str += "{label: \"Cash\", data: " + ModelManage.instance.cash + "},";
-                str += "{label: \"Equities\", data: " + equ + "},";
-                str += "{label: \"Vanilla Options\", data: " + vanilla + "},";
-                str += "{label: \"Exotic Options\", data: " + exo + "}";
+                str += "{label: \"Cash\", data: " + XmlConvert.ToString(ModelManage.instance.cash) + "},";
+                str += "{label: \"Equities\", data: " + XmlConvert.ToString(equ) + "},";
+                str += "{label: \"Vanilla Options\", data: " + XmlConvert.ToString(vanilla) + "},";
+                str += "{label: \"Exotic Options\", data: " + XmlConvert.ToString(exo) + "}";
             }
             str += "]";
             return str;
@@ -98,22 +99,22 @@ namespace Everglades.Models
             return getPrice(DateTime.Now);
         }
 
-        //TODO
-        public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
+        public Data getPrice(DateTime t1, DateTime t2, TimeSpan step, double divisor)
         {
             Data data = new Data();
             DateTime t = t1;
-            while (t <= t2)
+            while (t < t2)
             {
-                double prix = 0;
-                foreach (KeyValuePair<IAsset, double> pair in assetList)
-                {
-                    prix += pair.Value * pair.Key.getPrice(t);
-                }
-                data.add(new DataPoint(t, prix));
+                data.add(new DataPoint(t, getPrice(t) / divisor));
                 t += step;
             }
+            data.add(new DataPoint(t2, getPrice(t2) / divisor));
             return data;
+        }
+
+        public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
+        {
+            return getPrice(t1, t2, step, 1);
         }
 
         public double getPrice(DateTime t)
