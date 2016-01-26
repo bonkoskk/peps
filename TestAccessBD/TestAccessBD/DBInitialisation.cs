@@ -25,9 +25,10 @@ namespace TestAccessBD
             //List<string> list = new List<string> { "AAPL", "SAN" };
             if (DateTime.Compare(lastConn, DateTime.Today) < 0 && DateTime.Today.DayOfWeek != DayOfWeek.Saturday && DateTime.Today.DayOfWeek != DayOfWeek.Sunday)
             {
-                XMLParser.XMLParser.CreateXML(list, lastConn, DateTime.Today, "C:/Users/ensimag/Desktop/Everglades/peps/Everglades/bin/YahooDataPeps.xml");
+                string xmlPath = System.AppDomain.CurrentDomain.BaseDirectory + "bin/YahooDataPeps.xml"; //"C:/Users/babs/Desktop/Everglades/peps/Everglades/bin";
+                XMLParser.XMLParser.CreateXML(list, lastConn, DateTime.Today, xmlPath);
                 XMLParser.XMLParser parserXML = new XMLParser.XMLParser();
-                parserXML.XMLtoDB("C:/Users/ensimag/Desktop/Everglades/peps/Everglades/bin/YahooDataPeps.xml");
+                parserXML.XMLtoDB(xmlPath);
                 if (lastConn.Equals(beginProduct))
                 {
                     parserXML.list_equities.ForEach(e => context.Assets.Add(e));
