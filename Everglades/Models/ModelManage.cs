@@ -121,6 +121,7 @@ namespace Everglades.Models
         {
             RandomNormal rand = new RandomNormal();
             LinkedList<DateTime> list_dates = everg.getObservationDates();
+            LinkedList<DateTime> list_anticipated_dates = everg.getAnticipatedDates();
             DateTime first = list_dates.First();
             List<IAsset> simulated_list = new List<IAsset>();
             foreach (IAsset ass in Assets)
@@ -139,6 +140,8 @@ namespace Everglades.Models
             double r = 0.04;
             
             DateTime date_prev = list_dates.First();
+            // used for anticipated end of everglades
+            bool breakk = false;
 
             foreach (DateTime date in list_dates)
             {
@@ -151,12 +154,42 @@ namespace Everglades.Models
                 }
                 else
                 {
-                    evergvalue = everg_simul.getPrice(date);
+                    // here we (virtually) sell old hedging portfolio
                     double t = (date - date_prev).TotalDays / 360;
                     portvalue = hedge_simul.getPrice(date) + cash_t * Math.Exp(r * t);
                     cash_t = portvalue;
-                    if (date != list_dates.Last())
+                    // test if date is a constatation date
+                    if (list_anticipated_dates.Contains(date))
                     {
+                        // if the date is an anticipated constatation date, we check if
+                        // we must break now, and if we do we set the price of everglades
+                        // with payoff and set breakk to true.
+                        Tuple<bool, double> payoff = everg_simul.getPayoff(date);
+                        if (payoff.Item1)
+                        {
+                            evergvalue = payoff.Item2;
+                            cash_t -= evergvalue;
+                            breakk = true;
+                        }
+                        else
+                        {
+                            // if not the last date, we simply price the product and ajust our edge
+                            evergvalue = everg_simul.getPrice(date);
+                            hedge_simul = everg_simul.getDeltaPortfolio(date);
+                            cash_t -= hedge_simul.getPrice(date);
+                        }
+                    }
+                    else if (date == everg_simul.getLastDate())
+                    {
+                        // if last date, we ge payoff and bam
+                        Tuple<bool, double> payoff = everg_simul.getPayoff(date);
+                        evergvalue = payoff.Item2;
+                        cash_t -= evergvalue;
+                    }
+                    else
+                    {
+                        // if not the last date, we simply price the product and ajust our edge
+                        evergvalue = everg_simul.getPrice(date);
                         hedge_simul = everg_simul.getDeltaPortfolio(date);
                         cash_t -= hedge_simul.getPrice(date);
                     }
@@ -179,6 +212,10 @@ namespace Everglades.Models
                 if (!double.IsInfinity(cash_t) && !double.IsNaN(cash_t))
                 {
                     cash_price.add(new DataPoint(date, cash_t));
+                }
+                if (breakk)
+                {
+                    break;
                 }
                 date_prev = date;
             }
