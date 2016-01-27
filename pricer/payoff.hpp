@@ -7,4 +7,6 @@
 
 extern double payoff_call_barrier_down_out(struct simulations::Params data, int J, double L, gsl_vector* simulations);
 
+extern double payoff_call_vanilla(struct simulations::Params data, gsl_vector* simulations);
+
 #endif // PAYOFF_HPP

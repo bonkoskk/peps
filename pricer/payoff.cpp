@@ -31,3 +31,18 @@ extern double payoff_call_barrier_down_out(struct simulations::Params data, int 
 	return 0;
 }
 
+extern double payoff_call_vanilla(struct simulations::Params data, gsl_vector* simulations)
+{
+
+	double S_T = gsl_vector_get(simulations, simulations->size);
+	double prod = 1;
+	double proba;
+
+
+	if (S_T - data.K > 0)
+	{
+		return (S_T - data.K);
+	}
+
+	return 0;
+}
