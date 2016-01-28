@@ -1,5 +1,8 @@
+#include <exception>
+
 #include "managed_gsl.hpp"
 #include "simulations.hpp"
+#include "tools.hpp"
 
 namespace managed_gsl{
 	// gsl_matrix functions
@@ -28,9 +31,12 @@ namespace managed_gsl{
 	double h_gsl_matrix::get_value(int i, int j){
 		return gsl_matrix_get(_matrix, i, j);
 	}
+
 	h_gsl_matrix^ h_gsl_matrix::cholesky_factorization(){
 		h_gsl_matrix^ res = gcnew h_gsl_matrix(_matrix->size1, _matrix->size1);
-		res->_matrix = simulations::fact_cholesky(*_matrix);
+		if (fact_cholesky(_matrix, res->_matrix)) {
+			throw gcnew System::Exception(); // TODO
+		}
 		return res;
 	}
 
