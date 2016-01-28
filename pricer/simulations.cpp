@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_blas.h>
+#include <gsl/gsl_linalg.h>
 #include "simulations.hpp"
 #include "everglades.hpp"
 
@@ -34,36 +35,6 @@ extern gsl_vector* simulations::simulate_n_brownian(int nb, gsl_rng* rng)
 		gsl_vector_set(brownian, i, W_temp);
 	}
 	return brownian;
-}
-
-extern gsl_matrix* simulations::fact_cholesky(gsl_matrix &cov) {
-	if (cov.size1 != cov.size2) throw std::invalid_argument("matrix must be square for cholesky factorization!");
-	int n = cov.size1;
-	double sum1 = 0.0;
-	double sum2 = 0.0;
-	double sum3 = 0.0;
-	gsl_matrix *l = gsl_matrix_calloc(n,n);
-	gsl_matrix_set(l, 0, 0, sqrt(gsl_matrix_get(&cov, 0, 0)));
-	for (int j = 1; j <= n - 1; j++)
-		gsl_matrix_set(l, j, 0, gsl_matrix_get(&cov, j, 0)/gsl_matrix_get(l, 0, 0));
-	for (int i = 1; i <= (n - 2); i++)
-	{
-		sum1 = 0.0;
-		for (int k = 0; k <= (i - 1); k++)
-			sum1 += gsl_matrix_get(l, i, k)*gsl_matrix_get(l, i, k);
-		gsl_matrix_set(l, i, i, sqrt(gsl_matrix_get(&cov, i, i) - sum1));
-		for (int j = (i + 1); j <= (n - 1); j++)
-		{
-			sum2 = 0.0;
-			for (int k = 0; k <= (i - 1); k++)
-				sum2 += gsl_matrix_get(l, j, k)*gsl_matrix_get(l, i, k);
-			gsl_matrix_set(l, j, i, (gsl_matrix_get(&cov, j, i) - sum2) / gsl_matrix_get(l, i, i));
-		}
-	}
-	for (int k = 0; k <= (n - 2); k++)
-		sum3 += gsl_matrix_get(l, n - 1, k)* gsl_matrix_get(l, n - 1, k);
-	gsl_matrix_set(l, n - 1, n - 1, sqrt(gsl_matrix_get(&cov, n - 1, n - 1) - sum3));
-	return l;
 }
 
 extern gsl_vector* simulations::simulate_sj(struct simulations::Params data, int J, gsl_rng* rng)
