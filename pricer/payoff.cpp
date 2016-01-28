@@ -31,3 +31,14 @@ extern double payoff_call_barrier_down_out(struct simulations::Params data, int 
 	return 0;
 }
 
+extern double payoff_call_vanilla(struct simulations::Params data, double st)
+{
+	if (st - data.K > 0)
+	{
+		return st - data.K;
+
+	}
+	return 0;
+
+}
+

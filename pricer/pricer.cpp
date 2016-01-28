@@ -5,6 +5,57 @@
 #include <ctime>
 #include <gsl/gsl_cdf.h>
 
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_blas.h>
+
+void Pricer::call_vanilla_mc(double &ic, double &prix, double &delta, double &delta_mc, int nb_samples, double T,
+	double S0, double K, double sigma, double r)
+{
+	struct simulations::Params data;
+	data.M = nb_samples;
+	data.S = S0;
+	data.K = K;
+	data.r = r;
+	data.v = sigma;
+	data.T = T;
+
+	double sum = 0;
+	double sum_delta_mc = 0;
+	double var = 0;
+
+	double payoff = 0;
+
+	gsl_rng *rng = gsl_rng_alloc(gsl_rng_default);
+	gsl_rng_set(rng, (unsigned long int)time(NULL));
+
+	double St;
+	double epsilon = 0.1;
+	double payoff_up, payoff_down;
+
+	for (int i = 0; i < nb_samples; i++)
+	{
+		//simulations = simulate_sj(data, 2, rng);
+
+		St = simulate_ST(data, rng);
+		payoff = payoff_call_vanilla(data, St);
+
+		payoff_up = payoff_call_vanilla(data, St * (1 + epsilon));
+		payoff_down = payoff_call_vanilla(data, St * (1 - epsilon));
+
+
+		
+		sum += exp(-r*T) * payoff;
+		var += exp(-2.*r*T) * payoff * payoff;
+		sum_delta_mc += (payoff_up - payoff_down) / (2 * epsilon * St);
+	}
+
+	prix = sum / nb_samples;
+	delta_mc = exp(-r*T) * sum_delta_mc / nb_samples;
+	var = var / nb_samples - prix * prix;
+	ic = 1.96 * sqrt(var / nb_samples);
+	gsl_rng_free(rng);
+}
+
 void Pricer::call_vanilla(double &prix, double T,
 	double S0, double K, double sigma, double r, double q)
 {
