@@ -13,7 +13,7 @@ namespace AccessBD
             //DateTime date = Access.GetLastConnection(new qpcptfaw());
             //qpcptfaw db = new qpcptfaw();
             //DBInitialisation.DBInit(db);
-            Access.Get_Price(13, new DateTime(2011, 1, 28));
+            //Access.Get_Price(13, new DateTime(2011, 1, 28));
             //Access.Get_Price(1, new DateTime(2010, 1, 1));
         }
     }
