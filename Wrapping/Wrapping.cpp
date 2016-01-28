@@ -47,11 +47,12 @@ namespace Wrapping {
 
 	void WrapperVanilla::getPriceOptionEuropeanCallMC(int M, double T, double S0, double K, double sigma, double r, double q){
 		
-		double px, ic;
-		call_vanilla_mc(ic, px, M, T, S0, K, sigma, r);
-		this->price = px;
+		double px, ic, d_mc, d;
+		call_vanilla_mc(ic, px, d, d_mc, M, T, S0, K, sigma, r);
+ 		this->price = px;
 		this->confidenceInterval = ic;
-		this->delta = 0;
+		this->delta = d;
+		this->delta_mc = d_mc;
 
 	}
 
@@ -80,5 +81,12 @@ namespace Wrapping {
 		{
 			this->delta[i] = gsl_vector_get(deltas_temp, i);
 		}
+	}
+
+	void WrapperEverglades::getPayoffEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, double vlr) {
+		h_gsl_matrix historic_matrix(nb_asset, nb_dates, historic);
+		bool anticipated;
+		this->payoff = Everglades::get_payoff(*historic_matrix._matrix, vlr, anticipated);
+		this->payoffIsAnticipated = anticipated;
 	}
 }

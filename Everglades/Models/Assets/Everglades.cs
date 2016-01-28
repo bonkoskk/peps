@@ -11,12 +11,16 @@ namespace Everglades.Models
 {
     public class Everglades : IAsset
     {
-
+        // wrapping object for c++ / cli functions access (price)
+        Wrapping.WrapperEverglades wp;
+        private double VLR;
         private Currency currency;
         private List<IAsset> underlying_list;
 
         public Everglades(List<IAsset> underlying_list)
         {
+            wp = new Wrapping.WrapperEverglades();
+            this.VLR = 200; //TODO TODO TODO TODO TODO TODO TODO TODO
             this.underlying_list = underlying_list;
             currency = new Currency("€");
         }
@@ -58,6 +62,20 @@ namespace Everglades.Models
             return list;
         }
 
+        public LinkedList<DateTime> getAnticipatedDates()
+        {
+            LinkedList<DateTime> list = new LinkedList<DateTime>();
+            // using constructor DateTime(year, month, day)
+            list.AddLast(new DateTime(2013, 03, 1)); // observation 8
+            return list;
+        }
+
+        public DateTime getLastDate()
+        {
+            // using constructor DateTime(year, month, day)
+            return new DateTime(2017, 03, 1); // observation 24
+        }
+
         public double getPrice()
         {
             return getPrice(DateTime.Now);
@@ -90,6 +108,35 @@ namespace Everglades.Models
             }
         }
 
+        public Tuple<bool, double> getPayoff(DateTime t)
+        {
+            LinkedList<DateTime> dates = new LinkedList<DateTime>();
+            foreach (DateTime d in getObservationDates())
+            {
+
+                if (d > t)
+                {
+                    break;
+                }
+                dates.AddLast(d);
+            }
+            double[,] historic = new double[underlying_list.Count, dates.Count];
+            int ass_i = 0;
+            foreach (IAsset ass in underlying_list)
+            {
+                int d_i = 0;
+                foreach (DateTime d in dates)
+                {
+                    historic[ass_i, d_i] = ass.getPrice(d);
+                    d_i++;
+                }
+                ass_i++;
+            }
+            int nb_dates = dates.Count;
+            int nb_asset = this.underlying_list.Count;
+            wp.getPayoffEverglades(nb_dates, nb_asset, historic, this.VLR);
+            return new Tuple<bool, double>(wp.getPayoffIsAnticipated(), wp.getPayoff());
+        }
 
         public Tuple<double, double[]> computePrice(DateTime t)
         {
@@ -167,18 +214,18 @@ namespace Everglades.Models
             int sampleNb = 100;
              
             // price
+
             
             //Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
-            //wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
+            // wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
+            //return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
 
             Wrapping.WrapperVanilla wp = new Wrapping.WrapperVanilla();
 
-            wp.getPriceOptionEuropeanCallMC(1000, 1, 100, 100, 0.2, 0.04, 0);
+            wp.getPriceOptionEuropeanCallMC(1000000, 1, 100, 100, 0.2, 0.04, 0);
 
             double[] temp_double = new double[asset_nb];
             return new Tuple<double, double[]>(wp.getPrice(), temp_double);
-
-            //return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
         }
 
         //TODO
@@ -214,6 +261,5 @@ namespace Everglades.Models
         {
             return currency;
         }
-
     }
 }

@@ -19,7 +19,7 @@ namespace Everglades
 	* @param[in] path contient une trajectoire avec les prix aux 24 dates de constatation et à la date d'émission.
 	* C'est une matrice de taille nb_ss_Jacents x 25.
 	*/
-	double get_payoff(const gsl_matrix &path, double vlr, bool &anticipated);
+	DLLEXP double get_payoff(const gsl_matrix &path, double vlr, bool &anticipated);
 
 	/**
 	* Permet de calculer le prix du produit everglades

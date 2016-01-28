@@ -83,6 +83,11 @@ extern gsl_vector* simulations::simulate_sj(struct simulations::Params data, int
 	return simulations;
 }
 
+extern double simulations::simulate_ST(struct simulations::Params data, gsl_rng* rng)
+{
+	return data.S * exp((data.r - data.v*data.v / 2) * (data.T) + data.v *  sqrt(data.T) * gsl_ran_ugaussian(rng));
+}
+
 extern void simulations::simulate_n_sj(gsl_matrix &path, int last_index, int nb_day_after, const gsl_vector &expected_returns, const gsl_vector &vol, const gsl_matrix &cholesky, gsl_rng* rng)
 {
 	int size = path.size2;
