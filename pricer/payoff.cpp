@@ -35,7 +35,6 @@ extern double payoff_call_vanilla(struct simulations::Params data, gsl_vector* s
 {
 
 	double S_T = gsl_vector_get(simulations, simulations->size);
-	double prod = 1;
 	double proba;
 
 

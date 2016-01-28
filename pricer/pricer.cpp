@@ -28,7 +28,7 @@ void Pricer::call_vanilla_mc(double &ic, double &prix, int nb_samples, double T,
 
 	for (int i = 0; i < nb_samples; i++)
 	{
-		simulations = simulate_sj(data, T*360, rng);
+		simulations = simulate_sj(data, 1, rng);
 
 		payoff = payoff_call_vanilla(data, simulations);
 		sum += exp(-r*T) * payoff;

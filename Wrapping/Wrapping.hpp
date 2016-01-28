@@ -16,6 +16,7 @@ namespace Wrapping {
 	public:
 		WrapperVanilla() { confidenceInterval = price = 0; };
 		void getPriceOptionEuropeanCall(double T, double S0, double K, double sigma, double r, double q);
+		void getPriceOptionEuropeanCallMC(int M, double T, double S0, double K, double sigma, double r, double q);
 		void getPriceOptionEuropeanPut(double T, double S0, double K, double sigma, double r, double q);
 		double getPrice() { return price; };
 		double getIC() { return confidenceInterval; };
