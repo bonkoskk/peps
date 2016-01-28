@@ -5,9 +5,16 @@
 #include "everglades.hpp"
 #include "simulations.hpp"
 
+#ifndef __max(a,b)
+	#define __max(a,b) \
+		({ __typeof__ (a) _a = (a); \
+			__typeof__ (b) _b = (b); \
+			_a > _b ? _a : _b; })
+#endif
+
 using namespace std;
 
-double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipated) {
+extern double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipated) {
 	anticipated = false;
 	int nb_timesteps = path.size2 - 1;
 	int nb_underlyings = path.size1;
@@ -27,7 +34,7 @@ double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipa
 	return __max(vlr * (1.0 + 0.75*sum_perf / nb_timesteps), vlr);
 }
 
-int Everglades::get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
+extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
 	const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu){
 
 
@@ -78,7 +85,7 @@ int Everglades::get_price(double& price, double& ic, gsl_vector** delta, const g
 
 			epsilon = 0.1 * gsl_matrix_get(path, sj, last_index);
 
-			for (int t = last_index; t < path->size2; t++)
+			for (int t = last_index; t < (int)path->size2; t++)
 			{
 				s_temp = gsl_matrix_get(path, sj, t);
 				gsl_matrix_set(path_up, sj, t, (s_temp + epsilon));

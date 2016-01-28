@@ -1,5 +1,5 @@
 #pragma once
-#define DLLEXP   __declspec( dllexport )
+#include "dll_define.hpp"
 
 
 namespace Pricer{

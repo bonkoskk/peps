@@ -8,7 +8,8 @@
 #define VLR 200.0
 #define PERIODE 63.0
 
-#define DLLEXP   __declspec( dllexport )
+#include "dll_define.hpp"
+
 namespace Everglades
 {
 	/**
@@ -19,7 +20,7 @@ namespace Everglades
 	* @param[in] path contient une trajectoire avec les prix aux 24 dates de constatation et à la date d'émission.
 	* C'est une matrice de taille nb_ss_Jacents x 25.
 	*/
-	DLLEXP double get_payoff(const gsl_matrix &path, double vlr, bool &anticipated);
+	DLLEXP extern double get_payoff(const gsl_matrix &path, double vlr, bool &anticipated);
 
 	/**
 	* Permet de calculer le prix du produit everglades
@@ -36,7 +37,7 @@ namespace Everglades
 	* @param[in] correl : matrice de corrélation des actifs sous jacents.
 	* @param[in] nbSimu : nombre de simulation.
 	*/
-	DLLEXP int get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
+	DLLEXP extern int get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
 		const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu);
 };
 
