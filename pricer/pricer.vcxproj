@@ -154,16 +154,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="dll_define.hpp" />
     <ClInclude Include="everglades.hpp" />
     <ClInclude Include="pricer.hpp" />
     <ClInclude Include="payoff.hpp" />
     <ClInclude Include="simulations.hpp" />
+    <ClInclude Include="tools.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="everglades.cpp" />
     <ClCompile Include="pricer.cpp" />
     <ClCompile Include="payoff.cpp" />
     <ClCompile Include="simulations.cpp" />
+    <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

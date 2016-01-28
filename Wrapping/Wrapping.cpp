@@ -70,4 +70,11 @@ namespace Wrapping {
 			this->delta[i] = gsl_vector_get(deltas_temp, i);
 		}
 	}
+
+	void WrapperEverglades::getPayoffEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, double vlr) {
+		h_gsl_matrix historic_matrix(nb_asset, nb_dates, historic);
+		bool anticipated;
+		this->payoff = Everglades::get_payoff(*historic_matrix._matrix, vlr, anticipated);
+		this->payoffIsAnticipated = anticipated;
+	}
 }
