@@ -399,9 +399,9 @@
     <Content Include="Views\Operations\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TestAccessBD\TestAccessBD\TestAccessBD.csproj">
-      <Project>{246c51e2-ae15-4e77-bc3c-00e726911651}</Project>
-      <Name>TestAccessBD</Name>
+    <ProjectReference Include="..\AccessBD\AccessBD\AccessBD.csproj">
+      <Project>{73b0f989-807b-4063-b9d2-2a6d5a02dcb1}</Project>
+      <Name>AccessBD</Name>
     </ProjectReference>
     <ProjectReference Include="..\Wrapping\Wrapping.vcxproj">
       <Project>{c37bfcdf-f5a9-4f03-95d0-c22f86bc361b}</Project>
