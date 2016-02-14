@@ -21,14 +21,13 @@ namespace AccessBD
             {
                 lastConn = Access.GetLastConnection(context);
             }
+
+            List<string> list = new List<string> { "AAPL:US", "SAN:SM", "939:HK", "941:HK", "CSGN:VX", "XOM:US", "HSBA:LN", "1398:HK", "JNJ:US", "MSFT:US", "NESN:VX", "NOVN:VX", "PG", "ROG:VX", "SAN:FP", "SIE:GR", "TEF:SM", "FP:FP", "UBSG:VX", "VOD:LN" };
             
-            //List<string> list = new List<string> { "AAPL", "SAN", "0939.HK", "0941.HK", "GS", "XOM", "HSBA.L", "1398.HK", "JNJ", "MSFT", "NESN.VX", "RNO.PA", "PG", "ROG.VX", "SAN.PA", "SIE.DE", "PERH.EX", "FP.PA", "UBSG.VX", "VOD.L" };
-            //List<string> list = new List<string> { "AAPL", "SAN", "0939.HK", "0941.HK", "XOM", "HSBA.L", "1398.HK", "JNJ", "MSFT", "NESN.VX", "PG", "ROG.VX", "SAN.PA", "SIE.DE", "FP.PA", "UBSG.VX", "VOD.L" };
-            //SAN.PA
-            
-            List<string> list = new List<string> { "AAPL", "SAN", "0939.HK", "0941.HK", "XOM", "HSBA.L", "1398.HK", "JNJ", "MSFT", "NESN.VX", "PG", "ROG.VX", "SIE.DE", "FP.PA", "UBSG.VX", "VOD.L" };
-            
-            if (DateTime.Compare(lastConn, DateTime.Today) < 0)
+
+
+
+            /*if (DateTime.Compare(lastConn, DateTime.Today) < 0)
             {
                 DateTime begin = lastConn;
                 DateTime end = lastConn.AddMonths(1);
@@ -47,14 +46,42 @@ namespace AccessBD
                 LastConnectionDB connection = new LastConnectionDB { date = DateTime.Today };
                 context.DbConnections.Add(connection);
                 context.SaveChanges();           
+            }*/
+
+
+
+
+            if (DateTime.Compare(lastConn, DateTime.Today) < 0)
+            {
+                DateTime begin = lastConn;
+                //DateTime end = lastConn.AddMonths(1);
+                DateTime end = lastConn.AddYears(1);
+                while (DateTime.Compare(end, DateTime.Today) < 0)
+                {
+                    QuandlData.storeAllInDB(list, context, begin, end);
+                    begin = end;
+                    //end = begin.AddMonths(1);
+                    end = begin.AddYears(1);
+                    LastConnectionDB conn = new LastConnectionDB { date = begin };
+                    context.DbConnections.Add(conn);
+                    context.SaveChanges();
+                }
+                QuandlData.storeAllInDB(list, context, begin, DateTime.Today);
+                LastConnectionDB connection = new LastConnectionDB { date = DateTime.Today };
+                context.DbConnections.Add(connection);
+                context.SaveChanges();
             }
 
-                /*DateTime end = new DateTime(2010, 12, 31);
-                XMLParser.XMLParser.CreateXML(list, DBstart, end, XMLParser.XMLParser.dir+"/YahooDataPeps.xml");
-                XMLParser.XMLParser parserXML = new XMLParser.XMLParser();
-                parserXML.XMLtoDB(XMLParser.XMLParser.dir + "/YahooDataPeps.xml", context);*/
-                
-            }
+
+            /*DateTime end = new DateTime(2010, 12, 31);
+            XMLParser.XMLParser.CreateXML(list, DBstart, end, XMLParser.XMLParser.dir+"/YahooDataPeps.xml");
+            XMLParser.XMLParser parserXML = new XMLParser.XMLParser();
+            parserXML.XMLtoDB(XMLParser.XMLParser.dir + "/YahooDataPeps.xml", context);*/
+
+            //QuandlData.storeAllInDB(new List<string> { "FP:FP" }, context, DBInitialisation.DBstart, DateTime.Today);
+
         }
     }
+}
+
 

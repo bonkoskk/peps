@@ -25,6 +25,13 @@ namespace Everglades.Models
         {
             qpcptfaw db = new qpcptfaw();
             DBInitialisation.DBInit(db);
+            //Access.ClearPrice(db, 65);
+            //Access.ClearAsset(db, 65);
+            //Access.ClearPrice(db, 68);
+            //Access.ClearAsset(db, 68);
+            //Access.ClearPrices(db);
+            //Access.ClearDbConnections(db);
+            //Access.ClearAssets(db);
 
             instance = this;
             Assets = new List<IAsset>();

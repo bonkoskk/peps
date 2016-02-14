@@ -152,6 +152,22 @@ namespace AccessBD
             }
         }
 
+        public static DateTime GetLastData(string symbol)
+        {
+            using (var context = new qpcptfaw())
+            {
+                double l;
+                int id = GetEquityIdFromSymbol(symbol);
+                var prices = from p in context.Prices
+                             where p.AssetDBId == id
+                             select p;
+                if (id == 62) 
+                    l = 1;
+                if (prices.Count() == 0) return DBInitialisation.DBstart;
+                return prices.OrderByDescending(x => x.date).First().date;
+            }
+        }
+
         public static DateTime GetLastConnection(qpcptfaw context)
         {
                 var d = context.DbConnections.FirstOrDefault(p => p.date == context.DbConnections.Max(x => x.date));
@@ -190,6 +206,19 @@ namespace AccessBD
             {
                 context.Assets.Remove(a);
             }
+            context.SaveChanges();
+        }
+
+        public static void ClearAsset(qpcptfaw context, int id)
+        {
+            var assets = from a in context.Assets
+                         where a.AssetDBId == id
+                         select a;
+            foreach (var a in assets)
+            {
+                context.Assets.Remove(a);
+            }
+            context.SaveChanges();
         }
 
         public static void ClearPrices(qpcptfaw context)
@@ -200,9 +229,31 @@ namespace AccessBD
             {
                 context.Prices.Remove(a);
             }
-
+            context.SaveChanges();
         }
-        
+
+        public static void ClearPrice(qpcptfaw context, int id)
+        {
+            var assets = from a in context.Prices
+                         where a.AssetDBId==id
+                         select a;
+            foreach (var a in assets)
+            {
+                context.Prices.Remove(a);
+            }
+            context.SaveChanges();
+        }
+
+        public static void ClearDbConnections(qpcptfaw context)
+        {
+            var conns = from a in context.DbConnections
+                         select a;
+            foreach (var a in conns)
+            {
+                context.DbConnections.Remove(a);
+            }
+            context.SaveChanges();
+        }
 
     }
 }
