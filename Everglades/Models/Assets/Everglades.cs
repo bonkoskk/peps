@@ -140,6 +140,7 @@ namespace Everglades.Models
 
         public Tuple<double, double[]> computePrice(DateTime t)
         {
+            ModelManage.timers.start("Everglades pricing");
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             foreach (DateTime d in getObservationDates()) 
@@ -225,6 +226,7 @@ namespace Everglades.Models
             wp.getPriceOptionEuropeanCallMC(1000000, 1, 100, 100, 0.2, 0.04, 0);
 
             double[] temp_double = new double[asset_nb];
+            ModelManage.timers.stop("Everglades pricing");
             return new Tuple<double, double[]>(wp.getPrice(), temp_double);
         }
 

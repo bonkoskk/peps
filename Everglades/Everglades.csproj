@@ -207,6 +207,9 @@
     <Compile Include="Models\Param.cs" />
     <Compile Include="Models\ParamType.cs" />
     <Compile Include="Models\RandomNormal.cs" />
+    <Compile Include="Models\Timers\TimerList.cs" />
+    <Compile Include="Models\Timers\TimerStatus.cs" />
+    <Compile Include="Models\Timers\Timer.cs" />
     <Compile Include="Models\TimeStep.cs" />
     <Compile Include="Models\Assets\IAsset.cs" />
     <Compile Include="Models\DataBase\AccessDB.cs" />
