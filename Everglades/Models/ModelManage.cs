@@ -6,12 +6,14 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using AccessBD;
+using Everglades.Models.Timers;
 
 namespace Everglades.Models
 {
     public class ModelManage
     {
         public static ModelManage instance = null;
+        public static TimerList timers = new TimerList();
 
         public List<IAsset> Assets;
         public double cash;
@@ -23,8 +25,11 @@ namespace Everglades.Models
 
         public ModelManage()
         {
+            timers.start("ModelManage initialization");
+            timers.start("Database initialization");
             qpcptfaw db = new qpcptfaw();
             DBInitialisation.DBInit(db);
+            timers.stop("Database initialization");
             //Access.ClearPrice(db, 65);
             //Access.ClearAsset(db, 65);
             //Access.ClearPrice(db, 68);
@@ -52,6 +57,7 @@ namespace Everglades.Models
             derivatives.Add(new AmericanPut());
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
+            timers.stop("ModelManage initialization");
         }
 
         public void buy(IAsset asset, int number)
@@ -80,6 +86,7 @@ namespace Everglades.Models
         public List<Advice> getHedgingAdvice()
         {
             List<Advice> list = new List<Advice>();
+            /*
             Portfolio deltas = everg.getDeltaPortfolio();
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
@@ -94,6 +101,7 @@ namespace Everglades.Models
                     list.Add(new Advice(-difference, assetname, "buy " + Convert.ToInt32(-difference).ToString() + " of " + assetname));
                 }
             }
+             * */
             return list;
         }
 

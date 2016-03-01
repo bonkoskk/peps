@@ -52,6 +52,54 @@ namespace Everglades.Models.DataBase
             }
         }
 
+        public static Dictionary<Tuple<String, DateTime>, double> Get_Asset_Price(List<String> assetNames, List<DateTime> dates)
+        {
+            Dictionary<int, string> idToName = new Dictionary<int, string>();
+            foreach(string name in assetNames) {
+                idToName[Access.GetIdFromName(name)] = name;
+            }
+
+            Dictionary<Tuple<int, DateTime>, Dictionary<string, double>> pricesId = Access.Get_Price(idToName.Keys.ToList(), dates);
+            Dictionary<Tuple<String, DateTime>, double> pricesName = new Dictionary<Tuple<string,DateTime>,double>();
+            foreach (int id_asset in idToName.Keys)
+            {
+                foreach (DateTime date in dates)
+                {
+                    Tuple<String, DateTime> str_date = new Tuple<String, DateTime>(idToName[id_asset], date);
+                    Tuple<int, DateTime> id_date = new Tuple<int, DateTime>(id_asset, date);
+                    if (pricesId.ContainsKey(id_date))
+                    {
+                        pricesName[str_date] = pricesId[id_date]["close"];
+                    }
+                    else
+                    {
+                        pricesName[str_date] = Access.Get_Price(id_asset, date)["close"];
+                    }
+                }
+            }
+            return pricesName;
+        }
+
+        public static Dictionary<DateTime, double> Get_Asset_Price(String name, List<DateTime> dates)
+        {
+            int id = Access.GetIdFromName(name);
+
+            Dictionary<DateTime, Dictionary<string, double>> pricesId = Access.Get_Price(id, dates);
+            Dictionary<DateTime, double> pricesName = new Dictionary<DateTime, double>();
+            foreach (DateTime date in dates)
+            {
+                if (pricesId.ContainsKey(date))
+                {
+                    pricesName[date] = pricesId[date]["close"];
+                }
+                else
+                {
+                    pricesName[date] = Access.Get_Price(id, date)["close"];
+                }
+            }
+            return pricesName;
+        }
+
         // this member is temporary (TODO)
         private static Dictionary<DateTime, double> everglades_price = new Dictionary<DateTime, double>();
         public static double getEvergladesPrice(DateTime date)
