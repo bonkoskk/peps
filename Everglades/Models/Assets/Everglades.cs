@@ -211,21 +211,21 @@ namespace Everglades.Models
                 correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
             }
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
-            int sampleNb = 100;
+            int sampleNb = 1000;
              
             // price
 
             
-            //Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
-            // wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
-            //return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
+            Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
+            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
+            return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
 
-            Wrapping.WrapperVanilla wp = new Wrapping.WrapperVanilla();
+            /*Wrapping.WrapperVanilla wp = new Wrapping.WrapperVanilla();
 
             wp.getPriceOptionEuropeanCallMC(1000000, 1, 100, 100, 0.2, 0.04, 0);
 
             double[] temp_double = new double[asset_nb];
-            return new Tuple<double, double[]>(wp.getPrice(), temp_double);
+            return new Tuple<double, double[]>(wp.getPrice(), temp_double);*/
         }
 
         //TODO

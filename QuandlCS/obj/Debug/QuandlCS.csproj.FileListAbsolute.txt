@@ -1,0 +1,8 @@
+C:\Users\Xin\Desktop\Everglades\peps\QuandlCS\bin\Debug\QuandlCS.dll
+C:\Users\Xin\Desktop\Everglades\peps\QuandlCS\bin\Debug\QuandlCS.pdb
+C:\Users\Xin\Desktop\Everglades\peps\QuandlCS\obj\Debug\QuandlCS.dll
+C:\Users\Xin\Desktop\Everglades\peps\QuandlCS\obj\Debug\QuandlCS.pdb
+C:\Users\ensimag\Documents\peps\QuandlCS\bin\Debug\QuandlCS.dll
+C:\Users\ensimag\Documents\peps\QuandlCS\bin\Debug\QuandlCS.pdb
+C:\Users\ensimag\Documents\peps\QuandlCS\obj\Debug\QuandlCS.dll
+C:\Users\ensimag\Documents\peps\QuandlCS\obj\Debug\QuandlCS.pdb
