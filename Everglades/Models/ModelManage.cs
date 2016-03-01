@@ -30,6 +30,13 @@ namespace Everglades.Models
             qpcptfaw db = new qpcptfaw();
             DBInitialisation.DBInit(db);
             timers.stop("Database initialization");
+            //Access.ClearPrice(db, 65);
+            //Access.ClearAsset(db, 65);
+            //Access.ClearPrice(db, 68);
+            //Access.ClearAsset(db, 68);
+            //Access.ClearPrices(db);
+            //Access.ClearDbConnections(db);
+            //Access.ClearAssets(db);
 
             instance = this;
             Assets = new List<IAsset>();
@@ -79,6 +86,7 @@ namespace Everglades.Models
         public List<Advice> getHedgingAdvice()
         {
             List<Advice> list = new List<Advice>();
+            /*
             Portfolio deltas = everg.getDeltaPortfolio();
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
@@ -93,6 +101,7 @@ namespace Everglades.Models
                     list.Add(new Advice(-difference, assetname, "buy " + Convert.ToInt32(-difference).ToString() + " of " + assetname));
                 }
             }
+             * */
             return list;
         }
 
