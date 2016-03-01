@@ -10,7 +10,7 @@ namespace Everglades.Models.Timers
         private string _name;
         private TimerStatus _status;
         private DateTime _start;
-        private TimeSpan _time;
+        private double _time; // in seconds
 
         public Timer(string name)
         {
@@ -24,9 +24,9 @@ namespace Everglades.Models.Timers
             _status = TimerStatus.Started;
         }
 
-        public TimeSpan stop()
+        public double stop()
         {
-            _time = DateTime.Now - _start;
+            _time = (DateTime.Now - _start).TotalSeconds;
             _status = TimerStatus.Stopped;
             return _time;
         }

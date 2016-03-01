@@ -46,11 +46,25 @@ namespace Everglades.Models
                 throw new ArgumentOutOfRangeException("Step must be strictly positive");
             }
             DateTime t = t1;
-            Data data = new Data();
+            List<DateTime> dates = new List<DateTime>();
             while (t < t2)
             {
-                data.add(new DataPoint(t, AccessDB.Get_Asset_Price(this.name, t)));
+                dates.Add(t);
                 t += step;
+            }
+
+            Dictionary<DateTime, double> prices = AccessDB.Get_Asset_Price(this.name, dates);
+            Data data = new Data();
+            foreach(DateTime d in dates)
+            {
+                if (prices.ContainsKey(d))
+                {
+                    data.add(new DataPoint(d, prices[d]));
+                }
+                else
+                {
+                    data.add(new DataPoint(d, AccessDB.Get_Asset_Price(this.name, d)));
+                }
             }
             return data;
         }

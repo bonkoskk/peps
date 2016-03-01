@@ -36,7 +36,7 @@ namespace Everglades.Models.Timers
             }
             else
             {
-                return dic[name].stop().TotalSeconds;
+                return dic[name].stop();
             }
         }
 
