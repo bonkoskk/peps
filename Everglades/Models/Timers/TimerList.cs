@@ -40,5 +40,17 @@ namespace Everglades.Models.Timers
             }
         }
 
+        public override String ToString()
+        {
+            String str = "";
+            foreach (String name in dic.Keys)
+            {
+                str += dic[name].ToString();
+                str += "\n<br/>\n";
+            }
+
+            return str;
+        }
+
     }
 }
