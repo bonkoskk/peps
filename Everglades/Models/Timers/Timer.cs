@@ -30,5 +30,10 @@ namespace Everglades.Models.Timers
             _status = TimerStatus.Stopped;
             return _time;
         }
+
+        public override String ToString()
+        {
+            return _name + " : " + _time;
+        }
     }
 }
