@@ -171,13 +171,6 @@ namespace Everglades.Models
             
             }
 
-            if (nb_day_after > 63)
-            {
-                int caca = 1212323;
-            }
-
-
-
             // create and get data for all arguments
             double[,] historic = new double[underlying_list.Count, dates.Count];
             double[] expected_returns = new double[underlying_list.Count];

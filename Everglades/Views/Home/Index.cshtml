@@ -1,5 +1,6 @@
 ﻿@{
     List<Everglades.Models.Advice> hedging_advice = Model.getHedgingAdvice();
+    Everglades.Models.ModelManage.timers.start("Page loading");
 }
 
 <!-- buttons for update and simulate -->
@@ -303,21 +304,30 @@
 </footer>
 
 <script>
+    @{
+        Everglades.Models.ModelManage.timers.start("Page data script loading hedge");
+    }
     var data_graph_hedge = @Model.getHedgeForOne(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now - TimeSpan.FromDays(26), TimeSpan.FromDays(2)).ToString();
     var label_graph_hedge = "hedge";
-    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now - TimeSpan.FromDays(26), TimeSpan.FromDays(1)).ToString();
-    var label_graph_product = "product";
-    var data_donut = @Html.Raw(Model.Hedging_Portfolio.portfolioComposition());
-
-
-    /*
-    var series = Math.floor(Math.random() * 6) + 3;
-    for (var i = 0; i < series; i++) {
-        data_donut[i] = {
-            label: "Series" + (i + 1),
-            data: Math.floor(Math.random() * 100) + 1
-        }
+    @{
+        Everglades.Models.ModelManage.timers.stop("Page data script loading hedge");
+        Everglades.Models.ModelManage.timers.start("Page data script loading everg");
     }
-    */
+    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now - TimeSpan.FromDays(26), TimeSpan.FromDays(2)).ToString();
+    var label_graph_product = "product";
+    @{
+        Everglades.Models.ModelManage.timers.stop("Page data script loading everg");
+        Everglades.Models.ModelManage.timers.start("Page data script loading donut");
+    }
+    var data_donut = @Html.Raw(Model.Hedging_Portfolio.portfolioComposition());
+    @{
+        Everglades.Models.ModelManage.timers.stop("Page data script loading donut");
+    }
 
 </script>
+
+
+@{
+    Everglades.Models.ModelManage.timers.stop("Page loading");
+}
+@Html.Raw(Everglades.Models.ModelManage.timers.ToString());
