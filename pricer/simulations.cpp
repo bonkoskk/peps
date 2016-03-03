@@ -71,6 +71,7 @@ extern void simulations::simulate_n_sj(gsl_matrix &path, int last_index, int nb_
 	double curr_val;
 	double sigmad;
 	double lg;
+	if (nb_day_after != 0)
 	for (int j = 0; j <nb_stocks; j++){
 		prev_val = gsl_matrix_get(&path, j, last_index-1);
 		gsl_matrix_get_col(Ld, &cholesky, j);
