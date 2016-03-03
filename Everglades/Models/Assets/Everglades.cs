@@ -209,7 +209,7 @@ namespace Everglades.Models
                     d_i++;
                 }
                 expected_returns[ass_i] = ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
-                vol[ass_i] = ass.getVolatility(t);
+                vol[ass_i] = 0;  //ass.getVolatility(t);
                 ass_i++;
             }
             ModelManage.timers.stop("Everglades historic data");
