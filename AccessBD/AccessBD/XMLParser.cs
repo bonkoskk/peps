@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using APIFiMag;
-using APIFiMag.Datas;
-using APIFiMag.Exporter;
-using APIFiMag.Importer;
+//using APIFiMag;
+//using APIFiMag.Datas;
+//using APIFiMag.Exporter;
+//using APIFiMag.Importer;
 using System.Xml.Linq;
 using System.Xml;
 
@@ -14,7 +14,7 @@ namespace AccessBD.XMLParser
 {
     public class XMLParser
     {
-        public static readonly string dir = System.AppDomain.CurrentDomain.BaseDirectory;
+        /*public static readonly string dir = System.AppDomain.CurrentDomain.BaseDirectory;
 
         public static void CreateXML(List<string> list_equities, DateTime beginning, DateTime end, string xmlfilePath)
         {
@@ -192,6 +192,6 @@ namespace AccessBD.XMLParser
             context.SaveChanges();
             //Console.Write("Liste prices : ");
             //this.list_prices.ForEach(p => { Console.Write(p.AssetDBId); Console.Write(" "); Console.Write(p.date); Console.Write(" "); Console.Write(p.close); Console.Write(" "); Console.Write(p.high); Console.Write(" "); Console.Write(p.low); Console.Write(" "); Console.Write(p.open); Console.Write(" "); Console.WriteLine(p.volume); });
-        }
+        }*/
     }
 }

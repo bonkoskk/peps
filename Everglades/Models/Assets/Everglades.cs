@@ -252,6 +252,13 @@ namespace Everglades.Models
             int sampleNb = 1000;
              
             // price
+
+            
+            Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
+            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
+            return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
+
+            /*Wrapping.WrapperVanilla wp = new Wrapping.WrapperVanilla();
             ModelManage.timers.stop("Everglades pre-pricing");
             ModelManage.timers.start("Everglades pricing");
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
@@ -264,9 +271,11 @@ namespace Everglades.Models
             wp.getPriceOptionEuropeanCallMC(1000000, 1, 100, 100, 0.2, 0.04, 0);
 
             double[] temp_double = new double[asset_nb];
+
+            return new Tuple<double, double[]>(wp.getPrice(), temp_double);
             ModelManage.timers.stop("Everglades pricing");
             return new Tuple<double, double[]>(wp.getPrice(), temp_double);
-             * */
+              */
         }
 
         //TODO

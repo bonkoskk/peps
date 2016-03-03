@@ -115,6 +115,10 @@ extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, 
 			delta_temp = gsl_vector_get(*delta, sj);
 			gsl_vector_set(*delta, sj, delta_temp + (payoff_up - payoff_down) / (2.0 * epsilon));
 
+			// debug
+			//gsl_vector_set(*delta, sj, 1);
+
+
 			gsl_matrix_free(path_up);
 			gsl_matrix_free(path_down);
 		}

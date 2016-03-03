@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Everglades", "Everglades\Everglades.csproj", "{083942C7-D548-463F-976F-7A6713590431}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -65,8 +65,13 @@ Global
 		{C37BFCDF-F5A9-4F03-95D0-C22F86BC361B}.Release|x64.ActiveCfg = Release|Win32
 		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+<<<<<<< HEAD
+		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+=======
 		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Debug|Mixed Platforms.Build.0 = Debug|x64
+>>>>>>> 248c93b762bb19f1e38a028857221e0ad8a1b51e
 		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Debug|x64.ActiveCfg = Debug|x64
 		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Debug|x64.Build.0 = Debug|x64
 		{73B0F989-807B-4063-B9D2-2A6D5A02DCB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -79,8 +84,12 @@ Global
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+<<<<<<< HEAD
+		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Debug|x64.ActiveCfg = Debug|Any CPU
+=======
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Debug|x64.ActiveCfg = Debug|x64
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Debug|x64.Build.0 = Debug|x64
+>>>>>>> 248c93b762bb19f1e38a028857221e0ad8a1b51e
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
