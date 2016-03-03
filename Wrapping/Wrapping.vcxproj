@@ -120,8 +120,7 @@ copy "C:\Users\ensimag\Documents\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Do
       <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"</Message>
       <Command>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"
 copy "C:\Users\ensimag\Documents\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"
-copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Debug\Wrapping.dll" "C:\Users\babs\Desktop\Everglades\peps\Everglades\bin"
-copy "C:\Users\babs\Desktop\Everglades\peps\x64\Debug\Pricer.dll" "C:\Users\babs\Desktop\Everglades\peps\bin"</Command>
+</Command>
       <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin\Debug\Wrapping.dll"</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
