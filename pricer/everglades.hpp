@@ -4,9 +4,9 @@
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_rng.h>
-#define DAY 252.0
+#define DAY 365.0
 #define VLR 200.0
-#define PERIODE 63.0
+#define PERIODE 92.0
 
 #include "dll_define.hpp"
 

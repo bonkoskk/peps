@@ -166,9 +166,17 @@ namespace Everglades.Models
                 nb_day_after = Convert.ToInt32((priceDate - dates.Last.Value).TotalDays); // round to nearest integer (in case of x.9999 -> x and not x+1)
                 if (nb_day_after > 0)
                 {
-                    dates.AddLast(new DateTime(priceDate.Year, priceDate.Month, priceDate.Day));
+                    dates.AddLast(priceDate);
                 }
+            
             }
+
+            if (nb_day_after > 63)
+            {
+                int caca = 1212323;
+            }
+
+
 
             // create and get data for all arguments
             double[,] historic = new double[underlying_list.Count, dates.Count];
