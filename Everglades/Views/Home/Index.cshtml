@@ -303,9 +303,9 @@
 </footer>
 
 <script>
-    var data_graph_hedge = @Model.getHedgeForOne(DateTime.Now - TimeSpan.FromDays(28), DateTime.Now - TimeSpan.FromDays(26), TimeSpan.FromDays(2)).ToString();
+    var data_graph_hedge = @Model.getHedgeForOne(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now - TimeSpan.FromDays(26), TimeSpan.FromDays(2)).ToString();
     var label_graph_hedge = "hedge";
-    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(28), DateTime.Now - TimeSpan.FromDays(26), TimeSpan.FromDays(1)).ToString();
+    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(30), DateTime.Now - TimeSpan.FromDays(26), TimeSpan.FromDays(1)).ToString();
     var label_graph_product = "product";
     var data_donut = @Html.Raw(Model.Hedging_Portfolio.portfolioComposition());
 

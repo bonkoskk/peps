@@ -208,7 +208,7 @@ namespace Everglades.Models
                     }
                     d_i++;
                 }
-                expected_returns[ass_i] = ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
+                expected_returns[ass_i] = 0; // ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
                 vol[ass_i] = 0;  //ass.getVolatility(t);
                 ass_i++;
             }
