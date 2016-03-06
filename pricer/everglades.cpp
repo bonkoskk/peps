@@ -18,20 +18,17 @@ extern double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &a
 	anticipated = false;
 	int nb_timesteps = path.size2 - 1;
 	int nb_underlyings = path.size1;
-	double perf;
-	double sum_perf = 0.0;
+	double perf = 0.0;
 	for (int i = 1; i < nb_timesteps; i++) {
-		perf = 0.0;
 		for (int j = 0; j < nb_underlyings; j++) {
 			perf += (gsl_matrix_get(&path, j, i) / gsl_matrix_get(&path, j, 0) - 1.0);
 		}
-		sum_perf += perf / ((double)nb_underlyings);
-		if (i == 7 && sum_perf / 8 >= 0.12) {
+		if (i == 7 && perf / (8*nb_underlyings) >= 0.12) {
 			anticipated = true;
 			return (vlr * 1.09);
 		}
 	}
-	return __max(vlr * (1.0 + 0.75*sum_perf / nb_timesteps), vlr);
+	return __max(vlr * (1.0 + 0.75*perf / (nb_timesteps*nb_underlyings)), vlr);
 }
 
 extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
