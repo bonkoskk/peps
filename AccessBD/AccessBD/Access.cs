@@ -413,5 +413,29 @@ namespace AccessBD
             }
         }
 
+        public static List<Currencies> getAllCurrencies()
+        {
+            using (var context = new qpcptfaw())
+            {
+                List<Currencies> list_res = new List<Currencies>();
+                var currencies = from f in context.Forex
+                                 select f;
+                if (currencies.Count() == 0) throw new Exception("No currencies stored in the database");
+                foreach (var c in currencies) list_res.Add(c.from);
+                return list_res;
+            }
+        }
+
+        public static void Clear_Everglades_Price(DateTime date){
+            using(var context = new qpcptfaw()){
+                var everg_price = from f in context.Prices
+                                  where f.date == date && f.AssetDBId == GetIdEverglades()
+                                  select f;
+                if (everg_price.Count() == 0) throw new ArgumentException("no everglades prices for this date", date.ToString());
+                if (everg_price.Count() > 1) throw new ArgumentException("there shoud be an unique price for this date", date.ToString());
+                context.Prices.Remove(everg_price.First());
+            }
+        }
+
     }
 }
