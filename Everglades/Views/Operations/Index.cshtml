@@ -23,7 +23,7 @@
                     param.setInt(Int32.Parse(Request[param.getName()]));
                     break;
                 case Everglades.Models.ParamType._double:
-                    param.setDouble(Double.Parse(Request[param.getName()]));
+                    param.setDouble(Double.Parse(Request[param.getName()].Replace(".", ",")));
                     break;
                 case Everglades.Models.ParamType._date:
                     param.setDate(DateTime.Parse(Request[param.getName()]));
