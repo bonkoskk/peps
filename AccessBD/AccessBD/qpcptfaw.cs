@@ -26,6 +26,7 @@ namespace AccessBD
         {
             modelBuilder.Entity<Price>().HasKey(t => new { t.AssetDBId, t.date });
             modelBuilder.Entity<ForexRateDB>().HasKey(t => new {t.ForexDBId, t.date});
+            modelBuilder.Entity<PortfolioComposition>().HasKey(t => new { t.AssetDBId, t.date });
         }
 
     }
