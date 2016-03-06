@@ -10,9 +10,12 @@ namespace AccessBD
     public class qpcptfaw : DbContext
     {
         public DbSet<AssetDB> Assets { get; set; }
-        public DbSet<PortfolioComposition> Portfolio { get; set; }
+        public DbSet<HedgingPortfolio> Portfolio { get; set; }
         public DbSet<Price> Prices { get; set; }
         public DbSet<LastConnectionDB> DbConnections { get; set; }
+        public DbSet<EvergladesDB> Everglades { get; set; }
+        public DbSet<ForexDB> Forex { get; set; }
+        public DbSet<ForexRateDB> ForexRates { get; set; }
 
         public qpcptfaw()
         {
@@ -22,6 +25,7 @@ namespace AccessBD
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Price>().HasKey(t => new { t.AssetDBId, t.date });
+            modelBuilder.Entity<ForexRateDB>().HasKey(t => new {t.ForexDBId, t.date});
         }
 
     }

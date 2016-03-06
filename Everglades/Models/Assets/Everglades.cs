@@ -171,6 +171,11 @@ namespace Everglades.Models
             
             }
 
+            if (nb_day_after > 91)
+            {
+                nb_day_after = 91;
+            }
+
             // create and get data for all arguments
             double[,] historic = new double[underlying_list.Count, dates.Count];
             double[] expected_returns = new double[underlying_list.Count];
