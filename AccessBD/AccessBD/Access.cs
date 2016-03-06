@@ -39,6 +39,7 @@ namespace AccessBD
                 }
             }
         }*/
+
         public static List<string> Get_List_Assets()
         {
             List<string> list_assets = new List<string>();
@@ -95,6 +96,19 @@ namespace AccessBD
             }
         }
 
+        public static int GetIdEverglades()
+        {
+            int id = -1;
+            using (var context = new qpcptfaw())
+            {
+                var a = from asset in context.Assets.OfType<EvergladesDB>()
+                        select asset;
+                if (a.Count() != 1) throw new Exception("The Everglades table is wrong : Everglades should be unique");
+                id = a.First().AssetDBId;
+            }
+            return id;
+        }
+
         public static int GetEquityIdFromSymbol(string symbol)
         {
             int id = -1;
@@ -149,6 +163,56 @@ namespace AccessBD
                 }
             }
         }
+
+
+        public static double Get_Price_Everglades(DateTime date)
+        {
+            DateTime datelocal = date;
+            int id = -1;
+            if (datelocal < DBInitialisation.DBstart)
+            {
+                throw new ArgumentException("no data for this date, check if this date is after the first date in the database", date.ToString());
+            }
+
+            using (qpcptfaw context = new qpcptfaw())
+            {
+                id = GetIdEverglades();
+                var array = (from p in context.Prices
+                             where p.AssetDBId == id && p.date == datelocal
+                             select new { high = p.high, low = p.low, close = p.close, open = p.open, volume = p.volume })
+                                .ToArray();
+                if (array.Length == 0)
+                {
+                    throw new ArgumentException("no data for this date, check if this date is after the first date in the database", date.ToString());
+                }
+                else
+                {
+                    var price = array[0];
+                    return price.close;
+                }
+            }
+        }
+
+
+        public static Price Get_PriceDB(int id, DateTime date)
+        {
+            DateTime datelocal = date;
+            if (datelocal < DBInitialisation.DBstart)
+            {
+                throw new ArgumentException("no data for this date, check if this date is after the first date in the database", date.ToString());
+            }
+
+            using (qpcptfaw context = new qpcptfaw())
+            {
+                    var prices = from p in context.Prices
+                                   where p.AssetDBId == id && p.date == date
+                                   select p;
+                    if (prices.Count() == 0) throw new ArgumentException("price does not exist in the database");
+                    if (prices.Count() > 1) throw new ArgumentException("duplicate price data in the database");
+                    return prices.First();
+            }
+        }
+
 
         public static Dictionary<Tuple<int, DateTime>, Dictionary<string, double>> Get_Price(List<int> ids, List<DateTime> dates)
         {
@@ -314,6 +378,39 @@ namespace AccessBD
                 context.DbConnections.Remove(a);
             }
             context.SaveChanges();
+        }
+
+        public static List<DateTime> getAllKeysHedgingPortfolio(qpcptfaw context)
+        {
+            List<DateTime> list_dates = new List<DateTime>();
+            var portfolio = from p in context.Portfolio
+                            select p;
+            foreach (var p in portfolio) list_dates.Add(p.date);
+            return list_dates;
+        }
+
+        public static HedgingPortfolio getHedgingPortfolio(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var portfolio = from p in context.Portfolio
+                                where p.date == date
+                                select p;
+                if (portfolio.Count() == 0) throw new ArgumentException("no portfolio value for this date", date.ToString());
+                return new HedgingPortfolio { date = date, value = portfolio.First().value };
+            }
+        }
+
+        public static double getHedgingPortfolioValue(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var portfolio = from p in context.Portfolio
+                                where p.date == date
+                                select p;
+                if (portfolio.Count() == 0) throw new ArgumentException("no portfolio value for this date", date.ToString());
+                return portfolio.First().value;
+            }
         }
 
     }
