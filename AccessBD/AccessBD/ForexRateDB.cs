@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AccessBD{
 
-    [Table("Forex Rates")]
+    [Table("ForexRates")]
     public class ForexRateDB
     {
         public DateTime date { get; set; }
@@ -16,6 +16,6 @@ namespace AccessBD{
         public double rate { get; set; }
 
         public int ForexDBId { get; set; }
-        public AssetDB ForexDB { get; set; }
+        public ForexDB ForexDB { get; set; }
     }
 }
