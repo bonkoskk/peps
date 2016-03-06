@@ -2,14 +2,11 @@ C:\Users\Xin\Desktop\Everglades\peps\QuandlCS\bin\Debug\QuandlCS.dll
 C:\Users\Xin\Desktop\Everglades\peps\QuandlCS\bin\Debug\QuandlCS.pdb
 C:\Users\Xin\Desktop\Everglades\peps\QuandlCS\obj\Debug\QuandlCS.dll
 C:\Users\Xin\Desktop\Everglades\peps\QuandlCS\obj\Debug\QuandlCS.pdb
-<<<<<<< HEAD
-C:\Users\ensimag\Documents\peps\QuandlCS\bin\Debug\QuandlCS.dll
-C:\Users\ensimag\Documents\peps\QuandlCS\bin\Debug\QuandlCS.pdb
-C:\Users\ensimag\Documents\peps\QuandlCS\obj\Debug\QuandlCS.dll
-C:\Users\ensimag\Documents\peps\QuandlCS\obj\Debug\QuandlCS.pdb
-=======
 C:\Users\babs\Desktop\Everglades\peps\QuandlCS\bin\Debug\QuandlCS.dll
 C:\Users\babs\Desktop\Everglades\peps\QuandlCS\bin\Debug\QuandlCS.pdb
 C:\Users\babs\Desktop\Everglades\peps\QuandlCS\obj\Debug\QuandlCS.dll
 C:\Users\babs\Desktop\Everglades\peps\QuandlCS\obj\Debug\QuandlCS.pdb
->>>>>>> 248c93b762bb19f1e38a028857221e0ad8a1b51e
+C:\Users\ensimag\Documents\peps\QuandlCS\bin\Debug\QuandlCS.dll
+C:\Users\ensimag\Documents\peps\QuandlCS\bin\Debug\QuandlCS.pdb
+C:\Users\ensimag\Documents\peps\QuandlCS\obj\Debug\QuandlCS.dll
+C:\Users\ensimag\Documents\peps\QuandlCS\obj\Debug\QuandlCS.pdb
