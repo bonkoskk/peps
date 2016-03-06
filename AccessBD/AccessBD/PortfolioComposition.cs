@@ -6,22 +6,16 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace AccessBD
 {
-    public enum Currencies
+    [Table("Portfolio Composition")]
+    public class PortfolioComposition
     {
-        USD,
-        CHF,
-        HKD,
-        GBP
-    }
+        public DateTime date { get; set; }
 
-    [Table("Forex")]
-    public class ForexDB
-    {
-        [Key]
-        public int ForexDBId { get; set;}
-        public Currencies from {get; set;}
+        public int AssetDBId { get; set; }
+        public AssetDB AssetDB { get; set; }
+
+        public double quantity { get; set; }
     }
 }
