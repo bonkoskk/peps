@@ -102,7 +102,7 @@ namespace Everglades.Models.DataBase
 
         // this member is temporary (TODO)
         private static Dictionary<DateTime, double> everglades_price = new Dictionary<DateTime, double>();
-        public static double getEvergladesPrice(DateTime date)
+        /*public static double getEvergladesPrice(DateTime date)
         {
             date = Round(date, TimeSpan.FromDays(1));
             if (everglades_price.ContainsKey(date))
@@ -113,12 +113,52 @@ namespace Everglades.Models.DataBase
             {
                 throw new NoDataException("Everglades", date);
             }
+        }*/
+
+        public static double getEvergladesPrice(DateTime date)
+        {
+            date = Round(date, TimeSpan.FromDays(1));
+            double price;
+            try{
+                price = Access.Get_Price_Everglades(date);
+                return price;
+            }catch(ArgumentException){
+                throw new NoDataException("Exception", date);
+            }
         }
+
+        /*public static void setEvergladesPrice(DateTime date, double price)
+        {
+            date = Round(date, TimeSpan.FromDays(1));
+            everglades_price[date] = price;
+        }*/
 
         public static void setEvergladesPrice(DateTime date, double price)
         {
             date = Round(date, TimeSpan.FromDays(1));
-            everglades_price[date] = price;
+            AccessBD.Write.storeEvergladesPrice(date, price);
+        }
+
+
+        public static double getPortfolioValue(DateTime date)
+        {
+            //date = Round(date, TimeSpan.FromDays(1));
+            double value;
+            try
+            {
+                value = Access.getHedgingPortfolioValue(date);
+                return value;
+            }
+            catch (ArgumentException)
+            {
+                throw new NoDataException("Exception", date);
+            }
+        }
+
+        public static void setHedgingPortfolioValue(DateTime date, double value)
+        {
+            //date = Round(date, TimeSpan.FromDays(1));
+            AccessBD.Write.storePortfolioValue(date, value);
         }
 
         // return delta of an asset from name
