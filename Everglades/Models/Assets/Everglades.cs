@@ -180,7 +180,7 @@ namespace Everglades.Models
             double[,] historic = new double[underlying_list.Count, dates.Count];
             double[] expected_returns = new double[underlying_list.Count];
             double[] vol = new double[underlying_list.Count];
-            double[,] correl;
+            double[,] correl = new double[underlying_list.Count, underlying_list.Count];
 
             ModelManage.timers.start("Everglades historic data");
             
@@ -190,12 +190,32 @@ namespace Everglades.Models
                 assetNames.Add(ass.getName());
             }
 
-
             Dictionary<Tuple<String, DateTime>, double> hist = null;
+            Dictionary<Tuple<String, DateTime>, double> hist_correl = null;
             if (underlying_list.First() is Equity)
             {
                 hist = AccessDB.Get_Asset_Price(assetNames, dates.ToList());
+                List<DateTime> dates_correl = new List<DateTime>();
+                int nb_dates_correl = 30;
+                for (int i = 0; i < nb_dates_correl; i++)
+                {
+                    dates_correl.Add(priceDate - TimeSpan.FromDays(i));
+                }
+                hist_correl = AccessDB.Get_Asset_Price(assetNames, dates_correl);
+                double[,] hist_correl_double = new double[underlying_list.Count, nb_dates_correl];
+                int k = 0;
+                foreach(IAsset ass in underlying_list) {
+                    int j = 0;
+                    foreach(DateTime d in dates_correl) {
+                        hist_correl_double[k, j] = hist_correl[new Tuple<String, DateTime>(ass.getName(), d)];
+                        j++;
+                    }
+                    k++;
+                }
+                Wrapping.Tools tools = new Wrapping.Tools();
+                tools.getCorrelAndVol(nb_dates_correl, underlying_list.Count, hist_correl_double, correl, vol);
             }
+            // TODO
             
             int ass_i = 0;
             foreach (IAsset ass in underlying_list)
@@ -215,9 +235,10 @@ namespace Everglades.Models
                     d_i++;
                 }
                 expected_returns[ass_i] = 0; // ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
-                vol[ass_i] = 0;  //ass.getVolatility(t);
+                vol[ass_i] = ass.getVolatility(t);
                 ass_i++;
             }
+
             ModelManage.timers.stop("Everglades historic data");
             // correlation is a bit trickier
             int asset_nb = underlying_list.Count;

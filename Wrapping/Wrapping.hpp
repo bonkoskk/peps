@@ -1,5 +1,6 @@
 // Wrapping.h
 #include "managed_gsl.hpp"
+#include "tools.hpp"
 
 #pragma once
 
@@ -86,6 +87,35 @@ namespace Wrapping {
 		array<double>^ getDelta() { return delta; };
 		bool getPayoffIsAnticipated() { return payoffIsAnticipated; };
 		double getPayoff() { return payoff; };
+
+	};
+
+
+	public ref class Tools
+	{
+	public:
+		void getCorrelAndVol(int nb_dates, int nb_asset, array<double, 2>^ prices, array<double, 2>^ correl, array<double>^ vol) {
+			h_gsl_matrix prices_gsl(nb_asset, nb_dates, prices);
+			h_gsl_matrix covariance_gsl(nb_asset, nb_asset);
+			h_gsl_matrix correl_gsl(nb_asset, nb_asset);
+			h_gsl_vector vol_gsl(nb_asset);
+			compute_covariance(prices_gsl._matrix, covariance_gsl._matrix);
+			get_correlation_and_volatility(covariance_gsl._matrix, correl_gsl._matrix, vol_gsl._vector);
+
+			for (int i = 0; i < correl_gsl._matrix->size1; i++)
+			{
+				for (int j = 0; j < correl_gsl._matrix->size2; j++)
+				{
+					correl[i, j] = gsl_matrix_get(correl_gsl._matrix, i, j);
+				}
+			}
+
+			for (int i = 0; i < vol_gsl._vector->size; i++)
+			{
+				vol[i] = gsl_vector_get(vol_gsl._vector, i);
+			}
+		}
+
 
 	};
 }
