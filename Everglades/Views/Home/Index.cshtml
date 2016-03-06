@@ -313,7 +313,7 @@
         Everglades.Models.ModelManage.timers.stop("Page data script loading hedge");
         Everglades.Models.ModelManage.timers.start("Page data script loading everg");
     }
-    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(1500), DateTime.Now - TimeSpan.FromDays(0), TimeSpan.FromDays(15)).ToString();
+    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(1500), DateTime.Now - TimeSpan.FromDays(0), TimeSpan.FromDays(100)).ToString();
     var label_graph_product = "product";
     @{
         Everglades.Models.ModelManage.timers.stop("Page data script loading everg");
