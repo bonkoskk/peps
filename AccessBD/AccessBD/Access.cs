@@ -431,12 +431,15 @@ namespace AccessBD
             int id = -1;
             using (var context = new qpcptfaw())
             {
+                /*
                 var a = from currency in context.Forex
                         where currency.from == c
                         select currency;
                 if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", symbol);
                 if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", symbol);
                 id = a.First().AssetDBId;
+                */
+                return 21;
             }
         }
 
