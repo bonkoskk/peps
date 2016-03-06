@@ -426,6 +426,20 @@ namespace AccessBD
             }
         }
 
+        public static int getForexIdFromCurrency(Currencies c)
+        {
+            int id = -1;
+            using (var context = new qpcptfaw())
+            {
+                var a = from currency in context.Forex
+                        where currency.from == c
+                        select currency;
+                if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", symbol);
+                if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", symbol);
+                id = a.First().AssetDBId;
+            }
+        }
+
         public static void Clear_Everglades_Price(DateTime date){
             using(var context = new qpcptfaw()){
                 var everg_price = from f in context.Prices
@@ -436,6 +450,8 @@ namespace AccessBD
                 context.Prices.Remove(everg_price.First());
             }
         }
+
+
 
     }
 }
