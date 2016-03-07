@@ -13,6 +13,7 @@ namespace AccessBD
         [Key]
         public int AssetDBId { get; set; }
         public string name { get; set; }
+        public Currencies currency { get; set; }
 
         public static int nbAssets{get; set;}
 

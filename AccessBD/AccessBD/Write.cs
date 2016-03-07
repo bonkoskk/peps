@@ -24,17 +24,15 @@ namespace AccessBD
                 {
                     if (price == Access.Get_Price(id, date)["close"]) return;
                     price_everglades = Access.Get_PriceDB(id, date);
-                    price_everglades.close = price;
-                    price_everglades.open = price;
-                    price_everglades.high = price;
-                    price_everglades.low = price;
+                    price_everglades.price = price;
+                    price_everglades.priceEur = price;
                     context.Prices.Add(price_everglades);
                     context.SaveChanges();
                     return;
                 }
                 else
                 {
-                    Price p = new Price { AssetDBId = id, date = date, high = price, open = price, close = price, low = price, volume = 0 };
+                    Price p = new Price { AssetDBId = id, date = date, price = price, priceEur =price };
                     context.Prices.Add(p);
                     context.SaveChanges();
                     return;

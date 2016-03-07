@@ -59,6 +59,7 @@ namespace AccessBD
             string symbol = code;
 
             int aid;
+            Currencies curr;
 
             //récupère tous les clés id-date de la BD (table Prices)
             List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllPricesKey(context);
@@ -66,16 +67,14 @@ namespace AccessBD
             KeyValuePair<int, DateTime> keyValue;
             List<Price> list_prices = new List<Price>();
 
-            double o = 0;
-            double h = 0;
-            double l = 0;
-            double v = 0;
             double c = 0;
+            string name;
 
             //si la bd ne contient pas le symbole concerné, on crée une nouvelle action et on la stocke dans la BD (table asset)
             if (!list_symbols_db.Contains(symbol))
             {
-                EquityDB e = new EquityDB { name = (string)jObj["name"], symbol = symbol };
+                name = (string)jObj["name"];
+                EquityDB e = new EquityDB { name = name, symbol = symbol, currency = CurrencyAsset.getCurrencyOf(name) };
                 context.Assets.Add(e);
                 context.SaveChanges();
                 AssetDB.assetCounter();
@@ -85,9 +84,10 @@ namespace AccessBD
 
             //récupère l'id correspondant au symbole de l'action
             aid = Access.GetEquityIdFromSymbol(symbol);
+            curr = Access.GetEquityCurrencyFromSymbol(symbol);
             //si l'id est -1 alors le symbol n'existe pas dans la bd, on ne stocke pas le prix
             if(aid!=-1){
-                //on parle les données json
+                //on parse les données json
                  foreach (var item in datas.Children())
                 {
                      //chaque item correspond aux données d'un jour
@@ -98,22 +98,23 @@ namespace AccessBD
                     if (!list_pair_db.Contains(keyValue)){
                         if (source == "YAHOO")
                         {
-                            o = double.Parse(data[1].ToString());
-                            h = double.Parse(data[2].ToString());
-                            l = double.Parse(data[3].ToString());
-                            v = double.Parse(data[5].ToString());
                             c = double.Parse(data[6].ToString());
                         }
                         else if (source == "GOOG")
                         {
-                            o = double.Parse(data[1].ToString());
-                            h = double.Parse(data[2].ToString());
-                            l = double.Parse(data[3].ToString());
-                            v = double.Parse(data[5].ToString());
                             c = double.Parse(data[4].ToString());
                         }
            
-                        Price p = new Price { AssetDBId = aid, date = date, high = h, open = o, close = c, low = l, volume = v };
+                        Price p = new Price { AssetDBId = aid, price = c, date = date };
+                        //conversion en euro
+                        if (!curr.Equals(Currencies.EUR))
+                        {
+                            p.priceEur = CurrencyAsset.convertToEuro(p.price, curr, date, context);
+                        }
+                        else
+                        {
+                            p.priceEur = p.price;
+                        }
                         list_prices.Add(p);
                     }
                 }
