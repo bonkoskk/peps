@@ -12,6 +12,7 @@ namespace AccessBD
     {
         public static List<KeyValuePair<String, int>> _id_name = new List<KeyValuePair<String, int>>();
         public static List<String> _name = new List<string>();
+        public static Dictionary<Currencies, int> _id_forex = new Dictionary<Currencies,int>(4);
 
 
         /*public void AccessData()
@@ -124,6 +125,21 @@ namespace AccessBD
             return id;
         }
 
+
+        public static Currencies GetEquityCurrencyFromSymbol(string symbol)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var a = from asset in context.Assets.OfType<EquityDB>()
+                        where asset.symbol == symbol
+                        select asset;
+                if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", symbol);
+                if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", symbol);
+                return a.First().currency;
+            }
+        }
+
+
         public static Dictionary<string, double> Get_Price(int id, DateTime date)
         {
             DateTime datelocal = date;
@@ -137,14 +153,14 @@ namespace AccessBD
             {
                 var array = (from p in context.Prices
                             where p.AssetDBId == id && p.date == datelocal
-                             select new { high = p.high, low = p.low, close = p.close, open = p.open, volume = p.volume })
+                             select new { price = p.price, priceEur = p.priceEur })
                                 .ToArray();
                 if (array.Length == 0)
                 {
                     array = (from p in context.Prices
                              where p.AssetDBId == id && p.date < datelocal
                              orderby p.date descending
-                             select new { high = p.high, low = p.low, close = p.close, open = p.open, volume = p.volume })
+                             select new { price = p.price, priceEur = p.priceEur })
                                 .Take(1).ToArray();
                 }   
                 if (array.Length == 0)
@@ -154,11 +170,8 @@ namespace AccessBD
                 else
                 {
                     var price = array[0];
-                    P["high"] = price.high;
-                    P["low"] = price.low;
-                    P["close"] = price.close;
-                    P["open"] = price.open;
-                    P["volume"] = price.volume;
+                    P["price"] = price.price;
+                    P["priceEur"] = price.priceEur;
                     return P;
                 }
             }
@@ -179,7 +192,7 @@ namespace AccessBD
                 id = GetIdEverglades();
                 var array = (from p in context.Prices
                              where p.AssetDBId == id && p.date == datelocal
-                             select new { high = p.high, low = p.low, close = p.close, open = p.open, volume = p.volume })
+                             select new { price = p.price })
                                 .ToArray();
                 if (array.Length == 0)
                 {
@@ -188,7 +201,7 @@ namespace AccessBD
                 else
                 {
                     var price = array[0];
-                    return price.close;
+                    return price.price;
                 }
             }
         }
@@ -222,16 +235,13 @@ namespace AccessBD
             {
                 var array = (from p in context.Prices
                              where ids.Contains(p.AssetDBId) && dates.Contains(p.date)
-                             select new { id = p.AssetDBId, date = p.date, high = p.high, low = p.low, close = p.close, open = p.open, volume = p.volume })
+                             select new { id = p.AssetDBId, date = p.date, price = p.price, priceEur = p.priceEur })
                                 .ToArray();
                 foreach(var price in array)
                 {
                     Dictionary<string, double> P = new Dictionary<string, double>();
-                    P["high"] = price.high;
-                    P["low"] = price.low;
-                    P["close"] = price.close;
-                    P["open"] = price.open;
-                    P["volume"] = price.volume;
+                    P["price"] = price.price;
+                    P["priceEur"] = price.priceEur;
                     dic[new Tuple<int, DateTime>(price.id, price.date)] = P;
                 }
                 return dic;
@@ -246,16 +256,13 @@ namespace AccessBD
             {
                 var array = (from p in context.Prices
                              where id == p.AssetDBId && dates.Contains(p.date)
-                             select new { id = p.AssetDBId, date = p.date, high = p.high, low = p.low, close = p.close, open = p.open, volume = p.volume })
+                             select new { id = p.AssetDBId, date = p.date, price = p.price, priceEur = p.priceEur })
                                 .ToArray();
                 foreach (var price in array)
                 {
                     Dictionary<string, double> P = new Dictionary<string, double>();
-                    P["high"] = price.high;
-                    P["low"] = price.low;
-                    P["close"] = price.close;
-                    P["open"] = price.open;
-                    P["volume"] = price.volume;
+                    P["price"] = price.price;
+                    P["priceEur"] = price.priceEur;
                     dic[price.date] = P;
                 }
                 return dic;
@@ -288,6 +295,20 @@ namespace AccessBD
                     l = 1;
                 if (prices.Count() == 0) return DBInitialisation.DBstart;
                 return prices.OrderByDescending(x => x.date).First().date;
+            }
+        }
+
+        public static DateTime GetLastData(Currencies currency)
+        {
+            using (var context = new qpcptfaw())
+            {
+                double l;
+                int id = getForexIdFromCurrency(currency);
+                var rates = from p in context.ForexRates
+                             where p.ForexDBId == id
+                             select p;
+                if (rates.Count() == 0) return DBInitialisation.DBstart;
+                return rates.OrderByDescending(x => x.date).First().date;
             }
         }
 
@@ -380,6 +401,18 @@ namespace AccessBD
             context.SaveChanges();
         }
 
+        public static void ClearDbConnections(qpcptfaw context, int id)
+        {
+            var conns = from a in context.DbConnections
+                        where a.LastConnectionDBId == id
+                        select a;
+            foreach (var a in conns)
+            {
+                context.DbConnections.Remove(a);
+            }
+            context.SaveChanges();
+        }
+
         public static List<DateTime> getAllKeysHedgingPortfolio(qpcptfaw context)
         {
             List<DateTime> list_dates = new List<DateTime>();
@@ -421,7 +454,7 @@ namespace AccessBD
                 var currencies = from f in context.Forex
                                  select f;
                 if (currencies.Count() == 0) throw new Exception("No currencies stored in the database");
-                foreach (var c in currencies) list_res.Add(c.from);
+                foreach (var c in currencies) list_res.Add(c.currency);
                 return list_res;
             }
         }
@@ -431,16 +464,47 @@ namespace AccessBD
             int id = -1;
             using (var context = new qpcptfaw())
             {
-                /*
                 var a = from currency in context.Forex
-                        where currency.from == c
+                        where currency.currency == c
                         select currency;
-                if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", symbol);
-                if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", symbol);
-                id = a.First().AssetDBId;
-                */
-                return 21;
+                if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", c.ToString());
+                if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", c.ToString());
+                id = a.First().ForexDBId;
+                return id;
             }
+        }
+
+        public static List<KeyValuePair<int, DateTime>> getAllForexRateKey(qpcptfaw context)
+        {
+            List<KeyValuePair<int, DateTime>> list_pair = new List<KeyValuePair<int, DateTime>>();
+            var rates = from r in context.ForexRates
+                         select r;
+            foreach (var p in rates)
+            {
+                list_pair.Add(new KeyValuePair<int, DateTime>(p.ForexDBId, p.date));
+            }
+            return list_pair;
+        }
+
+        public static double getExchangeRate(Currencies currency, DateTime date, qpcptfaw context)
+        {
+            int cid;
+            if (_id_forex.ContainsKey(currency)) 
+            { 
+                cid = _id_forex[currency];
+            }
+            else
+            {
+                cid = getForexIdFromCurrency(currency);
+                _id_forex.Add(currency, cid);
+            }
+
+            var rates = from r in context.ForexRates
+                        where r.ForexDBId == cid && r.date == date
+                        select r;
+            if (rates.Count() == 0) throw new ArgumentException("No data for this date and currency", date.ToString());
+            if (rates.Count() > 1) throw new Exception("The data required should be unique.");
+            return rates.First().rate;
         }
 
         public static void Clear_Everglades_Price(DateTime date){
@@ -454,6 +518,20 @@ namespace AccessBD
                 context.Prices.Remove(everg_price.First());
                 context.SaveChanges();
             }
+        }
+
+
+        public static void Clear_Prices_After(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var prices = from f in context.Prices
+                                  where f.date > date
+                                  select f;
+                foreach(Price p in prices ) context.Prices.Remove(p);
+                context.SaveChanges();
+            }
+
         }
 
 

@@ -22,6 +22,7 @@ namespace AccessBD
                 lastConn = Access.GetLastConnection(context);
             }
 
+            List<Currencies> list_currencies = new List<Currencies> { Currencies.USD, Currencies.HKD, Currencies.GBP, Currencies.CHF };
             List<string> list = new List<string> { "AAPL:US", "SAN:SM", "939:HK", "941:HK", "CSGN:VX", "XOM:US", "HSBA:LN", "1398:HK", "JNJ:US", "MSFT:US", "NESN:VX", "NOVN:VX", "PG", "ROG:VX", "SAN:FP", "SIE:GR", "TEF:SM", "FP:FP", "UBSG:VX", "VOD:LN" };
         
             //récupération des données Quandl
@@ -31,6 +32,9 @@ namespace AccessBD
                 DateTime end = lastConn.AddYears(1);
                 while (DateTime.Compare(end, DateTime.Today) < 0)
                 {
+                    //récupération des taux de change
+                    QuandlDataExchange.storeAllInDB(list_currencies, context, begin, end);
+                    //récupération des prix des actions
                     QuandlData.storeAllInDB(list, context, begin, end);
                     begin = end;
                     end = begin.AddYears(1);
@@ -38,6 +42,8 @@ namespace AccessBD
                     context.DbConnections.Add(conn);
                     context.SaveChanges();
                 }
+                //récupération des taux de change
+                QuandlDataExchange.storeAllInDB(list_currencies, context, begin, DateTime.Today);
                 QuandlData.storeAllInDB(list, context, begin, DateTime.Today);
                 LastConnectionDB connection = new LastConnectionDB { date = DateTime.Today };
                 context.DbConnections.Add(connection);
