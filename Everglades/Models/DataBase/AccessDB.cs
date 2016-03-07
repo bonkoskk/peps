@@ -100,6 +100,12 @@ namespace Everglades.Models.DataBase
             return pricesName;
         }
 
+        //retourne prix d'une action en euro
+        public static double Get_Asset_Price_Eur(string name, DateTime date){
+            int id = Access.GetIdFromName(name);
+            return Access.get_Price_Eur(id, date);
+        }
+
         // this member is temporary (TODO)
         private static Dictionary<DateTime, double> everglades_price = new Dictionary<DateTime, double>();
         /*public static double getEvergladesPrice(DateTime date)
