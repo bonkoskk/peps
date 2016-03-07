@@ -119,7 +119,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuandlData.cs" />
-    <Compile Include="QuandlDataExchange.cs" />
     <Compile Include="Rate.cs" />
     <Compile Include="qpcptfaw.cs" />
     <Compile Include="Write.cs" />
