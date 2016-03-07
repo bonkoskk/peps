@@ -13,6 +13,7 @@ namespace AccessBD
         public static List<KeyValuePair<String, int>> _id_name = new List<KeyValuePair<String, int>>();
         public static List<String> _name = new List<string>();
         public static Dictionary<Currencies, int> _id_forex = new Dictionary<Currencies,int>(4);
+        public static Dictionary<String, int> _id_Everglades = new Dictionary<string, int>(1);
 
 
         /*public void AccessData()
@@ -100,12 +101,14 @@ namespace AccessBD
         public static int GetIdEverglades()
         {
             int id = -1;
+            if (_id_Everglades.ContainsKey("Everglades")) return _id_Everglades["Everglades"];
             using (var context = new qpcptfaw())
             {
                 var a = from asset in context.Assets.OfType<EvergladesDB>()
                         select asset;
                 if (a.Count() != 1) throw new Exception("The Everglades table is wrong : Everglades should be unique");
                 id = a.First().AssetDBId;
+                _id_Everglades.Add("Everglades", id);
             }
             return id;
         }
@@ -266,6 +269,19 @@ namespace AccessBD
                     dic[price.date] = P;
                 }
                 return dic;
+            }
+        }
+
+        public static double get_Price_Eur(int id, DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var prices = from p in context.Prices
+                             where p.AssetDBId == id && p.date == date
+                             select p;
+                if (prices.Count() == 0) throw new ArgumentException("No price for this asset at this date", date.ToString());
+                if (prices.Count() > 1) throw new Exception("Data should be unique");
+                return prices.First().priceEur;
             }
         }
 
