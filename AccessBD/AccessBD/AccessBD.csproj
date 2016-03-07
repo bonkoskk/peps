@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="Access.cs" />
     <Compile Include="AssetDB.cs" />
+    <Compile Include="CurrencyAsset.cs" />
     <Compile Include="DBInitialisation.cs" />
     <Compile Include="EquityDB.cs" />
     <Compile Include="EvergladesData.cs" />
