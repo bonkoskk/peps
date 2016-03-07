@@ -37,7 +37,7 @@ namespace Everglades.Models
             //Access.ClearPrices(db);
             //Access.ClearDbConnections(db);
             //Access.ClearAssets(db);
-            Access.Clear_Everglades_Price(new DateTime(2016, 3, 2));
+            //Access.Clear_Everglades_Price(new DateTime(2016, 3, 2));
 
             instance = this;
             Assets = new List<IAsset>();
@@ -87,7 +87,7 @@ namespace Everglades.Models
         public List<Advice> getHedgingAdvice()
         {
             List<Advice> list = new List<Advice>();
-            /*
+            
             Portfolio deltas = everg.getDeltaPortfolio();
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
@@ -102,7 +102,6 @@ namespace Everglades.Models
                     list.Add(new Advice(-difference, assetname, "buy " + Convert.ToInt32(-difference).ToString() + " of " + assetname));
                 }
             }
-             * */
             return list;
         }
 
