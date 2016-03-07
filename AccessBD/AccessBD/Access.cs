@@ -525,12 +525,14 @@ namespace AccessBD
 
         public static void Clear_Everglades_Price(DateTime date){
             using(var context = new qpcptfaw()){
+                int id = GetIdEverglades();
                 var everg_price = from f in context.Prices
-                                  where f.date == date && f.AssetDBId == GetIdEverglades()
+                                  where f.AssetDBId == id && f.date == date
                                   select f;
                 if (everg_price.Count() == 0) throw new ArgumentException("no everglades prices for this date", date.ToString());
                 if (everg_price.Count() > 1) throw new ArgumentException("there shoud be an unique price for this date", date.ToString());
                 context.Prices.Remove(everg_price.First());
+                context.SaveChanges();
             }
         }
 
