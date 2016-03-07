@@ -33,7 +33,7 @@ namespace Everglades.Models.DataBase
             {
                 int id = Access.GetIdFromName(assetName);
                 Dictionary<string, double> P = Access.Get_Price(id, date);
-                return P["close"];
+                return P["price"];
             }
             else
             {
@@ -41,7 +41,7 @@ namespace Everglades.Models.DataBase
                 {
                     int id = Access.GetIdFromName(assetName);
                     Dictionary<string, double> P = Access.Get_Price(id, date);
-                    double price = P["close"];
+                    double price = P["price"];
                     cache.setPrice(assetName, date, price);
                     return price;
                 }
@@ -69,11 +69,11 @@ namespace Everglades.Models.DataBase
                     Tuple<int, DateTime> id_date = new Tuple<int, DateTime>(id_asset, date);
                     if (pricesId.ContainsKey(id_date))
                     {
-                        pricesName[str_date] = pricesId[id_date]["close"];
+                        pricesName[str_date] = pricesId[id_date]["price"];
                     }
                     else
                     {
-                        pricesName[str_date] = Access.Get_Price(id_asset, date)["close"];
+                        pricesName[str_date] = Access.Get_Price(id_asset, date)["price"];
                     }
                 }
             }
@@ -90,11 +90,11 @@ namespace Everglades.Models.DataBase
             {
                 if (pricesId.ContainsKey(date))
                 {
-                    pricesName[date] = pricesId[date]["close"];
+                    pricesName[date] = pricesId[date]["price"];
                 }
                 else
                 {
-                    pricesName[date] = Access.Get_Price(id, date)["close"];
+                    pricesName[date] = Access.Get_Price(id, date)["price"];
                 }
             }
             return pricesName;

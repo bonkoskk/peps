@@ -46,7 +46,7 @@ namespace Everglades.Models
             }
             everg = new Everglades(Assets);
             // TODO : cash should be in database
-            shares_everg = 10000;
+            shares_everg = 100;
             cash = shares_everg * everg.getPrice();
             Hedging_Portfolio = new Portfolio(Assets);
             Operations_History = new LinkedList<Operation.Operation>();
@@ -87,11 +87,12 @@ namespace Everglades.Models
         public List<Advice> getHedgingAdvice()
         {
             List<Advice> list = new List<Advice>();
+            /*
             Portfolio deltas = everg.getDeltaPortfolio();
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
                 string assetname = item.Key.getName();
-                double difference = Hedging_Portfolio.assetList[item.Key] - item.Value * shares_everg;
+                double difference = Hedging_Portfolio.assetList[item.Key] - item.Value;
                 if (difference > 0.5)
                 {
                     list.Add(new Advice(difference, assetname, "sell " + Convert.ToInt32(difference).ToString() + " of " + assetname));
@@ -101,6 +102,7 @@ namespace Everglades.Models
                     list.Add(new Advice(-difference, assetname, "buy " + Convert.ToInt32(-difference).ToString() + " of " + assetname));
                 }
             }
+             * */
             return list;
         }
 

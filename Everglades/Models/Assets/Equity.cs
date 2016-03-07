@@ -58,7 +58,7 @@ namespace Everglades.Models
             int i = 0;
             foreach (DateTime d in dates)
             {
-                data[1, i] = prices[d];
+                data[0, i] = prices[d];
                 i++;
             }
             return data;
@@ -114,7 +114,7 @@ namespace Everglades.Models
 
             int nb_dates = 15;
 
-            double[,] price = getPriceDouble(t, t - TimeSpan.FromDays(nb_dates), TimeSpan.FromDays(1));
+            double[,] price = getPriceDouble(t - TimeSpan.FromDays(nb_dates), t, TimeSpan.FromDays(1));
 
             double[,] correl = new double[1, 1];
             double[] vol = new double[1];
