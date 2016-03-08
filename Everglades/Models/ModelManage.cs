@@ -61,7 +61,7 @@ namespace Everglades.Models
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
             timers.stop("ModelManage initialization");
-            everg.computePrice(DateTime.Now);
+            //everg.computePrice(DateTime.Now);
         }
 
         public void buy(IAsset asset, int number)
@@ -95,7 +95,7 @@ namespace Everglades.Models
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
                 string assetname = item.Key.getName();
-                double difference = Hedging_Portfolio.assetList[item.Key] - item.Value;
+                double difference = Hedging_Portfolio.assetList[item.Key] - item.Value * shares_everg;
                 if (difference > 0.5)
                 {
                     list.Add(new Advice(difference, assetname, "sell " + Convert.ToInt32(difference).ToString() + " of " + assetname));
