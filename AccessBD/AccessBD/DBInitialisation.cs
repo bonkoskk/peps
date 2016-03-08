@@ -26,9 +26,9 @@ namespace AccessBD
             List<string> list = new List<string> { "AAPL:US", "SAN:SM", "939:HK", "941:HK", "CSGN:VX", "XOM:US", "HSBA:LN", "1398:HK", "JNJ:US", "MSFT:US", "NESN:VX", "NOVN:VX", "PG", "ROG:VX", "SAN:FP", "SIE:GR", "TEF:SM", "FP:FP", "UBSG:VX", "VOD:LN" };
         
             //récupération des données Quandl
-            if (DateTime.Compare(lastConn, DateTime.Today) < 0)
+            if (DateTime.Compare(lastConn, DateTime.Today) <= 0)
             {
-                DateTime begin = lastConn;
+                DateTime begin = lastConn.AddDays(-1);
                 DateTime end = lastConn.AddYears(1);
                 while (DateTime.Compare(end, DateTime.Today) < 0)
                 {
