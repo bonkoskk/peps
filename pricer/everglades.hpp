@@ -1,4 +1,4 @@
-#ifndef EVERGLADES_HPP
+ï»¿#ifndef EVERGLADES_HPP
 #define EVERGLADES_HPP
 #pragma once
 
@@ -15,9 +15,9 @@ namespace Everglades
 	/**
 	* Permet de calculer le Payoff du produit Everglades
 	*
-	* @param[out] anticipated est vrai si l'exercice anticipé a eu lieu.
+	* @param[out] anticipated est vrai si l'exercice anticipï¿½ a eu lieu.
 	*
-	* @param[in] path contient une trajectoire avec les prix aux 24 dates de constatation et à la date d'émission.
+	* @param[in] path contient une trajectoire avec les prix aux 24 dates de constatation et ï¿½ la date d'ï¿½mission.
 	* C'est une matrice de taille nb_ss_Jacents x 25.
 	*/
 	DLLEXP extern double get_payoff(const gsl_matrix &path, double vlr, bool &anticipated);
@@ -26,15 +26,15 @@ namespace Everglades
 	* Permet de calculer le prix du produit everglades
 	*
 	* @param[out] price : contient le prix du produit.
-	* @param[out] ic : contient la largeur du demi intervalle de confiance centré sur le prix.
-	* @param[in] historic : contient une trajectoire avec les prix constatés passés ainsi que le prix du jour.
-	* C'est une matrice de taille nb_sous_jacents x (nb_dates_constatations_passées + 1 ou + 2).
-	* @param[in] nb_day_after : nombre de jour ouvré depuis la dernière date de constatations.
-	* @param[in] r1 : taux d'intérêt (en cas d'exercice anticipé) jusqu'à la date d'exercice anticipée.
-	* @param[in] r2 : taux d'intérêt (en cas d'exercice NON anticipé) jusqu'à la date de fin du produit.
+	* @param[out] ic : contient la largeur du demi intervalle de confiance centrï¿½ sur le prix.
+	* @param[in] historic : contient une trajectoire avec les prix constatï¿½s passï¿½s ainsi que le prix du jour.
+	* C'est une matrice de taille nb_sous_jacents x (nb_dates_constatations_passï¿½es + 1 ou + 2).
+	* @param[in] nb_day_after : nombre de jour ouvrï¿½ depuis la derniï¿½re date de constatations.
+	* @param[in] r1 : taux d'intï¿½rï¿½t (en cas d'exercice anticipï¿½) jusqu'ï¿½ la date d'exercice anticipï¿½e.
+	* @param[in] r2 : taux d'intï¿½rï¿½t (en cas d'exercice NON anticipï¿½) jusqu'ï¿½ la date de fin du produit.
 	* @param[in] expected_returns : performances attendues des sous-jacents.
-	* @param[in] vol : vecteur de volatilité des actifs sous jacents.
-	* @param[in] correl : matrice de corrélation des actifs sous jacents.
+	* @param[in] vol : vecteur de volatilitï¿½ des actifs sous jacents.
+	* @param[in] correl : matrice de corrï¿½lation des actifs sous jacents.
 	* @param[in] nbSimu : nombre de simulation.
 	*/
 	DLLEXP extern int get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
@@ -42,3 +42,4 @@ namespace Everglades
 };
 
 #endif // EVERGLADES_HPP
+
