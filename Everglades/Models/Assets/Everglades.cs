@@ -193,11 +193,11 @@ namespace Everglades.Models
 
             Dictionary<Tuple<String, DateTime>, double> hist = null;
             Dictionary<Tuple<String, DateTime>, double> hist_correl = null;
-            if (underlying_list.First() is Equity)
+            if (underlying_list.First() is Equity && 1==0)
             {
                 hist = AccessDB.Get_Asset_Price(assetNames, dates.ToList());
                 List<DateTime> dates_correl = new List<DateTime>();
-                int nb_dates_correl = 20;
+                int nb_dates_correl = 2;
                 for (int i = 0; i < nb_dates_correl; i++)
                 {
                     dates_correl.Add(priceDate - TimeSpan.FromDays(i));
@@ -243,7 +243,7 @@ namespace Everglades.Models
                 int d_i = 0;
                 foreach (DateTime d in dates)
                 {
-                    if (ass is Equity)
+                    if (ass is Equity && 1==0)
                     {
                         var key = new Tuple<String, DateTime>(ass.getName(), d);
                         historic[ass_i, d_i] = hist[key];
