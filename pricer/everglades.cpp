@@ -60,6 +60,7 @@ extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, 
 
 	for (int i = 0; i < nb_sj; i++)
 	{
+		gsl_vector_set(*delta, i, 0);
 		gsl_vector_set(temp, i, 0);
 		gsl_vector_set(epsilon, i, 0);
 		gsl_vector_set(payoff_up_anticipated, i, 0);
