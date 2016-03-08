@@ -141,6 +141,7 @@ namespace Everglades.Models
         public Tuple<double, double[]> computePrice(DateTime t)
         {
             ModelManage.timers.start("Everglades pre-pricing");
+            int asset_nb = underlying_list.Count;
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             // little correction : as we need historic data, we consider price today is price at
@@ -177,10 +178,10 @@ namespace Everglades.Models
             }
 
             // create and get data for all arguments
-            double[,] historic = new double[underlying_list.Count, dates.Count];
-            double[] expected_returns = new double[underlying_list.Count];
-            double[] vol = new double[underlying_list.Count];
-            double[,] correl = new double[underlying_list.Count, underlying_list.Count];
+            double[,] historic = new double[asset_nb, dates.Count];
+            double[] expected_returns = new double[asset_nb];
+            double[] vol = new double[asset_nb];
+            double[,] correl = new double[asset_nb, asset_nb];
 
             ModelManage.timers.start("Everglades historic data");
             
@@ -196,13 +197,13 @@ namespace Everglades.Models
             {
                 hist = AccessDB.Get_Asset_Price(assetNames, dates.ToList());
                 List<DateTime> dates_correl = new List<DateTime>();
-                int nb_dates_correl = 30;
+                int nb_dates_correl = 20;
                 for (int i = 0; i < nb_dates_correl; i++)
                 {
                     dates_correl.Add(priceDate - TimeSpan.FromDays(i));
                 }
                 hist_correl = AccessDB.Get_Asset_Price(assetNames, dates_correl);
-                double[,] hist_correl_double = new double[underlying_list.Count, nb_dates_correl];
+                double[,] hist_correl_double = new double[asset_nb, nb_dates_correl];
                 int k = 0;
                 foreach(IAsset ass in underlying_list) {
                     int j = 0;
@@ -213,7 +214,26 @@ namespace Everglades.Models
                     k++;
                 }
                 Wrapping.Tools tools = new Wrapping.Tools();
-                tools.getCorrelAndVol(nb_dates_correl, underlying_list.Count, hist_correl_double, correl, vol);
+                tools.getCorrelAndVol(nb_dates_correl, asset_nb, hist_correl_double, correl, vol);
+            }
+            else
+            {
+                correl = new double[asset_nb, asset_nb];
+                for (int i = 0; i < asset_nb; i++)
+                {
+                    for (int j = 0; j < asset_nb; j++)
+                    {
+                        if (i == j)
+                        {
+                            correl[i, j] = 1;
+                        }
+                        else
+                        {
+                            correl[i, j] = 0.0;
+                        }
+                    }
+                    expected_returns[i] = 0;
+                }
             }
             // TODO
             
@@ -235,46 +255,12 @@ namespace Everglades.Models
                     d_i++;
                 }
                 expected_returns[ass_i] = 0; // ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
-                vol[ass_i] = ass.getVolatility(t);
+                vol[ass_i] = 0.3;// ass.getVolatility(t);
                 ass_i++;
             }
 
             ModelManage.timers.stop("Everglades historic data");
             // correlation is a bit trickier
-            int asset_nb = underlying_list.Count;
-            if (1 == 1)
-            {
-                correl = new double[asset_nb,asset_nb];
-                for(int i = 0; i < asset_nb ; i++) {
-                    for (int j = 0; j < asset_nb; j++)
-                    {
-                        if (i == j)
-                        {
-                            correl[i, j] = 1;
-                        }
-                        else
-                        {
-                            correl[i, j] = 0.0;
-                        }
-                    }
-                }
-            } else {
-                int date_nb_correl = 100;
-                double[][] prices = new double[asset_nb][];
-                int j = 0;
-                foreach (IAsset ass in underlying_list)
-                {
-                    prices[j] = new double[date_nb_correl];
-                    DateTime titer = t - TimeSpan.FromDays(date_nb_correl);
-                    for (int i = 0; i < date_nb_correl; i++)
-                    {
-                        prices[j][i] = ass.getPrice(titer);
-                        titer += TimeSpan.FromDays(1);
-                    }
-                    j++;
-                }
-                correl = HistoricCorrelation.computeCorrelation(date_nb_correl, asset_nb, prices, vol);
-            }
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             int sampleNb = 1000;
              
