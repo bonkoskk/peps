@@ -536,6 +536,19 @@ namespace AccessBD
             }
         }
 
+        public static void Clear_Everglades_Prices()
+        {
+            using (var context = new qpcptfaw())
+            {
+                int id = GetIdEverglades();
+                var everg_price = from f in context.Prices
+                                  where f.AssetDBId == id 
+                                  select f;
+                foreach(var e in everg_price) context.Prices.Remove(e);
+                context.SaveChanges();
+            }
+        }
+
 
         public static void Clear_Prices_After(DateTime date)
         {

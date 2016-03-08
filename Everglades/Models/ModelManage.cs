@@ -28,6 +28,7 @@ namespace Everglades.Models
             timers.start("ModelManage initialization");
             timers.start("Database initialization");
             qpcptfaw db = new qpcptfaw();
+            //Access.Clear_Everglades_Prices();
             DBInitialisation.DBInit(db);
             timers.stop("Database initialization");
             //Access.ClearPrice(db, 65);
@@ -38,6 +39,7 @@ namespace Everglades.Models
             //Access.ClearDbConnections(db);
             //Access.ClearAssets(db);
             //Access.Clear_Everglades_Price(new DateTime(2016, 3, 2));
+            
 
             instance = this;
             Assets = new List<IAsset>();
