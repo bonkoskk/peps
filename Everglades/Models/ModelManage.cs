@@ -61,6 +61,7 @@ namespace Everglades.Models
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
             timers.stop("ModelManage initialization");
+            everg.computePrice(DateTime.Now);
         }
 
         public void buy(IAsset asset, int number)

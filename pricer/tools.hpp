@@ -26,9 +26,9 @@ extern int compounded_returns(const gsl_vector* prices, gsl_vector* returns);
 
 extern double historic_volatility(gsl_vector* prices);
 
-extern int compute_covariance(const gsl_matrix* prices, gsl_matrix* covariance);
+DLLEXP extern int compute_covariance(const gsl_matrix* prices, gsl_matrix* covariance);
 
-extern int get_correlation_and_volatility(const gsl_matrix* covariance, gsl_matrix* correl, gsl_vector* vol);
+DLLEXP extern int get_correlation_and_volatility(const gsl_matrix* covariance, gsl_matrix* correl, gsl_vector* vol);
 
 #endif /* TOOLS_HPP */
 

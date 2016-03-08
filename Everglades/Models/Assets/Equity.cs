@@ -35,6 +35,35 @@ namespace Everglades.Models
             return getPrice(DateTime.Now);
         }
 
+        public Double[,] getPriceDouble(DateTime t1, DateTime t2, TimeSpan step)
+        {
+            if (t1 > t2)
+            {
+                throw new ArgumentOutOfRangeException("Start date must be before end date");
+            }
+            if (step.TotalDays <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Step must be strictly positive");
+            }
+            DateTime t = t1;
+            List<DateTime> dates = new List<DateTime>();
+            while (t < t2)
+            {
+                dates.Add(t);
+                t += step;
+            }
+
+            Dictionary<DateTime, double> prices = AccessDB.Get_Asset_Price(this.name, dates);
+            double[,] data = new double[1, dates.Count];
+            int i = 0;
+            foreach (DateTime d in dates)
+            {
+                data[0, i] = prices[d];
+                i++;
+            }
+            return data;
+        }
+
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
             if (t1 > t2)
@@ -81,22 +110,16 @@ namespace Everglades.Models
 
         public double getVolatility(DateTime t)
         {
+            Wrapping.Tools tools = new Wrapping.Tools();
 
-            /*
-            // number of observations dates (1 day separated)
-            int date_nb = 100;
-            // get prices for these days
-            DateTime titer = t;
-            Double[] prices = new Double[date_nb];
-            for(int i=0; i<100; i++)
-            {
-                prices[i] = this.getPrice(titer);
-                titer -= TimeSpan.FromDays(1);
-            }
-            // compute and return historic volatility
-            return HistoricVolatility.compute(date_nb, prices);*/
+            int nb_dates = 15;
 
-            return 0.4;
+            double[,] price = getPriceDouble(t - TimeSpan.FromDays(nb_dates), t, TimeSpan.FromDays(1));
+
+            double[,] correl = new double[1, 1];
+            double[] vol = new double[1];
+            tools.getCorrelAndVol(nb_dates, 1, price, correl, vol);
+            return vol[0];
         }
 
         public double getCovariance(IAsset a, DateTime t)

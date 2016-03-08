@@ -19,6 +19,11 @@ namespace Everglades.Models
             return 0.03;
         }
 
+        public double getChangeToEuro(DateTime date)
+        {
+            return 1;
+        }
+
         public string getSymbol()
         {
             return symbol;
