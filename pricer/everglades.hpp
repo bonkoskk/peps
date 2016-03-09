@@ -1,4 +1,4 @@
-﻿#ifndef EVERGLADES_HPP
+#ifndef EVERGLADES_HPP
 #define EVERGLADES_HPP
 #pragma once
 
@@ -9,6 +9,7 @@
 #define PERIODE 92.0
 
 #include "dll_define.hpp"
+
 
 namespace Everglades
 {
@@ -42,4 +43,3 @@ namespace Everglades
 };
 
 #endif // EVERGLADES_HPP
-

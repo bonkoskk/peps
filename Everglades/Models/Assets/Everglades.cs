@@ -193,7 +193,7 @@ namespace Everglades.Models
 
             Dictionary<Tuple<String, DateTime>, double> hist = null;
             Dictionary<Tuple<String, DateTime>, double> hist_correl = null;
-            if (underlying_list.First() is Equity && 1==0)
+            if (underlying_list.First() is Equity)
             {
                 hist = AccessDB.Get_Asset_Price(assetNames, dates.ToList());
                 List<DateTime> dates_correl = new List<DateTime>();
@@ -243,7 +243,7 @@ namespace Everglades.Models
                 int d_i = 0;
                 foreach (DateTime d in dates)
                 {
-                    if (ass is Equity && 1==0)
+                    if (ass is Equity)
                     {
                         var key = new Tuple<String, DateTime>(ass.getName(), d);
                         historic[ass_i, d_i] = hist[key];
@@ -254,20 +254,21 @@ namespace Everglades.Models
                     }
                     d_i++;
                 }
-                expected_returns[ass_i] = 0; // ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
-                vol[ass_i] = 0.3;// ass.getVolatility(t);
+                expected_returns[ass_i] = 0.02; //ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
+                vol[ass_i] = ass.getVolatility(t);
                 ass_i++;
             }
 
             ModelManage.timers.stop("Everglades historic data");
             // correlation is a bit trickier
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
-            int sampleNb = 1000;
+            int sampleNb = 10000;
              
             // price
 
             
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
+          
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
             return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
 

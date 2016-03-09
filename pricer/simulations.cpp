@@ -71,17 +71,17 @@ extern void simulations::simulate_n_sj(gsl_matrix &path, int last_index, int nb_
 	double curr_val;
 	double sigmad;
 	double lg;
-	if (nb_day_after != 0)
-	for (int j = 0; j <nb_stocks; j++){
-		prev_val = gsl_matrix_get(&path, j, last_index-1);
-		gsl_matrix_get_col(Ld, &cholesky, j);
-		sigmad = gsl_vector_get(&vol, j);
+	if (nb_day_after != 0) {
+		for (int j = 0; j <nb_stocks; j++){
+			prev_val = gsl_matrix_get(&path, j, last_index-1);
+			gsl_matrix_get_col(Ld, &cholesky, j);
+			sigmad = gsl_vector_get(&vol, j);
 
-		gsl_blas_ddot(Ld, Brownien, &lg);
-		curr_val = prev_val * exp((gsl_vector_get(&expected_returns, j) - sigmad*sigmad / 2)*(PERIODE - nb_day_after) / DAY + sigmad*sqrt((PERIODE - nb_day_after) / DAY)*lg);
-		gsl_matrix_set(&path, j, last_index-1, curr_val);
+			gsl_blas_ddot(Ld, Brownien, &lg);
+			curr_val = prev_val * exp((gsl_vector_get(&expected_returns, j) - sigmad*sigmad / 2)*(PERIODE - nb_day_after) / DAY + sigmad*sqrt((PERIODE - nb_day_after) / DAY)*lg);
+			gsl_matrix_set(&path, j, last_index-1, curr_val);
+		}
 	}
-
 	gsl_vector_free(Brownien);
 
 	for (int i = last_index; i < size; i++) {
@@ -97,4 +97,5 @@ extern void simulations::simulate_n_sj(gsl_matrix &path, int last_index, int nb_
 		gsl_vector_free(Brownien);
 	}
 	gsl_vector_free(Ld);
+
 }
