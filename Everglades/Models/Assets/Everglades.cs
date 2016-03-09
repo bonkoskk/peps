@@ -262,34 +262,25 @@ namespace Everglades.Models
             ModelManage.timers.stop("Everglades historic data");
             // correlation is a bit trickier
             double r = this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
-            int sampleNb = 10000;
+            int sampleNb = 1000;
              
             // price
 
             
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
-          
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
-            return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
 
-            /*Wrapping.WrapperVanilla wp = new Wrapping.WrapperVanilla();
-            ModelManage.timers.stop("Everglades pre-pricing");
-            ModelManage.timers.start("Everglades pricing");
-            Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
-            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
-            ModelManage.timers.stop("Everglades pricing");
-            return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
             /*
-            Wrapping.WrapperVanilla wp = new Wrapping.WrapperVanilla();
+            DateTime T = new DateTime(2017, 03, 14);
+            double tau = (T - t).TotalDays / 365;
 
-            wp.getPriceOptionEuropeanCallMC(1000000, 1, 100, 100, 0.2, 0.04, 0);
 
-            double[] temp_double = new double[asset_nb];
+            Wrapping.WrapperDebugVanilla wp = new Wrapping.WrapperDebugVanilla();
+            wp.getPriceVanilla(0, asset_nb, historic[0, historic.Length], expected_returns, vol, correl, tau, r, sampleNb, historic[0, historic.Length]);
+            */
+            return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
 
-            return new Tuple<double, double[]>(wp.getPrice(), temp_double);
-            ModelManage.timers.stop("Everglades pricing");
-            return new Tuple<double, double[]>(wp.getPrice(), temp_double);
-              */
+
         }
 
         //TODO
