@@ -89,4 +89,19 @@ namespace Wrapping {
 		this->payoff = Everglades::get_payoff(*historic_matrix._matrix, vlr, anticipated);
 		this->payoffIsAnticipated = anticipated;
 	}
+
+	array<double, 2>^ WrapperEverglades::factCholesky(array<double, 2>^ correl, int nb_asset) {
+		array<double, 2>^ result = gcnew array<double, 2>(nb_asset, nb_asset);
+		h_gsl_matrix correl_gsl(nb_asset, nb_asset, correl);
+		h_gsl_matrix result_gsl(nb_asset, nb_asset);
+		fact_cholesky(correl_gsl._matrix, result_gsl._matrix);
+		for (int i = 0; i < nb_asset; i++)
+		{
+			for (int j = 0; j < nb_asset; j++)
+			{
+				result[i, j] = gsl_matrix_get(result_gsl._matrix, i, j);
+			}
+		}
+		return result;
+	}
 }

@@ -87,7 +87,7 @@ namespace Wrapping {
 		array<double>^ getDelta() { return delta; };
 		bool getPayoffIsAnticipated() { return payoffIsAnticipated; };
 		double getPayoff() { return payoff; };
-
+		array<double, 2>^ factCholesky(array<double, 2>^ correl, int nb_asset);
 	};
 
 
