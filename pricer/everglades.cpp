@@ -44,7 +44,9 @@ extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, 
 
 	//Allocation des vecteurs itermédiaires de calculs
 	*delta = gsl_vector_calloc(nb_sj);
+
 	gsl_matrix *path = gsl_matrix_alloc(nb_sj, nb_dates);
+	gsl_matrix *path_cpy = gsl_matrix_alloc(nb_sj, nb_dates);
 	gsl_matrix *path_up = gsl_matrix_alloc(nb_sj, nb_dates);
 	gsl_matrix *path_down = gsl_matrix_alloc(nb_sj, nb_dates);
 	gsl_vector *temp = gsl_vector_alloc(nb_sj);
@@ -53,6 +55,27 @@ extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, 
 	gsl_vector *payoff_up_final = gsl_vector_calloc(nb_sj);
 	gsl_vector *payoff_down_anticipated = gsl_vector_calloc(nb_sj);
 	gsl_vector *payoff_down_final = gsl_vector_calloc(nb_sj);
+
+
+
+	for (int i = 0; i < nb_sj; i++)
+	{
+		gsl_vector_set(*delta, i, 0);
+		gsl_vector_set(temp, i, 0);
+		gsl_vector_set(epsilon, i, 0);
+		gsl_vector_set(payoff_up_anticipated, i, 0);
+		gsl_vector_set(payoff_up_final, i, 0);
+		gsl_vector_set(payoff_down_anticipated, i, 0);
+		gsl_vector_set(payoff_down_final, i, 0);
+		for (int j = 0; j < nb_dates; j++)
+		{
+			gsl_matrix_set(path, i, j, 0);
+			gsl_matrix_set(path_cpy, i, j, 0);
+			gsl_matrix_set(path_up, i, j, 0);
+			gsl_matrix_set(path_down, i, j, 0);
+
+		}
+	}
 
 	//Initialisation du générateur aléatoire
 	gsl_rng *rng = gsl_rng_alloc(gsl_rng_default);
@@ -79,17 +102,18 @@ extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, 
 
 	//Simulations de Monte-Carlo
 	for (int i = 0; i < nbSimu; i++){
-		gsl_matrix_set_col(path, last_index - 1, temp); // WTFFFFFFFFFFFFF ?????????
+		//gsl_matrix_set_col(path, last_index - 1, temp); // WTFFFFFFFFFFFFF ?????????
 		//Remise � sa valeur initiale de la valeur actuelle des sous-jacents
-		simulations::simulate_n_sj(*path, last_index, nb_day_after, expected_returns, vol, correl, rng);
-		gsl_matrix_memcpy(path_up, path);
-		gsl_matrix_memcpy(path_down, path);
+		gsl_matrix_memcpy(path_cpy, path);
+		simulations::simulate_n_sj(*path_cpy, last_index, nb_day_after, expected_returns, vol, correl, rng);
+		gsl_matrix_memcpy(path_up, path_cpy);
+		gsl_matrix_memcpy(path_down, path_cpy);
 
 		for (int sj = 0; sj < nb_sj; sj++)
 		{
 			for (int t = last_index; t < (int)path->size2; t++)
 			{
-				s_temp = gsl_matrix_get(path, sj, t);
+				s_temp = gsl_matrix_get(path_cpy, sj, t);
 				gsl_matrix_set(path_up, sj, t, (s_temp + gsl_vector_get(epsilon, sj)));
 				gsl_matrix_set(path_down, sj, t, (s_temp - gsl_vector_get(epsilon, sj)));
 			}
@@ -118,7 +142,7 @@ extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, 
 		}
 
 		//Valeurs pour le prix
-		phi = Everglades::get_payoff(*path, VLR, anticipated);
+		phi = Everglades::get_payoff(*path_cpy, VLR, anticipated);
 		if (anticipated) {
 			sumPayoff_anticipated += phi;
 			sumIc_anticipated += phi*phi;
@@ -158,6 +182,7 @@ extern int Everglades::get_price(double& price, double& ic, gsl_vector** delta, 
 	gsl_matrix_free(path_down);
 	gsl_vector_free(temp);
 	gsl_matrix_free(path);
+	gsl_matrix_free(path_cpy);
 	gsl_rng_free(rng);
 	gsl_vector_free(epsilon);
 	gsl_vector_free(payoff_up_anticipated);
