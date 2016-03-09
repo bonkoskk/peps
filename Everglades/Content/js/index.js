@@ -305,6 +305,7 @@ $(function () {
         $(".advice-window").show();
     });
 
+    // simulation
     $("#simulate-button").click(function () {
         $(".simulation-window").show();
         $("#simulation-graph-prices").html("");
