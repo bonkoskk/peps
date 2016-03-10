@@ -151,9 +151,11 @@ namespace Everglades.Models
             Data tracking_error = new Data();
             Data everglades_price = new Data();
             Data hedge_price = new Data();
+            Data portsolo_price = new Data();
             Data cash_price = new Data();
             double cash_t = 0;
             double portvalue;
+            double portsolovalue;
             double evergvalue;
             double r = 0.04;
             
@@ -167,14 +169,16 @@ namespace Everglades.Models
                 {
                     evergvalue = everg_simul.computePrice(date).Item1;
                     hedge_simul = everg_simul.getDeltaPortfolio(date);
-                    cash_t = evergvalue - hedge_simul.getPrice(date);
-                    portvalue = hedge_simul.getPrice(date) + cash_t;
+                    portsolovalue = hedge_simul.getPrice(date);
+                    cash_t = evergvalue - portsolovalue;
+                    portvalue = portsolovalue + cash_t;
                 }
                 else
                 {
                     // here we (virtually) sell old hedging portfolio
                     double t = (date - date_prev).TotalDays / 360;
-                    portvalue = hedge_simul.getPrice(date) + cash_t * Math.Exp(r * t);
+                    portsolovalue = hedge_simul.getPrice(date);
+                    portvalue = portsolovalue + cash_t * Math.Exp(r * t);
                     cash_t = portvalue;
                     // test if date is a constatation date
                     if (list_anticipated_dates.Contains(date))
@@ -224,6 +228,10 @@ namespace Everglades.Models
                 {
                     hedge_price.add(new DataPoint(date, portvalue));
                 }
+                if (!double.IsInfinity(portsolovalue) && !double.IsNaN(portsolovalue))
+                {
+                    portsolo_price.add(new DataPoint(date, portsolovalue));
+                }
                 if (!double.IsInfinity(err) && !double.IsNaN(err))
                 {
                     tracking_error.add(new DataPoint(date, err));
@@ -243,6 +251,7 @@ namespace Everglades.Models
             list.Add(hedge_price);
             list.Add(tracking_error);
             list.Add(cash_price);
+            list.Add(portsolo_price);
             return list;
         }
 
