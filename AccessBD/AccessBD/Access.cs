@@ -346,6 +346,16 @@ namespace AccessBD
             return list_symbol;
         }
 
+        public static bool ContainsEquitySymbol(qpcptfaw context, string symbol)
+        {
+            var equities = from b in context.Assets.OfType<EquityDB>()
+                           where b.symbol == symbol
+                           select b;
+            if (equities.Count() == 0) return false;
+            if (equities.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
+        }
+
         public static List<KeyValuePair<int, DateTime>> getAllPricesKey(qpcptfaw context)
         {
             List<KeyValuePair<int, DateTime>> list_pair = new List<KeyValuePair<int, DateTime>>();
@@ -358,6 +368,16 @@ namespace AccessBD
                 list_pair.Add(new KeyValuePair<int, DateTime>(p.AssetDBId, p.date));
             }
             return list_pair;
+        }
+
+        public static bool ContainsPricesKey(qpcptfaw context, int id, DateTime date)
+        {
+            var prices = from p in context.Prices
+                         where p.AssetDBId==id && p.date==date
+                         select p;
+            if (prices.Count() == 0) return false;
+            if (prices.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
         }
 
         public static void ClearAssets(qpcptfaw context)
@@ -475,6 +495,19 @@ namespace AccessBD
             }
         }
 
+        public static bool CurrenciesContains(Currencies c)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var currencies = from f in context.Forex
+                                 where f.currency == c
+                                 select f;
+                if (currencies.Count() == 1) return true;
+                if (currencies.Count() == 0) return false;
+                throw new Exception("The data should be unique. Problem in the database.");
+            }
+        }
+
         public static int getForexIdFromCurrency(Currencies c)
         {
             int id = -1;
@@ -500,6 +533,16 @@ namespace AccessBD
                 list_pair.Add(new KeyValuePair<int, DateTime>(p.ForexDBId, p.date));
             }
             return list_pair;
+        }
+
+        public static bool ForexRateContainsKey(qpcptfaw context, DateTime date, int id)
+        {
+            var rates = from r in context.ForexRates
+                        where r.date == date && r.ForexDBId == id
+                        select r;
+            if (rates.Count() == 0) return false;
+            if (rates.Count() == 1) return true;
+            throw new Exception("The data returned should be unique. There is a problem in the Database.");
         }
 
         public static double getExchangeRate(Currencies currency, DateTime date, qpcptfaw context)

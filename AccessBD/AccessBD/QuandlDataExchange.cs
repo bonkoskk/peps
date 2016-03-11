@@ -53,25 +53,25 @@ namespace AccessBD
 
             List<Currencies> list_currencies_db;
             //tous les currencies présents dans la BD
-            try
+            /*try
             {
                 list_currencies_db = Access.getAllCurrencies();
             }catch (Exception){
                 list_currencies_db = new List<Currencies>();
-            }
+            }*/
 
             Currencies current_currency = getCurrencyFromQuandlCode(code);
 
             //Si la BD ne contient pas ce currency, on le crée
-            if (!list_currencies_db.Contains(current_currency))
+            if (!Access.CurrenciesContains(current_currency))//!list_currencies_db.Contains(current_currency))
             {
                 ForexDB fdb = new ForexDB{currency = current_currency};
                 context.Forex.Add(fdb);
                 context.SaveChanges();
             }
 
-            List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllForexRateKey(context);
-            KeyValuePair<int, DateTime> keyValue;
+            //List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllForexRateKey(context);
+            //KeyValuePair<int, DateTime> keyValue;
             List<ForexRateDB> list_rates = new List<ForexRateDB>();
 
             double rate = 0;
@@ -84,8 +84,8 @@ namespace AccessBD
                 {
                     JToken[] data = item.ToArray();
                     DateTime date = DateTime.Parse(data[0].ToString());
-                    keyValue = new KeyValuePair<int, DateTime>(id, date);
-                    if (!list_pair_db.Contains(keyValue))
+                   // keyValue = new KeyValuePair<int, DateTime>(id, date);
+                   if (!Access.ForexRateContainsKey(context, date, id)) //if (!list_pair_db.Contains(keyValue))
                     {
                         rate = double.Parse(data[1].ToString());
                         ForexRateDB f = new ForexRateDB { ForexDBId = id, date = date, rate = rate };
@@ -120,7 +120,7 @@ namespace AccessBD
             List<KeyValuePair<string, string>> list_quandl_codes = new List<KeyValuePair<string,string>>();
             foreach(Currencies c in currencies) list_quandl_codes.Add(getCodeQuandl(c));
 
-            List<Currencies> list_currencies_db;
+            /*List<Currencies> list_currencies_db;
             try
             {
                 list_currencies_db = Access.getAllCurrencies();
@@ -128,12 +128,12 @@ namespace AccessBD
             catch (Exception)
             {
                 list_currencies_db = new List<Currencies>();
-            }
+            }*/
 
             foreach (KeyValuePair<string, string> pair in list_quandl_codes)
             {
                 Currencies c = getCurrencyFromQuandlCode(pair.Value);
-                if (!list_currencies_db.Contains(c))
+                if (!Access.CurrenciesContains(c))//!list_currencies_db.Contains(c))
                 {
                     json = GetJsonData(pair.Key, pair.Value, start, end);
                     storeInDB(json, context, pair.Key, pair.Value);
