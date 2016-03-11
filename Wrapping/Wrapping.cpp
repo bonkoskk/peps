@@ -89,4 +89,38 @@ namespace Wrapping {
 		this->payoff = Everglades::get_payoff(*historic_matrix._matrix, vlr, anticipated);
 		this->payoffIsAnticipated = anticipated;
 	}
+
+	array<double, 2>^ WrapperEverglades::factCholesky(array<double, 2>^ correl, int nb_asset) {
+		array<double, 2>^ result = gcnew array<double, 2>(nb_asset, nb_asset);
+		h_gsl_matrix correl_gsl(nb_asset, nb_asset, correl);
+		h_gsl_matrix result_gsl(nb_asset, nb_asset);
+		fact_cholesky(correl_gsl._matrix, result_gsl._matrix);
+		for (int i = 0; i < nb_asset; i++)
+		{
+			for (int j = 0; j < nb_asset; j++)
+			{
+				result[i, j] = gsl_matrix_get(result_gsl._matrix, i, j);
+			}
+		}
+		return result;
+	}
+
+	void WrapperDebugVanilla::getPriceVanilla(int nb_dates, int nb_asset, double S0, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, double tau, double r, int sampleNb, double Strike) {
+		
+		h_gsl_vector expected_returns_vector(nb_asset, expected_returns);
+		h_gsl_vector vol_vector(nb_asset, vol);
+		h_gsl_matrix correl_matrix(nb_asset, nb_asset, correl);
+
+		double price, ic, delta_temp, delta_mc;
+
+		Pricer::call_vanilla_mc(ic, price, delta_temp, delta_mc, sampleNb, tau, S0, Strike, 0.2, 0.3);
+		this->price = price;
+		this->confidenceInterval = ic;
+
+		delta = gcnew array<double>(1);
+
+		for (int i = 0; i < 1; i++){
+			this->delta[i] = delta_temp;
+		}
+	}
 }

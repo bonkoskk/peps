@@ -61,6 +61,7 @@ namespace Everglades.Models
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
             timers.stop("ModelManage initialization");
+            //everg.computePrice(DateTime.Now);
         }
 
         public void buy(IAsset asset, int number)
@@ -94,7 +95,7 @@ namespace Everglades.Models
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
                 string assetname = item.Key.getName();
-                double difference = Hedging_Portfolio.assetList[item.Key] - item.Value;
+                double difference = Hedging_Portfolio.assetList[item.Key] - item.Value * shares_everg;
                 if (difference > 0.5)
                 {
                     list.Add(new Advice(difference, assetname, "sell " + Convert.ToInt32(difference).ToString() + " of " + assetname));
@@ -164,7 +165,7 @@ namespace Everglades.Models
             {
                 if (date == list_dates.First())
                 {
-                    evergvalue = everg_simul.getPrice(date);
+                    evergvalue = everg_simul.computePrice(date).Item1;
                     hedge_simul = everg_simul.getDeltaPortfolio(date);
                     cash_t = evergvalue - hedge_simul.getPrice(date);
                     portvalue = hedge_simul.getPrice(date) + cash_t;
@@ -191,7 +192,7 @@ namespace Everglades.Models
                         else
                         {
                             // if not the last date, we simply price the product and ajust our edge
-                            evergvalue = everg_simul.getPrice(date);
+                            evergvalue = everg_simul.computePrice(date).Item1;
                             hedge_simul = everg_simul.getDeltaPortfolio(date);
                             cash_t -= hedge_simul.getPrice(date);
                         }
@@ -200,13 +201,14 @@ namespace Everglades.Models
                     {
                         // if last date, we ge payoff and bam
                         Tuple<bool, double> payoff = everg_simul.getPayoff(date);
+                        Tuple<double, double[]> test = everg_simul.computePrice(date);
                         evergvalue = payoff.Item2;
                         cash_t -= evergvalue;
                     }
                     else
                     {
                         // if not the last date, we simply price the product and ajust our edge
-                        evergvalue = everg_simul.getPrice(date);
+                        evergvalue = everg_simul.computePrice(date).Item1;
                         hedge_simul = everg_simul.getDeltaPortfolio(date);
                         cash_t -= hedge_simul.getPrice(date);
                     }

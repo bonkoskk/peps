@@ -52,6 +52,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="APIFiMag, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\APIFiMag.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -112,9 +116,9 @@
     <Compile Include="EvergladesDB.cs" />
     <Compile Include="ForexDB.cs" />
     <Compile Include="ForexRateDB.cs" />
+    <Compile Include="HedgingPortfolio.cs" />
     <Compile Include="LastConnectionDB.cs" />
     <Compile Include="OptionDB.cs" />
-    <Compile Include="HedgingPortfolio.cs" />
     <Compile Include="PortfolioComposition.cs" />
     <Compile Include="Price.cs" />
     <Compile Include="Program.cs" />
@@ -131,7 +135,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
     <None Include="LinqToDB.Templates\DataAnnotations.ttinclude" />
     <None Include="LinqToDB.Templates\DataModel.ttinclude" />
     <None Include="LinqToDB.Templates\EditableObject.ttinclude" />
