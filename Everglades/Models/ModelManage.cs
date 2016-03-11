@@ -61,7 +61,6 @@ namespace Everglades.Models
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
             timers.stop("ModelManage initialization");
-            //everg.computePrice(DateTime.Now);
         }
 
         public void buy(IAsset asset, int number)
@@ -169,6 +168,7 @@ namespace Everglades.Models
                 {
                     evergvalue = everg_simul.computePrice(date).Item1;
                     hedge_simul = everg_simul.getDeltaPortfolio(date);
+                    
                     portsolovalue = hedge_simul.getPrice(date);
                     cash_t = evergvalue - portsolovalue;
                     portvalue = portsolovalue + cash_t;
@@ -177,8 +177,7 @@ namespace Everglades.Models
                 {
                     // here we (virtually) sell old hedging portfolio
                     double t = (date - date_prev).TotalDays / 360;
-                    portsolovalue = hedge_simul.getPrice(date);
-                    portvalue = portsolovalue + cash_t * Math.Exp(r * t);
+                    portvalue = hedge_simul.getPrice(date) + cash_t * Math.Exp(r * t);
                     cash_t = portvalue;
                     // test if date is a constatation date
                     if (list_anticipated_dates.Contains(date))
@@ -190,6 +189,7 @@ namespace Everglades.Models
                         if (payoff.Item1)
                         {
                             evergvalue = payoff.Item2;
+                            portsolovalue = hedge_simul.getPrice(date);
                             cash_t -= evergvalue;
                             breakk = true;
                         }
@@ -198,22 +198,24 @@ namespace Everglades.Models
                             // if not the last date, we simply price the product and ajust our edge
                             evergvalue = everg_simul.computePrice(date).Item1;
                             hedge_simul = everg_simul.getDeltaPortfolio(date);
-                            cash_t -= hedge_simul.getPrice(date);
+                            portsolovalue = hedge_simul.getPrice(date);
+                            cash_t -= portsolovalue;
                         }
                     }
                     else if (date == everg_simul.getLastDate())
                     {
                         // if last date, we ge payoff and bam
                         Tuple<bool, double> payoff = everg_simul.getPayoff(date);
-                        Tuple<double, double[]> test = everg_simul.computePrice(date);
                         evergvalue = payoff.Item2;
                         cash_t -= evergvalue;
+                        portsolovalue = hedge_simul.getPrice(date);
                     }
                     else
                     {
                         // if not the last date, we simply price the product and ajust our edge
                         evergvalue = everg_simul.computePrice(date).Item1;
                         hedge_simul = everg_simul.getDeltaPortfolio(date);
+                        portsolovalue = hedge_simul.getPrice(date);
                         cash_t -= hedge_simul.getPrice(date);
                     }
                 }

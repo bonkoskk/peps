@@ -142,6 +142,8 @@ namespace Everglades.Models
         {
             ModelManage.timers.start("Everglades pre-pricing");
             int asset_nb = underlying_list.Count;
+            // risk-free rate
+            double r = 0.04;//this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             // little correction : as we need historic data, we consider price today is price at
@@ -197,7 +199,7 @@ namespace Everglades.Models
             {
                 hist = AccessDB.Get_Asset_Price(assetNames, dates.ToList());
                 List<DateTime> dates_correl = new List<DateTime>();
-                int nb_dates_correl = 2;
+                int nb_dates_correl = 10;
                 for (int i = 0; i < nb_dates_correl; i++)
                 {
                     dates_correl.Add(priceDate - TimeSpan.FromDays(i));
@@ -232,7 +234,7 @@ namespace Everglades.Models
                             correl[i, j] = 0.0;
                         }
                     }
-                    expected_returns[i] = 0;
+                    expected_returns[i] = r;
                 }
             }
             // TODO
@@ -254,7 +256,7 @@ namespace Everglades.Models
                     }
                     d_i++;
                 }
-                expected_returns[ass_i] = 0.04; //ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
+                expected_returns[ass_i] = r; //ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
                 vol[ass_i] = ass.getVolatility(t);
                 ass_i++;
             }
@@ -266,7 +268,7 @@ namespace Everglades.Models
              
             // price
 
-            
+            // TODO : fact cholesky
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
           
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
