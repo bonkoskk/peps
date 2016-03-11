@@ -334,7 +334,7 @@ namespace AccessBD
                 return d.date;
         }
 
-        public static List<string> getAllEquitiesSymbol(qpcptfaw context)
+        /*public static List<string> getAllEquitiesSymbol(qpcptfaw context)
         {
             List<string> list_symbol = new List<string>();
             var equities = from b in context.Assets.OfType<EquityDB>()
@@ -344,7 +344,7 @@ namespace AccessBD
                 list_symbol.Add(e.symbol);
             }
             return list_symbol;
-        }
+        }*/
 
         public static bool ContainsEquitySymbol(qpcptfaw context, string symbol)
         {
@@ -356,7 +356,7 @@ namespace AccessBD
             throw new Exception("Data should be unique.");
         }
 
-        public static List<KeyValuePair<int, DateTime>> getAllPricesKey(qpcptfaw context)
+        /*public static List<KeyValuePair<int, DateTime>> getAllPricesKey(qpcptfaw context)
         {
             List<KeyValuePair<int, DateTime>> list_pair = new List<KeyValuePair<int, DateTime>>();
             var prices = from p in context.Prices
@@ -368,7 +368,7 @@ namespace AccessBD
                 list_pair.Add(new KeyValuePair<int, DateTime>(p.AssetDBId, p.date));
             }
             return list_pair;
-        }
+        }*/
 
         public static bool ContainsPricesKey(qpcptfaw context, int id, DateTime date)
         {
@@ -482,7 +482,7 @@ namespace AccessBD
             }
         }
 
-        public static List<Currencies> getAllCurrencies()
+        /*public static List<Currencies> getAllCurrencies()
         {
             using (var context = new qpcptfaw())
             {
@@ -493,7 +493,7 @@ namespace AccessBD
                 foreach (var c in currencies) list_res.Add(c.currency);
                 return list_res;
             }
-        }
+        }*/
 
         public static bool CurrenciesContains(Currencies c)
         {
@@ -523,7 +523,7 @@ namespace AccessBD
             }
         }
 
-        public static List<KeyValuePair<int, DateTime>> getAllForexRateKey(qpcptfaw context)
+        /*public static List<KeyValuePair<int, DateTime>> getAllForexRateKey(qpcptfaw context)
         {
             List<KeyValuePair<int, DateTime>> list_pair = new List<KeyValuePair<int, DateTime>>();
             var rates = from r in context.ForexRates
@@ -533,7 +533,7 @@ namespace AccessBD
                 list_pair.Add(new KeyValuePair<int, DateTime>(p.ForexDBId, p.date));
             }
             return list_pair;
-        }
+        }*/
 
         public static bool ForexRateContainsKey(qpcptfaw context, DateTime date, int id)
         {
