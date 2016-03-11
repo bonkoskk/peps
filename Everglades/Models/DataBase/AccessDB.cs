@@ -13,10 +13,9 @@ namespace Everglades.Models.DataBase
         private static RandomNormal rand = new RandomNormal();
         private static CacheDB cache = new CacheDB(1000);
 
-        private static DateTime Round(DateTime dateTime, TimeSpan interval)
+        private static DateTime Round(DateTime dateTime)
         {
-            var halfIntervelTicks = (interval.Ticks + 1) >> 1;
-            return dateTime.AddTicks(halfIntervelTicks - ((dateTime.Ticks + halfIntervelTicks) % interval.Ticks));
+            return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
         }
 
         // return list of assets names
@@ -28,7 +27,7 @@ namespace Everglades.Models.DataBase
         // return price of an asset from name
         public static double Get_Asset_Price(String assetName, DateTime date, bool cacheUse = true)
         {
-            date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             if (!cacheUse)
             {
                 int id = Access.GetIdFromName(assetName);
@@ -106,42 +105,21 @@ namespace Everglades.Models.DataBase
             return Access.get_Price_Eur(id, date);
         }
 
-        // this member is temporary (TODO)
-        private static Dictionary<DateTime, double> everglades_price = new Dictionary<DateTime, double>();
-        /*public static double getEvergladesPrice(DateTime date)
-        {
-            date = Round(date, TimeSpan.FromDays(1));
-            if (everglades_price.ContainsKey(date))
-            {
-                return everglades_price[date];
-            }
-            else
-            {
-                throw new NoDataException("Everglades", date);
-            }
-        }*/
-
         public static double getEvergladesPrice(DateTime date)
         {
-            date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             double price;
-            try{
+            try {
                 price = Access.Get_Price_Everglades(date);
                 return price;
-            }catch(ArgumentException){
+            } catch(ArgumentException) {
                 throw new NoDataException("Exception", date);
             }
         }
 
-        /*public static void setEvergladesPrice(DateTime date, double price)
-        {
-            date = Round(date, TimeSpan.FromDays(1));
-            everglades_price[date] = price;
-        }*/
-
         public static void setEvergladesPrice(DateTime date, double price)
         {
-            date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             AccessBD.Write.storeEvergladesPrice(date, price);
         }
 
@@ -163,7 +141,7 @@ namespace Everglades.Models.DataBase
 
         public static void setHedgingPortfolioValue(DateTime date, double value)
         {
-            //date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             AccessBD.Write.storePortfolioValue(date, value);
         }
 

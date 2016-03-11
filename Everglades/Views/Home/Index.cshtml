@@ -1,6 +1,8 @@
 ﻿@{
-    List<Everglades.Models.Advice> hedging_advice = Model.getHedgingAdvice();
     Everglades.Models.ModelManage.timers.start("Page loading");
+    Everglades.Models.ModelManage.timers.start("Page loading hedging advices");
+    List<Everglades.Models.Advice> hedging_advice = Model.getHedgingAdvice();
+    Everglades.Models.ModelManage.timers.stop("Page loading hedging advices");
 }
 
 <!-- buttons for update and simulate -->

@@ -263,14 +263,15 @@ namespace Everglades.Models
 
             ModelManage.timers.stop("Everglades historic data");
             // correlation is a bit trickier
-            double r = 0.04;//this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             int sampleNb = 1000;
              
             // price
 
             // TODO : fact cholesky
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
-          
+
+            //double[,] cholesky = wp.factCholesky(correl, asset_nb);
+            //wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, cholesky, nb_day_after, r, sampleNb);
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
             return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
 
