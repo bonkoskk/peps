@@ -118,4 +118,28 @@ namespace Wrapping {
 
 
 	};
+
+	public ref class WrapperDebugVanilla
+	{
+	private:
+		double confidenceInterval;
+		double price;
+		array<double>^ delta;
+		bool payoffIsAnticipated;
+		double payoff;
+
+
+	public:
+		
+		void getPriceVanilla(int nb_dates, int nb_asset, double S0, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, double tau, double r, int sampleNb, double Strike);
+
+		WrapperDebugVanilla() {
+			confidenceInterval = price = 0;
+		};
+		double getPrice() { return price; };
+		double getIC() { return confidenceInterval; };
+		array<double>^ getDelta() { return delta; };
+		bool getPayoffIsAnticipated() { return payoffIsAnticipated; };
+		double getPayoff() { return payoff; };
+	};
 }

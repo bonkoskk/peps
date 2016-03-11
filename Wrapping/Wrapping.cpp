@@ -104,4 +104,23 @@ namespace Wrapping {
 		}
 		return result;
 	}
+
+	void WrapperDebugVanilla::getPriceVanilla(int nb_dates, int nb_asset, double S0, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, double tau, double r, int sampleNb, double Strike) {
+		
+		h_gsl_vector expected_returns_vector(nb_asset, expected_returns);
+		h_gsl_vector vol_vector(nb_asset, vol);
+		h_gsl_matrix correl_matrix(nb_asset, nb_asset, correl);
+
+		double price, ic, delta_temp, delta_mc;
+
+		Pricer::call_vanilla_mc(ic, price, delta_temp, delta_mc, sampleNb, tau, S0, Strike, 0.2, 0.3);
+		this->price = price;
+		this->confidenceInterval = ic;
+
+		delta = gcnew array<double>(1);
+
+		for (int i = 0; i < 1; i++){
+			this->delta[i] = delta_temp;
+		}
+	}
 }
