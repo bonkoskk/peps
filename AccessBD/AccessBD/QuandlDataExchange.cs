@@ -46,6 +46,23 @@ namespace AccessBD
             }
         }
 
+        public static KeyValuePair<string, string> getCodeQuandl(Currencies currency)
+        {
+            switch (currency)
+            {
+                case Currencies.USD:
+                    return new KeyValuePair<string, string>("ECB", "EURUSD");
+                case Currencies.HKD:
+                    return new KeyValuePair<string, string>("ECB", "EURHKD");
+                case Currencies.GBP:
+                    return new KeyValuePair<string, string>("ECB", "EURGBP");
+                case Currencies.CHF:
+                    return new KeyValuePair<string, string>("ECB", "EURCHF");
+                default:
+                    return new KeyValuePair<string, string>();
+            }
+        }
+
         public static void storeInDB(string json, qpcptfaw context, string source, string code)
         {
             JObject jObj = JObject.Parse(json);
@@ -97,22 +114,7 @@ namespace AccessBD
             context.SaveChanges();
         }
 
-        public static KeyValuePair<string, string> getCodeQuandl(Currencies currency)
-        {
-            switch (currency)
-            {
-                case Currencies.USD:
-                    return new KeyValuePair<string, string>("ECB", "EURUSD");
-                case Currencies.HKD:
-                    return new KeyValuePair<string, string>("ECB", "EURHKD");
-                case Currencies.GBP:
-                    return new KeyValuePair<string, string>("ECB", "EURGBP");
-                case Currencies.CHF:
-                    return new KeyValuePair<string, string>("ECB", "EURCHF");
-                default:
-                    return new KeyValuePair<string, string>();
-            }
-        }
+        
 
         public static void storeAllInDB(List<Currencies> currencies, qpcptfaw context, DateTime start, DateTime end)
         {

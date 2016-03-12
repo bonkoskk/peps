@@ -19,19 +19,27 @@ namespace AccessBD
 
                 Price price_everglades;
 
-                //si la date existe déjà dans la table des prix
-                if (!Access.ContainsPricesKey(context, id, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
+                // si la date existe déjà dans la table des prix on la remplace
+                if (Access.ContainsPricesKey(context, id, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
-                    if (price == Access.Get_Price(id, date)["close"]) return;
-                    price_everglades = Access.Get_PriceDB(id, date);
-                    price_everglades.price = price;
-                    price_everglades.priceEur = price;
+                    // on vérifie que la valeur de prix est différente
+                    var priceBD = Access.Get_Price(id, date);
+                    // si identiques on return (rien à faire)
+                    if (price == priceBD["price"] || price == priceBD["priceEur"])
+                    {
+                        return;
+                    }
+                    // sinon on remplace
+                    //price_everglades = Access.Get_PriceDB(id, date);
+                    Access.Clear_Everglades_Price(date);
+                    price_everglades = new Price { AssetDBId = id, date = date, price = price, priceEur = price };
                     context.Prices.Add(price_everglades);
                     context.SaveChanges();
                     return;
                 }
                 else
                 {
+                    // sinon on l'ajoute
                     Price p = new Price { AssetDBId = id, date = date, price = price, priceEur =price };
                     context.Prices.Add(p);
                     context.SaveChanges();

@@ -51,7 +51,7 @@ namespace Everglades.Models.DataBase
             }
         }
 
-        public static Dictionary<Tuple<String, DateTime>, double> Get_Asset_Price(List<String> assetNames, List<DateTime> dates)
+        public static Dictionary<Tuple<String, DateTime>, double> Get_Asset_Price_Eur(List<String> assetNames, List<DateTime> dates)
         {
             Dictionary<int, string> idToName = new Dictionary<int, string>();
             foreach(string name in assetNames) {
@@ -68,11 +68,11 @@ namespace Everglades.Models.DataBase
                     Tuple<int, DateTime> id_date = new Tuple<int, DateTime>(id_asset, date);
                     if (pricesId.ContainsKey(id_date))
                     {
-                        pricesName[str_date] = pricesId[id_date]["price"];
+                        pricesName[str_date] = pricesId[id_date]["priceEur"];
                     }
                     else
                     {
-                        pricesName[str_date] = Access.Get_Price(id_asset, date)["price"];
+                        pricesName[str_date] = Access.Get_Price(id_asset, date)["priceEur"];
                     }
                 }
             }
@@ -89,11 +89,11 @@ namespace Everglades.Models.DataBase
             {
                 if (pricesId.ContainsKey(date))
                 {
-                    pricesName[date] = pricesId[date]["price"];
+                    pricesName[date] = pricesId[date]["priceEur"];
                 }
                 else
                 {
-                    pricesName[date] = Access.Get_Price(id, date)["price"];
+                    pricesName[date] = Access.Get_Price(id, date)["priceEur"];
                 }
             }
             return pricesName;

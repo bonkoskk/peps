@@ -23,6 +23,10 @@ namespace Everglades.Models
         public LinkedList<Operation.Operation> Operations_History;
         public List<IDerivative> derivatives;
 
+        // cache for last delta
+        public DateTime today_date = DateTime.MinValue;
+        public Portfolio today_delta;
+
         public ModelManage()
         {
             timers.start("ModelManage initialization");
@@ -45,7 +49,9 @@ namespace Everglades.Models
             Assets = new List<IAsset>();
             foreach (string name in AccessDB.Get_Asset_List())
             {
-                Assets.Add(new Equity(name, new Currency("$")));
+                Currencies curEnum = Access.GetEquityCurrencyFromSymbol(Access.GetSymbolFromName(name));
+                Currency cur = new Currency(curEnum.ToString());
+                Assets.Add(new Equity(name, cur));
             }
             everg = new Everglades(Assets);
             // TODO : cash should be in database
@@ -88,9 +94,16 @@ namespace Everglades.Models
 
         public List<Advice> getHedgingAdvice()
         {
-            List<Advice> list = new List<Advice>();
+            // getting or computing deltas of today
+            if (today_date < DateTime.Today)
+            {
+                today_delta = everg.getDeltaPortfolio();
+                today_date = DateTime.Today;
+            }
+            Portfolio deltas = today_delta;
             
-            Portfolio deltas = everg.getDeltaPortfolio();
+            // create advices depending on current hedge
+            List<Advice> list = new List<Advice>();
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
                 string assetname = item.Key.getName();
