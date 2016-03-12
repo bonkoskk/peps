@@ -15,11 +15,6 @@
 
 using namespace std;
 
-extern void printtoto(){
-	std::cout << "Toto";
-}
-
-
 extern double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipated) {
 	anticipated = false;
 	int nb_timesteps = path.size2 - 1;
