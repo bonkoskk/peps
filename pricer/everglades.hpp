@@ -22,6 +22,7 @@ namespace Everglades
 	* C'est une matrice de taille nb_ss_Jacents x 25.
 	*/
 	DLLEXP extern double get_payoff(const gsl_matrix &path, double vlr, bool &anticipated);
+	DLLEXP extern void printtoto();
 
 	/**
 	* Permet de calculer le prix du produit everglades

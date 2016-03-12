@@ -5,6 +5,7 @@
 #include "everglades.hpp"
 #include "simulations.hpp"
 
+
 #ifndef __max
 	#define __max(a,b) \
 		({ __typeof__ (a) _a = (a); \
@@ -13,6 +14,11 @@
 #endif
 
 using namespace std;
+
+extern void printtoto(){
+	std::cout << "Toto";
+}
+
 
 extern double Everglades::get_payoff(const gsl_matrix &path, double vlr, bool &anticipated) {
 	anticipated = false;
