@@ -53,7 +53,7 @@ namespace AccessBD
             JArray datas = (JArray)jObj["data"];
 
             //tous les symboles présents dans la BD
-            List<string> list_symbols_db = Access.getAllEquitiesSymbol(context);
+            //List<string> list_symbols_db = Access.getAllEquitiesSymbol(context);
             //récupère le symbole de l'action récupérée dans ce json
             //string symbol = (string)jObj["code"];
             string symbol = code;
@@ -62,16 +62,16 @@ namespace AccessBD
             Currencies curr;
 
             //récupère tous les clés id-date de la BD (table Prices)
-            List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllPricesKey(context);
+            //List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllPricesKey(context);
 
-            KeyValuePair<int, DateTime> keyValue;
+            //KeyValuePair<int, DateTime> keyValue;
             List<Price> list_prices = new List<Price>();
 
             double c = 0;
             string name;
 
             //si la bd ne contient pas le symbole concerné, on crée une nouvelle action et on la stocke dans la BD (table asset)
-            if (!list_symbols_db.Contains(symbol))
+            if (!Access.ContainsEquitySymbol(context, symbol))//!list_symbols_db.Contains(symbol))
             {
                 name = (string)jObj["name"];
                 EquityDB e = new EquityDB { name = name, symbol = symbol, currency = CurrencyAsset.getCurrencyOf(name) };
@@ -93,9 +93,9 @@ namespace AccessBD
                      //chaque item correspond aux données d'un jour
                     JToken[] data = item.ToArray();
                     DateTime date = DateTime.Parse(data[0].ToString());
-                    keyValue = new KeyValuePair<int, DateTime>(aid, date);
+                    //keyValue = new KeyValuePair<int, DateTime>(aid, date);
                      //si la bd ne contient pas les données pour cette action pour ce jour, on ajoute les données  
-                    if (!list_pair_db.Contains(keyValue)){
+                    if (!Access.ContainsPricesKey(context, aid, date)){//!list_pair_db.Contains(keyValue)){
                         if (source == "YAHOO")
                         {
                             c = double.Parse(data[6].ToString());
@@ -186,10 +186,10 @@ namespace AccessBD
         {
             string json;
             List<KeyValuePair<string, string>> listQuandlCodes = getQuandlCodes(bloombergSymbol);
-            List<string> list_symbols_db = Access.getAllEquitiesSymbol(context);
+            //List<string> list_symbols_db = Access.getAllEquitiesSymbol(context);
             foreach (KeyValuePair<string, string> pair in listQuandlCodes)
             {
-                if (!list_symbols_db.Contains(pair.Value))
+                if (!Access.ContainsEquitySymbol(context, pair.Value))//!list_symbols_db.Contains(pair.Value))
                 {
                     json = GetJsonData(pair.Key, pair.Value, start, end);
                     storeInDB(json, context, pair.Key, pair.Value);

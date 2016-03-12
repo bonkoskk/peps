@@ -15,12 +15,12 @@ namespace AccessBD
                 //récupère l'id d'Everglades
                 int id = Access.GetIdEverglades();
                 //récupère tous les clés id-date de la BD (table Prices)
-                List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllPricesKey(context);
+                //List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllPricesKey(context);
 
                 Price price_everglades;
 
                 //si la date existe déjà dans la table des prix
-                if (list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
+                if (!Access.ContainsPricesKey(context, id, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
                     if (price == Access.Get_Price(id, date)["close"]) return;
                     price_everglades = Access.Get_PriceDB(id, date);
