@@ -138,10 +138,46 @@ namespace Everglades.Models
             return new Tuple<bool, double>(wp.getPayoffIsAnticipated(), wp.getPayoff());
         }
 
+        private Tuple<double[,], double[]> computeCorrelationAndVol(DateTime priceDate, List<String> assetNames, uint date_nb)
+        {
+            int asset_nb = assetNames.Count;
+            // create a list of dates to get price for correlation computing
+            int nb_dates_correl = 200; // nb dates of correlation
+            List<DateTime> dates_correl = new List<DateTime>();
+            for (int i = 0; i < nb_dates_correl; i++)
+            {
+                dates_correl.Add(priceDate - TimeSpan.FromDays(i));
+            }
+            // get these prices from database
+            Dictionary<Tuple<String, DateTime>, double> hist_correl = AccessDB.Get_Asset_Price_Eur(assetNames, dates_correl);
+            // transform the Tuple format to double[,] format
+            double[,] hist_correl_double = new double[asset_nb, nb_dates_correl];
+            int k = 0;
+            foreach (IAsset ass in underlying_list)
+            {
+                int j = 0;
+                foreach (DateTime d in dates_correl)
+                {
+                    hist_correl_double[k, j] = hist_correl[new Tuple<String, DateTime>(ass.getName(), d)];
+                    j++;
+                }
+                k++;
+            }
+            // compute correl and vol using C++ functions
+            Wrapping.Tools tools = new Wrapping.Tools();
+            double[,] correl = new double[asset_nb, asset_nb];
+            double[] vol = new double[asset_nb];
+            tools.getCorrelAndVol(nb_dates_correl, asset_nb, hist_correl_double, correl, vol);
+            return new Tuple<double[,], double[]>(correl, vol);
+        }
+
+
         public Tuple<double, double[]> computePrice(DateTime t)
         {
             ModelManage.timers.start("Everglades pre-pricing");
             int asset_nb = underlying_list.Count;
+            // risk-free rate
+            double r = 0.04;//this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             // little correction : as we need historic data, we consider price today is price at
@@ -192,29 +228,15 @@ namespace Everglades.Models
             }
 
             Dictionary<Tuple<String, DateTime>, double> hist = null;
-            Dictionary<Tuple<String, DateTime>, double> hist_correl = null;
             if (underlying_list.First() is Equity)
             {
-                hist = AccessDB.Get_Asset_Price(assetNames, dates.ToList());
-                List<DateTime> dates_correl = new List<DateTime>();
-                int nb_dates_correl = 2;
-                for (int i = 0; i < nb_dates_correl; i++)
-                {
-                    dates_correl.Add(priceDate - TimeSpan.FromDays(i));
-                }
-                hist_correl = AccessDB.Get_Asset_Price(assetNames, dates_correl);
-                double[,] hist_correl_double = new double[asset_nb, nb_dates_correl];
-                int k = 0;
-                foreach(IAsset ass in underlying_list) {
-                    int j = 0;
-                    foreach(DateTime d in dates_correl) {
-                        hist_correl_double[k, j] = hist_correl[new Tuple<String, DateTime>(ass.getName(), d)];
-                        j++;
-                    }
-                    k++;
-                }
-                Wrapping.Tools tools = new Wrapping.Tools();
-                tools.getCorrelAndVol(nb_dates_correl, asset_nb, hist_correl_double, correl, vol);
+                // get prices in BD at constatation dates
+                hist = AccessDB.Get_Asset_Price_Eur(assetNames, dates.ToList());
+                // compute correlation and vol
+                uint nb_dates_correl = 200;
+                Tuple<double[,], double[]> temp = computeCorrelationAndVol(priceDate, assetNames, nb_dates_correl);
+                correl = temp.Item1;
+                vol = temp.Item2;
             }
             else
             {
@@ -232,7 +254,7 @@ namespace Everglades.Models
                             correl[i, j] = 0.0;
                         }
                     }
-                    expected_returns[i] = 0;
+                    expected_returns[i] = r;
                 }
             }
             // TODO
@@ -254,22 +276,25 @@ namespace Everglades.Models
                     }
                     d_i++;
                 }
-                expected_returns[ass_i] = 0.04; //ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
+                expected_returns[ass_i] = r; //ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
                 vol[ass_i] = ass.getVolatility(t);
                 ass_i++;
             }
 
             ModelManage.timers.stop("Everglades historic data");
             // correlation is a bit trickier
-
-            double r = 0.04;//this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             int sampleNb = 1000;
              
             // price
 
-            
+            // TODO : fact cholesky
             Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
-            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
+
+            
+            double[,] cholesky = wp.factCholesky(correl, asset_nb);
+            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, cholesky, nb_day_after, r, sampleNb);
+            
+            //wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
 
             /*
             DateTime T = new DateTime(2017, 03, 14);
