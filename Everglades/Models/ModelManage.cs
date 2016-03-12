@@ -39,7 +39,9 @@ namespace Everglades.Models
             //Access.ClearDbConnections(db);
             //Access.ClearAssets(db);
             //Access.Clear_Everglades_Price(new DateTime(2016, 3, 2));
-            
+            Access.Clear_Everglades_Price(new DateTime(2016, 3, 9));
+            Access.Clear_Everglades_Price(new DateTime(2016, 3, 10));
+
 
             instance = this;
             Assets = new List<IAsset>();
