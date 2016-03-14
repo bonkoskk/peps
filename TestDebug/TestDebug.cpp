@@ -885,7 +885,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	gsl_vector* delta;
 
-	
+	//Everglades::get_price_with_forex
+
 	Everglades::get_price(price, ic, &delta, *historic1, 64, r, *expected_returns, *vol, *cholesky, 1);
 	std::cout << "price historic 1 : " << price << std::endl;
 	

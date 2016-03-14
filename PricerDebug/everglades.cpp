@@ -178,8 +178,8 @@ extern int Everglades::get_price_with_forex(double& price, double& ic, gsl_vecto
 
     double eps = pow(nbSimu, -0.2);
     //Récupération des tailles
-    int nb_assets = historic.size1; //nombre d'action du produit + nombre de monnaie étrangère
-    int nb_sj = currency.size; //nombre d'action du produit
+    int nb_assets = historic.size1; //nombre d'actions du produit + nombre de monnaie étrangère
+    int nb_sj = currency.size; //nombre d'actions du produit
     int last_index = historic.size2; //indice du dernier prix
     int nb_dates = 25; //nombre de dates de constatations
     
@@ -212,7 +212,7 @@ extern int Everglades::get_price_with_forex(double& price, double& ic, gsl_vecto
     gsl_rng *rng = gsl_rng_alloc(gsl_rng_default);
     gsl_rng_set(rng, (unsigned long int)time(NULL));
 
-    //Copie d'historic dans le d�but du path
+    //Copie d'historic dans le début du path
     for (int i = 0; i < last_index; i++) {
         gsl_matrix_get_col(temp, &historic, i);
         gsl_matrix_set_col(path, i, temp);
@@ -225,7 +225,7 @@ extern int Everglades::get_price_with_forex(double& price, double& ic, gsl_vecto
     }
     for (int asset = nb_sj; asset < nb_assets; asset++) {
         //Pour les taux de change
-        gsl_vector_set(expected_returns, asset, r - gsl_vector_get(&foreign_rates, asset - nb_sj));
+		gsl_vector_set(expected_returns, asset, r - gsl_vector_get(&foreign_rates, asset - nb_sj));
     }
       
     //Création du path_for_payoff qui contient le prix des actions dans leurs monnaies d'émission
