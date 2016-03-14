@@ -13,10 +13,9 @@ namespace Everglades.Models.DataBase
         private static RandomNormal rand = new RandomNormal();
         private static CacheDB cache = new CacheDB(1000);
 
-        private static DateTime Round(DateTime dateTime, TimeSpan interval)
+        private static DateTime Round(DateTime dateTime)
         {
-            var halfIntervelTicks = (interval.Ticks + 1) >> 1;
-            return dateTime.AddTicks(halfIntervelTicks - ((dateTime.Ticks + halfIntervelTicks) % interval.Ticks));
+            return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
         }
 
         // return list of assets names
@@ -28,7 +27,7 @@ namespace Everglades.Models.DataBase
         // return price of an asset from name
         public static double Get_Asset_Price(String assetName, DateTime date, bool cacheUse = true)
         {
-            date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             if (!cacheUse)
             {
                 int id = Access.GetIdFromName(assetName);
@@ -52,7 +51,7 @@ namespace Everglades.Models.DataBase
             }
         }
 
-        public static Dictionary<Tuple<String, DateTime>, double> Get_Asset_Price(List<String> assetNames, List<DateTime> dates)
+        public static Dictionary<Tuple<String, DateTime>, double> Get_Asset_Price_Eur(List<String> assetNames, List<DateTime> dates)
         {
             Dictionary<int, string> idToName = new Dictionary<int, string>();
             foreach(string name in assetNames) {
@@ -69,11 +68,11 @@ namespace Everglades.Models.DataBase
                     Tuple<int, DateTime> id_date = new Tuple<int, DateTime>(id_asset, date);
                     if (pricesId.ContainsKey(id_date))
                     {
-                        pricesName[str_date] = pricesId[id_date]["price"];
+                        pricesName[str_date] = pricesId[id_date]["priceEur"];
                     }
                     else
                     {
-                        pricesName[str_date] = Access.Get_Price(id_asset, date)["price"];
+                        pricesName[str_date] = Access.Get_Price(id_asset, date)["priceEur"];
                     }
                 }
             }
@@ -90,11 +89,11 @@ namespace Everglades.Models.DataBase
             {
                 if (pricesId.ContainsKey(date))
                 {
-                    pricesName[date] = pricesId[date]["price"];
+                    pricesName[date] = pricesId[date]["priceEur"];
                 }
                 else
                 {
-                    pricesName[date] = Access.Get_Price(id, date)["price"];
+                    pricesName[date] = Access.Get_Price(id, date)["priceEur"];
                 }
             }
             return pricesName;
@@ -106,49 +105,28 @@ namespace Everglades.Models.DataBase
             return Access.get_Price_Eur(id, date);
         }
 
-        // this member is temporary (TODO)
-        private static Dictionary<DateTime, double> everglades_price = new Dictionary<DateTime, double>();
-        /*public static double getEvergladesPrice(DateTime date)
-        {
-            date = Round(date, TimeSpan.FromDays(1));
-            if (everglades_price.ContainsKey(date))
-            {
-                return everglades_price[date];
-            }
-            else
-            {
-                throw new NoDataException("Everglades", date);
-            }
-        }*/
-
         public static double getEvergladesPrice(DateTime date)
         {
-            date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             double price;
-            try{
+            try {
                 price = Access.Get_Price_Everglades(date);
                 return price;
-            }catch(ArgumentException){
+            } catch(ArgumentException) {
                 throw new NoDataException("Exception", date);
             }
         }
 
-        /*public static void setEvergladesPrice(DateTime date, double price)
-        {
-            date = Round(date, TimeSpan.FromDays(1));
-            everglades_price[date] = price;
-        }*/
-
         public static void setEvergladesPrice(DateTime date, double price)
         {
-            date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             AccessBD.Write.storeEvergladesPrice(date, price);
         }
 
 
         public static double getPortfolioValue(DateTime date)
         {
-            //date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             double value;
             try
             {
@@ -163,7 +141,7 @@ namespace Everglades.Models.DataBase
 
         public static void setHedgingPortfolioValue(DateTime date, double value)
         {
-            //date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             AccessBD.Write.storePortfolioValue(date, value);
         }
 
@@ -176,7 +154,7 @@ namespace Everglades.Models.DataBase
         // return interest rate of a particular money
         public static double Get_Interest_Rate(String moneyName, DateTime date)
         {
-            return 0.02; // TODO
+            return 0.02; // TODO : taux libor 3M
         }
 
 

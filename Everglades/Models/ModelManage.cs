@@ -23,6 +23,10 @@ namespace Everglades.Models
         public LinkedList<Operation.Operation> Operations_History;
         public List<IDerivative> derivatives;
 
+        // cache for last delta
+        public DateTime today_date = DateTime.MinValue;
+        public Portfolio today_delta;
+
         public ModelManage()
         {
             timers.start("ModelManage initialization");
@@ -31,6 +35,14 @@ namespace Everglades.Models
             //Access.Clear_Everglades_Prices();
             DBInitialisation.DBInit(db);
             timers.stop("Database initialization");
+            /*
+            for (int i = 1; i < 50 ; i++ )
+            {
+                DateTime d = DateTime.Today - TimeSpan.FromDays(i);
+                AccessDB.setHedgingPortfolioValue(d, 0);
+            }
+            */
+
             //Access.ClearPrice(db, 65);
             //Access.ClearAsset(db, 65);
             //Access.ClearPrice(db, 68);
@@ -39,13 +51,26 @@ namespace Everglades.Models
             //Access.ClearDbConnections(db);
             //Access.ClearAssets(db);
             //Access.Clear_Everglades_Price(new DateTime(2016, 3, 2));
-            
+            try
+            {
+                Access.Clear_Everglades_Price(new DateTime(2016, 3, 9));
+                Access.Clear_Everglades_Price(new DateTime(2016, 3, 10));
+                Access.Clear_Everglades_Price(new DateTime(2016, 3, 11));
+            }
+            catch (Exception)
+            {
+                int balek = 1000000000;
+            }
+
+
 
             instance = this;
             Assets = new List<IAsset>();
             foreach (string name in AccessDB.Get_Asset_List())
             {
-                Assets.Add(new Equity(name, new Currency("$")));
+                Currencies curEnum = Access.GetEquityCurrencyFromSymbol(Access.GetSymbolFromName(name));
+                Currency cur = new Currency(curEnum.ToString());
+                Assets.Add(new Equity(name, cur));
             }
             everg = new Everglades(Assets);
             // TODO : cash should be in database
@@ -61,7 +86,6 @@ namespace Everglades.Models
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
             timers.stop("ModelManage initialization");
-            //everg.computePrice(DateTime.Now);
         }
 
         public void buy(IAsset asset, int number)
@@ -72,6 +96,7 @@ namespace Everglades.Models
                 Hedging_Portfolio.addAsset(asset, number);
                 cash -= price * number;
                 Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "buy", asset, number, asset.getPrice()));
+                AccessDB.setHedgingPortfolioValue(DateTime.Today, Hedging_Portfolio.getPrice());
             }
             else
             {
@@ -85,13 +110,21 @@ namespace Everglades.Models
             Hedging_Portfolio.removeAsset(asset, number);
             cash += price * number;
             Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "sell", asset, number, asset.getPrice()));
+            AccessDB.setHedgingPortfolioValue(DateTime.Today, Hedging_Portfolio.getPrice());
         }
 
         public List<Advice> getHedgingAdvice()
         {
-            List<Advice> list = new List<Advice>();
+            // getting or computing deltas of today
+            if (today_date < DateTime.Today)
+            {
+                today_delta = everg.getDeltaPortfolio();
+                today_date = DateTime.Today;
+            }
+            Portfolio deltas = today_delta;
             
-            Portfolio deltas = everg.getDeltaPortfolio();
+            // create advices depending on current hedge
+            List<Advice> list = new List<Advice>();
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
                 string assetname = item.Key.getName();
@@ -118,10 +151,25 @@ namespace Everglades.Models
             DateTime t = t1;
             while (t < t2)
             {
-                data.add(new DataPoint(t, ( Hedging_Portfolio.getPrice(t) + cash) / (double)shares_everg));
+                //data.add(new DataPoint(t, ( Hedging_Portfolio.getPrice(t) + cash) / (double)shares_everg));
+                try
+                {
+                    data.add(new DataPoint(t, (AccessDB.getPortfolioValue(t) / (double)shares_everg)));
+                }
+                catch (Exception)
+                {
+
+                }
                 t += step;
             }
-            data.add(new DataPoint(t2, ( Hedging_Portfolio.getPrice(t2) + cash ) / (double)shares_everg));
+            try
+            {
+                data.add(new DataPoint(t2, AccessDB.getPortfolioValue(t2) / (double)shares_everg));
+            }
+            catch (Exception)
+            {
+
+            }
             return data;
         }
 
@@ -151,9 +199,11 @@ namespace Everglades.Models
             Data tracking_error = new Data();
             Data everglades_price = new Data();
             Data hedge_price = new Data();
+            Data portsolo_price = new Data();
             Data cash_price = new Data();
             double cash_t = 0;
             double portvalue;
+            double portsolovalue;
             double evergvalue;
             double r = 0.04;
             
@@ -167,8 +217,10 @@ namespace Everglades.Models
                 {
                     evergvalue = everg_simul.computePrice(date).Item1;
                     hedge_simul = everg_simul.getDeltaPortfolio(date);
-                    cash_t = evergvalue - hedge_simul.getPrice(date);
-                    portvalue = hedge_simul.getPrice(date) + cash_t;
+                    
+                    portsolovalue = hedge_simul.getPrice(date);
+                    cash_t = evergvalue - portsolovalue;
+                    portvalue = portsolovalue + cash_t;
                 }
                 else
                 {
@@ -186,6 +238,7 @@ namespace Everglades.Models
                         if (payoff.Item1)
                         {
                             evergvalue = payoff.Item2;
+                            portsolovalue = hedge_simul.getPrice(date);
                             cash_t -= evergvalue;
                             breakk = true;
                         }
@@ -194,22 +247,24 @@ namespace Everglades.Models
                             // if not the last date, we simply price the product and ajust our edge
                             evergvalue = everg_simul.computePrice(date).Item1;
                             hedge_simul = everg_simul.getDeltaPortfolio(date);
-                            cash_t -= hedge_simul.getPrice(date);
+                            portsolovalue = hedge_simul.getPrice(date);
+                            cash_t -= portsolovalue;
                         }
                     }
                     else if (date == everg_simul.getLastDate())
                     {
                         // if last date, we ge payoff and bam
                         Tuple<bool, double> payoff = everg_simul.getPayoff(date);
-                        Tuple<double, double[]> test = everg_simul.computePrice(date);
                         evergvalue = payoff.Item2;
                         cash_t -= evergvalue;
+                        portsolovalue = hedge_simul.getPrice(date);
                     }
                     else
                     {
                         // if not the last date, we simply price the product and ajust our edge
                         evergvalue = everg_simul.computePrice(date).Item1;
                         hedge_simul = everg_simul.getDeltaPortfolio(date);
+                        portsolovalue = hedge_simul.getPrice(date);
                         cash_t -= hedge_simul.getPrice(date);
                     }
                 }
@@ -223,6 +278,10 @@ namespace Everglades.Models
                 if (!double.IsInfinity(portvalue) && !double.IsNaN(portvalue))
                 {
                     hedge_price.add(new DataPoint(date, portvalue));
+                }
+                if (!double.IsInfinity(portsolovalue) && !double.IsNaN(portsolovalue))
+                {
+                    portsolo_price.add(new DataPoint(date, portsolovalue));
                 }
                 if (!double.IsInfinity(err) && !double.IsNaN(err))
                 {
@@ -243,6 +302,7 @@ namespace Everglades.Models
             list.Add(hedge_price);
             list.Add(tracking_error);
             list.Add(cash_price);
+            list.Add(portsolo_price);
             return list;
         }
 

@@ -98,6 +98,19 @@ namespace AccessBD
             }
         }
 
+        public static String GetSymbolFromName(string name)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var a = from asset in context.Assets.OfType<EquityDB>()
+                        where asset.name == name
+                        select asset.symbol;
+                if (a.Count() == 0) throw new ArgumentException("name does not exist in the database", name);
+                if (a.Count() > 1) throw new ArgumentException("duplicate name in the database", name);
+                return a.First();
+            }
+        }
+
         public static int GetIdEverglades()
         {
             int id = -1;
