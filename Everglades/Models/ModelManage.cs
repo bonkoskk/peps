@@ -35,6 +35,14 @@ namespace Everglades.Models
             //Access.Clear_Everglades_Prices();
             DBInitialisation.DBInit(db);
             timers.stop("Database initialization");
+            /*
+            for (int i = 1; i < 50 ; i++ )
+            {
+                DateTime d = DateTime.Today - TimeSpan.FromDays(i);
+                AccessDB.setHedgingPortfolioValue(d, 0);
+            }
+            */
+
             //Access.ClearPrice(db, 65);
             //Access.ClearAsset(db, 65);
             //Access.ClearPrice(db, 68);
@@ -43,8 +51,17 @@ namespace Everglades.Models
             //Access.ClearDbConnections(db);
             //Access.ClearAssets(db);
             //Access.Clear_Everglades_Price(new DateTime(2016, 3, 2));
-            //Access.Clear_Everglades_Price(new DateTime(2016, 3, 9));
-            //Access.Clear_Everglades_Price(new DateTime(2016, 3, 10));
+            try
+            {
+                Access.Clear_Everglades_Price(new DateTime(2016, 3, 9));
+                Access.Clear_Everglades_Price(new DateTime(2016, 3, 10));
+                Access.Clear_Everglades_Price(new DateTime(2016, 3, 11));
+            }
+            catch (Exception)
+            {
+                int balek = 1000000000;
+            }
+
 
 
             instance = this;
@@ -79,6 +96,7 @@ namespace Everglades.Models
                 Hedging_Portfolio.addAsset(asset, number);
                 cash -= price * number;
                 Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "buy", asset, number, asset.getPrice()));
+                AccessDB.setHedgingPortfolioValue(DateTime.Today, Hedging_Portfolio.getPrice());
             }
             else
             {
@@ -92,6 +110,7 @@ namespace Everglades.Models
             Hedging_Portfolio.removeAsset(asset, number);
             cash += price * number;
             Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "sell", asset, number, asset.getPrice()));
+            AccessDB.setHedgingPortfolioValue(DateTime.Today, Hedging_Portfolio.getPrice());
         }
 
         public List<Advice> getHedgingAdvice()
@@ -132,10 +151,25 @@ namespace Everglades.Models
             DateTime t = t1;
             while (t < t2)
             {
-                data.add(new DataPoint(t, ( Hedging_Portfolio.getPrice(t) + cash) / (double)shares_everg));
+                //data.add(new DataPoint(t, ( Hedging_Portfolio.getPrice(t) + cash) / (double)shares_everg));
+                try
+                {
+                    data.add(new DataPoint(t, (AccessDB.getPortfolioValue(t) / (double)shares_everg)));
+                }
+                catch (Exception)
+                {
+
+                }
                 t += step;
             }
-            data.add(new DataPoint(t2, ( Hedging_Portfolio.getPrice(t2) + cash ) / (double)shares_everg));
+            try
+            {
+                data.add(new DataPoint(t2, AccessDB.getPortfolioValue(t2) / (double)shares_everg));
+            }
+            catch (Exception)
+            {
+
+            }
             return data;
         }
 

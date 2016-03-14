@@ -12,10 +12,13 @@ namespace Everglades.Models
     public class Everglades : IAsset
     {
         // wrapping object for c++ / cli functions access (price)
-        Wrapping.WrapperEverglades wp;
+        private Wrapping.WrapperEverglades wp;
         private double VLR;
         private Currency currency;
         private List<IAsset> underlying_list;
+        private DateTime Last_Correl_Computation;
+        private double[,] Last_Cholesky;
+        private double[] Last_Vol;
 
         public Everglades(List<IAsset> underlying_list)
         {
@@ -142,13 +145,20 @@ namespace Everglades.Models
         {
             int asset_nb = assetNames.Count;
             // create a list of dates to get price for correlation computing
-            int nb_dates_correl = 200; // nb dates of correlation
+            int nb_dates_correl = 200;
             List<DateTime> dates_correl = new List<DateTime>();
-            for (int i = 0; i < nb_dates_correl; i++)
+            int total = 0, real = 0; // current number of date : total also have not taken dates cause week end
+            while (real < nb_dates_correl)
             {
-                dates_correl.Add(priceDate - TimeSpan.FromDays(i));
+                DateTime curr_date = priceDate - TimeSpan.FromDays(total);
+                if (!(curr_date.DayOfWeek == DayOfWeek.Saturday || curr_date.DayOfWeek == DayOfWeek.Sunday))
+                {
+                    dates_correl.Add(curr_date);
+                    real++;
+                }
+                total++;
             }
-            // get these prices from database
+            // get the prices from database
             Dictionary<Tuple<String, DateTime>, double> hist_correl = AccessDB.Get_Asset_Price_Eur(assetNames, dates_correl);
             // transform the Tuple format to double[,] format
             double[,] hist_correl_double = new double[asset_nb, nb_dates_correl];
@@ -180,10 +190,7 @@ namespace Everglades.Models
             double r = 0.04;//this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
-            // little correction : as we need historic data, we consider price today is price at
-            // market closure yesterday
             DateTime priceDate = new DateTime(t.Year, t.Month, t.Day);
-
             foreach (DateTime d in getObservationDates()) 
             {
             
@@ -207,39 +214,47 @@ namespace Everglades.Models
                 }
             
             }
-
-            if (nb_day_after > 91)
-            {
-                nb_day_after = 91;
-            }
-
             // create and get data for all arguments
             double[,] historic = new double[asset_nb, dates.Count];
             double[] expected_returns = new double[asset_nb];
             double[] vol = new double[asset_nb];
             double[,] correl = new double[asset_nb, asset_nb];
+            double[,] cholesky;
 
+            // get historic data for all functions
             ModelManage.timers.start("Everglades historic data");
-            
             List<String> assetNames = new List<String>();
             foreach (IAsset ass in underlying_list)
             {
                 assetNames.Add(ass.getName());
             }
+            Dictionary<Tuple<String, DateTime>, double> hist;
 
-            Dictionary<Tuple<String, DateTime>, double> hist = null;
             if (underlying_list.First() is Equity)
             {
                 // get prices in BD at constatation dates
                 hist = AccessDB.Get_Asset_Price_Eur(assetNames, dates.ToList());
-                // compute correlation and vol
-                uint nb_dates_correl = 200;
-                Tuple<double[,], double[]> temp = computeCorrelationAndVol(priceDate, assetNames, nb_dates_correl);
-                correl = temp.Item1;
-                vol = temp.Item2;
+                // compute or get correlation and vol
+                if ((priceDate - Last_Correl_Computation).TotalDays > 30)
+                {
+                    uint nb_dates_correl = 200;
+                    Tuple<double[,], double[]> temp = computeCorrelationAndVol(priceDate, assetNames, nb_dates_correl);
+                    correl = temp.Item1;
+                    vol = temp.Item2;
+                    cholesky = wp.factCholesky(correl, asset_nb);
+                    Last_Cholesky = cholesky;
+                    Last_Vol = vol;
+                }
+                else
+                {
+                    cholesky = Last_Cholesky;
+                    vol = Last_Vol;
+                }
+                
             }
             else
             {
+                hist = new Dictionary<Tuple<string, DateTime>, double>();
                 correl = new double[asset_nb, asset_nb];
                 for (int i = 0; i < asset_nb; i++)
                 {
@@ -256,8 +271,8 @@ namespace Everglades.Models
                     }
                     expected_returns[i] = r;
                 }
+                cholesky = correl; // cholesky fact of identity is identity
             }
-            // TODO
             
             int ass_i = 0;
             foreach (IAsset ass in underlying_list)
@@ -282,16 +297,10 @@ namespace Everglades.Models
             }
 
             ModelManage.timers.stop("Everglades historic data");
-            // correlation is a bit trickier
-            int sampleNb = 1000;
-             
-            // price
 
-            // TODO : fact cholesky
-            Wrapping.WrapperEverglades wp = new Wrapping.WrapperEverglades();
 
-            
-            double[,] cholesky = wp.factCholesky(correl, asset_nb);
+            int sampleNb = 1000; 
+            // pricing
             wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, cholesky, nb_day_after, r, sampleNb);
             
             //wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);

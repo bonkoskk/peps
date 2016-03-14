@@ -126,7 +126,7 @@ namespace Everglades.Models.DataBase
 
         public static double getPortfolioValue(DateTime date)
         {
-            //date = Round(date, TimeSpan.FromDays(1));
+            date = Round(date);
             double value;
             try
             {
@@ -154,7 +154,7 @@ namespace Everglades.Models.DataBase
         // return interest rate of a particular money
         public static double Get_Interest_Rate(String moneyName, DateTime date)
         {
-            return 0.02; // TODO
+            return 0.02; // TODO : taux libor 3M
         }
 
 
