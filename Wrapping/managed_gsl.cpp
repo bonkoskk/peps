@@ -52,6 +52,13 @@ namespace managed_gsl{
 			gsl_vector_set(_vector, i, values[i]);
 		}
 	}
+	h_gsl_vector::h_gsl_vector(int n, array<int>^ values)
+	{
+		_vector = gsl_vector_alloc(n);
+		for (int i = 0; i < n; i++) {
+			gsl_vector_set(_vector, i, values[i]);
+		}
+	}
 	h_gsl_vector::~h_gsl_vector()
 	{
 		gsl_vector_free(_vector);

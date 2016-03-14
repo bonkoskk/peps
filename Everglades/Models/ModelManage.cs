@@ -29,6 +29,13 @@ namespace Everglades.Models
 
         public ModelManage()
         {
+            int test;
+            test = (int)Currencies.USD;
+            test = (int)Currencies.CHF;
+            test = (int)Currencies.HKD;
+            test = (int)Currencies.GBP;
+            test = (int)Currencies.EUR;
+
             timers.start("ModelManage initialization");
             timers.start("Database initialization");
             qpcptfaw db = new qpcptfaw();
@@ -69,7 +76,7 @@ namespace Everglades.Models
             foreach (string name in AccessDB.Get_Asset_List())
             {
                 Currencies curEnum = Access.GetEquityCurrencyFromSymbol(Access.GetSymbolFromName(name));
-                Currency cur = new Currency(curEnum.ToString());
+                Currency cur = new Currency(curEnum);
                 Assets.Add(new Equity(name, cur));
             }
             everg = new Everglades(Assets);
