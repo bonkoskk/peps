@@ -1,4 +1,5 @@
 ﻿using AccessBD;
+using Everglades.Models.Assets;
 using Everglades.Models.DataBase;
 using Everglades.Models.HistoricCompute;
 using System;
@@ -17,15 +18,17 @@ namespace Everglades.Models
         private double VLR;
         private Currency currency;
         private List<IAsset> underlying_list;
+        private List<ICurrency> underlying_list_cur;
         private DateTime Last_Correl_Computation = DateTime.MinValue;
         private double[,] Last_Cholesky;
         private double[] Last_Vol;
 
-        public Everglades(List<IAsset> underlying_list)
+        public Everglades(List<IAsset> underlying_list, List<ICurrency> underlying_list_cur)
         {
             wp = new Wrapping.WrapperEverglades();
-            this.VLR = 200; //TODO TODO TODO TODO TODO TODO TODO TODO
+            this.VLR = 200; //TODO
             this.underlying_list = underlying_list;
+            this.underlying_list_cur = underlying_list_cur;
             currency = new Currency(Currencies.EUR);
         }
 
@@ -199,7 +202,7 @@ namespace Everglades.Models
         {
             // !!!! currencies not expected to work with simulation
             bool simulation = !(underlying_list.First() is Equity);
-            bool with_currency_change = !simulation;
+            bool with_currency_change = true;
 
             ModelManage.timers.start("Everglades pre-pricing");
             int asset_nb = underlying_list.Count;
@@ -309,10 +312,10 @@ namespace Everglades.Models
             {
                 // if simulated, correl is identity, asset volatility and historic got from object
                 hist = new Dictionary<Tuple<string, DateTime>, double>();
-                correl = new double[asset_nb, asset_nb];
-                for (int i = 0; i < asset_nb; i++)
+                correl = new double[asset_nb + currencies_nb, asset_nb + currencies_nb];
+                for (int i = 0; i < asset_nb + currencies_nb; i++)
                 {
-                    for (int j = 0; j < asset_nb; j++)
+                    for (int j = 0; j < asset_nb + currencies_nb; j++)
                     {
                         if (i == j)
                         {
@@ -329,6 +332,10 @@ namespace Everglades.Models
                 {
                     vol[ass_i_] = ass.getVolatility(t);
                     ass_i_++;
+                }
+                foreach (Currencies cur in list_currency_enum)
+                {
+                    vol[asset_nb + (int)cur] = 0.1;
                 }
                 cholesky = correl; // cholesky fact of identity is identity
             }
@@ -350,8 +357,9 @@ namespace Everglades.Models
                     ass_i++;
                 }
             }
-            else
+            else // is a simulation
             {
+                // assets
                 int ass_i = 0;
                 foreach (IAsset ass in underlying_list)
                 {
@@ -363,6 +371,21 @@ namespace Everglades.Models
                     }
                     expected_returns[ass_i] = r; //ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
                     ass_i++;
+                }
+                // currencies
+                if (with_currency_change)
+                {
+                    ass_i = 0;
+                    foreach (ICurrency cur in underlying_list_cur)
+                    {
+                        int d_i = 0;
+                        foreach (DateTime d in dates)
+                        {
+                            historic[asset_nb + (int)cur.getEnum(), d_i] = cur.getPrice(d);
+                            d_i++;
+                        }
+                        ass_i++;
+                    }
                 }
             }
             // set expected return of currencies
@@ -439,11 +462,20 @@ namespace Everglades.Models
             double[] delta = computePrice(t).Item2;
             double test = computePrice(t).Item1;
             Portfolio port = new Portfolio(underlying_list);
+            int nb_asset = underlying_list.Count;
             int i = 0;
             foreach (IAsset ass in underlying_list)
             {
                 port.addAsset(ass, delta[i]);
                 i++;
+            }
+            foreach (ICurrency cur in underlying_list_cur)
+            {
+                if (cur.getEnum() != this.currency.getEnum())
+                {
+                    int idx = nb_asset + (int)cur.getEnum();
+                    port.addAsset(cur, delta[nb_asset + (int)cur.getEnum()]);
+                }
             }
             return port;
         }

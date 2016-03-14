@@ -29,13 +29,6 @@ namespace Everglades.Models
 
         public ModelManage()
         {
-            int test;
-            test = (int)Currencies.USD;
-            test = (int)Currencies.CHF;
-            test = (int)Currencies.HKD;
-            test = (int)Currencies.GBP;
-            test = (int)Currencies.EUR;
-
             timers.start("ModelManage initialization");
             timers.start("Database initialization");
             qpcptfaw db = new qpcptfaw();
@@ -73,17 +66,22 @@ namespace Everglades.Models
 
             instance = this;
             Assets = new List<IAsset>();
+            List<ICurrency> Currenc = new List<ICurrency>();
             foreach (string name in AccessDB.Get_Asset_List())
             {
                 Currencies curEnum = Access.GetEquityCurrencyFromSymbol(Access.GetSymbolFromName(name));
                 Currency cur = new Currency(curEnum);
                 Assets.Add(new Equity(name, cur));
+                if (!Currenc.Any(x => x.getEnum() == curEnum) && curEnum != Currencies.EUR)
+                {
+                    Currenc.Add(cur);
+                }
             }
-            everg = new Everglades(Assets);
+            everg = new Everglades(Assets, Currenc);
             // TODO : cash should be in database
             shares_everg = 100;
             cash = shares_everg * everg.getPrice();
-            Hedging_Portfolio = new Portfolio(Assets);
+            Hedging_Portfolio = new Portfolio(Assets.Concat(Currenc.ConvertAll(x => (IAsset)x)).ToList());
             Operations_History = new LinkedList<Operation.Operation>();
             derivatives = new List<IDerivative>();
             derivatives.Add(new EuropeanCall());
@@ -197,11 +195,17 @@ namespace Everglades.Models
             LinkedList<DateTime> list_anticipated_dates = everg.getAnticipatedDates();
             DateTime first = list_dates.First();
             List<IAsset> simulated_list = new List<IAsset>();
+            List<ICurrency> underlying_list_cur = new List<ICurrency>();
             foreach (IAsset ass in Assets)
             {
                 simulated_list.Add(new AssetSimulated(ass, list_dates, rand));
+                Currencies curEnum = ass.getCurrency().getEnum();
+                if (!underlying_list_cur.Any(x => x.getEnum() == curEnum) && curEnum != Currencies.EUR)
+                {
+                    underlying_list_cur.Add(new CurrencySimulated(curEnum, rand));
+                }
             }
-            Everglades everg_simul = new Everglades(simulated_list);
+            Everglades everg_simul = new Everglades(simulated_list, underlying_list_cur);
             Portfolio hedge_simul = new Portfolio(simulated_list);
             Data tracking_error = new Data();
             Data everglades_price = new Data();

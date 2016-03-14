@@ -345,7 +345,7 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
-                int limit = 4;
+                int limit = 5;
                 for(int i=0; i<limit; i++) {
                     var rates = from p1 in context.ForexRates
                         join p2 in context.Forex on p1.ForexDBId equals p2.ForexDBId
