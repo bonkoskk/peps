@@ -83,7 +83,7 @@ namespace Everglades.Models
             }
 
             Dictionary<DateTime, double> prices = AccessDB.Get_Asset_Price(this.name, dates);
-            Data data = new Data();
+            Data data = new Data(this.name);
             foreach(DateTime d in dates)
             {
                 if (prices.ContainsKey(d))

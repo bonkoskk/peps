@@ -173,9 +173,15 @@
         else if (String.Compare(Request["operation"], "simulation") == 0)
         {
             int nb = 0;
+            bool first = true;
+            msg += "{";
             foreach(Everglades.Models.Data dat in Model.simulateHedgeEvolution()) {
-                switch (nb)
-                {
+                    if (first) {
+                        first = false;
+                    } else {
+                        msg += ", ";
+                    }
+                        /*
                     case 0:
                         msg += "{\"simulation-graph-prices-everg\": ";
                         break;
@@ -191,7 +197,8 @@
                     case 4:
                         msg += ", \"simulation-graph-soloport\": ";
                         break;
-                }
+                         */
+                    msg += "\"" + dat.getName() + "\": ";
                 msg += dat.ToString();
                 nb++;
             }

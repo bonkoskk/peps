@@ -152,7 +152,7 @@ namespace Everglades.Models
 
         public Data getHedgeForOne(DateTime t1, DateTime t2, TimeSpan step)
         {
-            Data data = new Data();
+            Data data = new Data("hedge");
             DateTime t = t1;
             while (t < t2)
             {
@@ -207,11 +207,23 @@ namespace Everglades.Models
             }
             Everglades everg_simul = new Everglades(simulated_list, underlying_list_cur);
             Portfolio hedge_simul = new Portfolio(simulated_list);
-            Data tracking_error = new Data();
-            Data everglades_price = new Data();
-            Data hedge_price = new Data();
-            Data portsolo_price = new Data();
-            Data cash_price = new Data();
+            Data tracking_error = new Data("simulation-graph-trackingerror");
+            Data everglades_price = new Data("simulation-graph-prices-everg");
+            Data hedge_price = new Data("simulation-graph-prices-hedge");
+            Data portsolo_price = new Data("simulation-graph-soloport");
+            Data cash_price = new Data("simulation-graph-cash");
+            Dictionary<String, Data> list_asset_price = new Dictionary<string, Data>();
+            foreach (IAsset asset in simulated_list)
+            {
+                String nameTemp = asset.getName();
+                list_asset_price[nameTemp] = new Data(nameTemp);
+            }
+            foreach (IAsset cur in underlying_list_cur)
+            {
+                String nameTemp = cur.getName();
+                list_asset_price[nameTemp] = new Data(nameTemp);
+            }
+
             double cash_t = 0;
             double portvalue;
             double portsolovalue;
@@ -224,6 +236,19 @@ namespace Everglades.Models
 
             foreach (DateTime date in list_dates)
             {
+                // get prices of assets at these dates in Data
+                foreach (IAsset asset in simulated_list)
+                {
+                    String nameTemp = asset.getName();
+                    list_asset_price[nameTemp].add(new DataPoint(date, asset.getPrice(date)));
+                }
+                foreach (IAsset cur in underlying_list_cur)
+                {
+                    String nameTemp = cur.getName();
+                    list_asset_price[nameTemp].add(new DataPoint(date, cur.getPrice(date)));
+                }
+
+
                 if (date == list_dates.First())
                 {
                     evergvalue = everg_simul.computePrice(date).Item1;
@@ -314,6 +339,10 @@ namespace Everglades.Models
             list.Add(tracking_error);
             list.Add(cash_price);
             list.Add(portsolo_price);
+            foreach (Data dat in list_asset_price.Values)
+            {
+                list.Add(dat);
+            }
             return list;
         }
 

@@ -90,7 +90,7 @@ namespace Everglades.Models
 
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
-            Data data = new Data();
+            Data data = new Data("everglades");
             DateTime t = t1;
             while (t < t2)
             {
