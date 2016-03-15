@@ -198,11 +198,10 @@ namespace Everglades.Models
         }
 
 
-        public Tuple<double, double[]> computePrice(DateTime t)
+        public Tuple<double, double[]> computePrice(DateTime t, bool with_currency_change = true)
         {
             // !!!! currencies not expected to work with simulation
             bool simulation = !(underlying_list.First() is Equity);
-            bool with_currency_change = true;
 
             ModelManage.timers.start("Everglades pre-pricing");
             int asset_nb = underlying_list.Count;
@@ -457,10 +456,17 @@ namespace Everglades.Models
             return getDeltaPortfolio(DateTime.Now);
         }
 
-        public Portfolio getDeltaPortfolio(DateTime t)
+        public Portfolio getDeltaPortfolio(DateTime t, double[] deltaIn = null, bool with_currency = true)
         {
-            double[] delta = computePrice(t).Item2;
-            double test = computePrice(t).Item1;
+            double[] delta;
+            if (deltaIn != null)
+            {
+                delta = deltaIn;
+            }
+            else
+            {
+                delta = computePrice(t, with_currency).Item2;
+            }
             Portfolio port = new Portfolio(underlying_list);
             int nb_asset = underlying_list.Count;
             int i = 0;
@@ -469,12 +475,15 @@ namespace Everglades.Models
                 port.addAsset(ass, delta[i]);
                 i++;
             }
-            foreach (ICurrency cur in underlying_list_cur)
+            if (with_currency)
             {
-                if (cur.getEnum() != this.currency.getEnum())
+                foreach (ICurrency cur in underlying_list_cur)
                 {
-                    int idx = nb_asset + (int)cur.getEnum();
-                    port.addAsset(cur, delta[nb_asset + (int)cur.getEnum()]);
+                    if (cur.getEnum() != this.currency.getEnum())
+                    {
+                        int idx = nb_asset + (int)cur.getEnum();
+                        port.addAsset(cur, delta[nb_asset + (int)cur.getEnum()]);
+                    }
                 }
             }
             return port;

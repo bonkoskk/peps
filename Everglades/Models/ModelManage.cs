@@ -188,7 +188,7 @@ namespace Everglades.Models
          * * Data of cash spent for hedging portfolio evolution
          * 
          */
-        public List<Data> simulateHedgeEvolution()
+        public List<Data> simulateHedgeEvolution(bool with_currency)
         {
             RandomNormal rand = new RandomNormal();
             LinkedList<DateTime> list_dates = everg.getObservationDates();
@@ -199,10 +199,13 @@ namespace Everglades.Models
             foreach (IAsset ass in Assets)
             {
                 simulated_list.Add(new AssetSimulated(ass, list_dates, rand));
-                Currencies curEnum = ass.getCurrency().getEnum();
-                if (!underlying_list_cur.Any(x => x.getEnum() == curEnum) && curEnum != Currencies.EUR)
+                if (with_currency)
                 {
-                    underlying_list_cur.Add(new CurrencySimulated(curEnum, rand));
+                    Currencies curEnum = ass.getCurrency().getEnum();
+                    if (!underlying_list_cur.Any(x => x.getEnum() == curEnum) && curEnum != Currencies.EUR)
+                    {
+                        underlying_list_cur.Add(new CurrencySimulated(curEnum, rand));
+                    }
                 }
             }
             Everglades everg_simul = new Everglades(simulated_list, underlying_list_cur);
@@ -251,8 +254,9 @@ namespace Everglades.Models
 
                 if (date == list_dates.First())
                 {
-                    evergvalue = everg_simul.computePrice(date).Item1;
-                    hedge_simul = everg_simul.getDeltaPortfolio(date);
+                    Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
+                    evergvalue = compute.Item1;
+                    hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                     
                     portsolovalue = hedge_simul.getPrice(date);
                     cash_t = evergvalue - portsolovalue;
@@ -281,8 +285,9 @@ namespace Everglades.Models
                         else
                         {
                             // if not the last date, we simply price the product and ajust our edge
-                            evergvalue = everg_simul.computePrice(date).Item1;
-                            hedge_simul = everg_simul.getDeltaPortfolio(date);
+                            Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
+                            evergvalue = compute.Item1;
+                            hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                             portsolovalue = hedge_simul.getPrice(date);
                             cash_t -= portsolovalue;
                         }
@@ -298,8 +303,9 @@ namespace Everglades.Models
                     else
                     {
                         // if not the last date, we simply price the product and ajust our edge
-                        evergvalue = everg_simul.computePrice(date).Item1;
-                        hedge_simul = everg_simul.getDeltaPortfolio(date);
+                        Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
+                        evergvalue = compute.Item1;
+                        hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                         portsolovalue = hedge_simul.getPrice(date);
                         cash_t -= hedge_simul.getPrice(date);
                     }

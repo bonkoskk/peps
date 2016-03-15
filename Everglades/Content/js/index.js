@@ -333,7 +333,9 @@ $(function () {
         $("#simulation-graph-prices").html("loading ...");
         $("#simulation-graph-trackingerror").html("");
         $("#simulation-graph-cash").html("");
-        var data = "operation=simulation";
+        var with_currency = $("#simulate-checkbox-currency")[0].checked;
+        var data = "operation=simulation&with_currency=" + with_currency;
+        console.log(data);
         $.ajax({
             type: "POST",
             url: "/operations",
