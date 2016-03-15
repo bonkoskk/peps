@@ -25,7 +25,7 @@ namespace AccessBD
                     // on vérifie que la valeur de prix est différente
                     var priceBD = Access.Get_Price(id, date);
                     // si identiques on return (rien à faire)
-                    if (price == priceBD["price"] || price == priceBD["priceEur"])
+                    if (price == priceBD["price"] && price == priceBD["priceEur"])
                     {
                         return;
                     }
@@ -53,8 +53,8 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
-                List<DateTime> list_dates_db = Access.getAllKeysHedgingPortfolio(context);
-                if (list_dates_db.Contains(date))
+                //List<DateTime> list_dates_db = Access.getAllKeysHedgingPortfolio(context);
+                if (Access.ContainsHedgPortKey(context, date))
                 {
                     HedgingPortfolio hp = Access.getHedgingPortfolio(date);
                     if (value == hp.value) return;
@@ -73,6 +73,95 @@ namespace AccessBD
             }
 
         }
+
+
+        public static void storePortfolioComposition(DateTime date, int assetId, double quantity)
+        {
+            using (var context = new qpcptfaw())
+            {
+                // si la date existe déjà dans la table des prix on la remplace
+                if (Access.ContainsPortCompositionsKey(context, assetId, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
+                {
+                    PortfolioComposition pc;
+                    // on vérifie que la valeur de prix est différente
+                    double quant = Access.getPortfolioComposition(assetId, date);
+                    // si identiques on return (rien à faire)
+                    if (quant==quantity)
+                    {
+                        return;
+                    }
+                    // sinon on remplace
+                    //price_everglades = Access.Get_PriceDB(id, date);
+                    Access.Clear_Portfolio_Composition(date, assetId);
+                    pc = new PortfolioComposition { AssetDBId = assetId, date = date, quantity = quantity};
+                    context.PortCompositions.Add(pc);
+                    context.SaveChanges();
+                    return;
+                }
+                else
+                {
+                    // sinon on l'ajoute
+                    PortfolioComposition p = new PortfolioComposition { AssetDBId = assetId, date = date, quantity = quantity };
+                    context.PortCompositions.Add(p);
+                    context.SaveChanges();
+                    return;
+                }
+            }
+        }
+
+        public static void storeCholeskyMat(DateTime date, double[][] mat)
+        {
+            using (var context = new qpcptfaw())
+            {
+                // si la date existe déjà dans la table des prix on la remplace
+                if (Access.ContainsCorrelKey(context, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
+                {
+                    var mats = from m in context.CorrelVol
+                               where m.date == date
+                               select m;
+                    mats.First().matrix = mat;
+                    context.SaveChanges();
+                    return;
+                }
+                else
+                {
+                    // sinon on l'ajoute
+                    //PortfolioComposition p = new PortfolioComposition { AssetDBId = assetId, date = date, quantity = quantity };
+                    CorrelDB data = new CorrelDB { date = date, matrix = mat };
+                    context.CorrelVol.Add(data);
+                    context.SaveChanges();
+                    return;
+                }
+            }
+        }
+
+            public static void storeVolVect(DateTime date, double[] vol)
+        {
+            using (var context = new qpcptfaw())
+            {
+                // si la date existe déjà dans la table des prix on la remplace
+                if (Access.ContainsCorrelKey(context, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
+                {
+                    var mats = from m in context.CorrelVol
+                               where m.date == date
+                               select m;
+                    mats.First().vol = vol;
+                    context.SaveChanges();
+                    return;
+                }
+                else
+                {
+                    // sinon on l'ajoute
+                    //PortfolioComposition p = new PortfolioComposition { AssetDBId = assetId, date = date, quantity = quantity };
+                    CorrelDB data = new CorrelDB { date = date, vol = vol };
+                    context.CorrelVol.Add(data);
+                    context.SaveChanges();
+                    return;
+                }
+            }
+
+        }
+
 
 
     }

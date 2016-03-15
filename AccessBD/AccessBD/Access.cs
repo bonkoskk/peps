@@ -619,7 +619,85 @@ namespace AccessBD
 
         }
 
+        public static double[][] getCholeskyMatrix(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var mats = from m in context.CorrelVol
+                           where m.date <= date && m.date >= date.AddDays(-15)
+                           select m;
+                return mats.OrderBy(m => m.date).Last().matrix;
+            }
+        }
 
+        public static double[] getVolatilityVector(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var mats = from m in context.CorrelVol
+                           where m.date <= date && m.date >= date.AddDays(-15)
+                           select m;
+                return mats.OrderBy(m => m.date).Last().vol;
+            }
+        }
+
+        public static bool ContainsPortCompositionsKey(qpcptfaw context, int id, DateTime date)
+        {
+            var prices = from p in context.PortCompositions
+                         where p.AssetDBId == id && p.date == date
+                         select p;
+            if (prices.Count() == 0) return false;
+            if (prices.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
+        }
+
+        public static bool ContainsHedgPortKey(qpcptfaw context, DateTime date)
+        {
+            var prices = from p in context.Portfolio
+                         where p.date == date
+                         select p;
+            if (prices.Count() == 0) return false;
+            if (prices.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
+        }
+
+        public static bool ContainsCorrelKey(qpcptfaw context, DateTime date)
+        {
+            var prices = from p in context.CorrelVol
+                         where p.date == date
+                         select p;
+            if (prices.Count() == 0) return false;
+            if (prices.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
+        }
+
+        public static double getPortfolioComposition(int AssetId, DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var comp = from c in context.PortCompositions
+                           where c.AssetDBId == AssetId && c.date == date
+                           select c;
+                if (comp.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
+                if (comp.Count() > 1) throw new Exception("Data should be unique.");
+                return comp.First().quantity;
+            }
+        }
+
+        public static void Clear_Portfolio_Composition(DateTime date, int assetId)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var comp = from c in context.PortCompositions
+                           where c.AssetDBId == assetId && c.date == date
+                           select c;
+                if (comp.Count() == 0) throw new ArgumentException("no data for this date", date.ToString());
+                if (comp.Count() > 1) throw new ArgumentException("data should be unique for this date.", date.ToString());
+                context.PortCompositions.Remove(comp.First());
+                context.SaveChanges();
+            }
+        }
+        
 
     }
 }

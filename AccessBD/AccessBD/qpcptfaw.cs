@@ -16,6 +16,8 @@ namespace AccessBD
         public DbSet<EvergladesDB> Everglades { get; set; }
         public DbSet<ForexDB> Forex { get; set; }
         public DbSet<ForexRateDB> ForexRates { get; set; }
+        public DbSet<CorrelDB> CorrelVol { get; set; }
+        public DbSet<PortfolioComposition> PortCompositions { get; set; }
 
         public qpcptfaw()
         {
