@@ -341,6 +341,64 @@ namespace AccessBD
             }
         }
 
+        public static double GetCurrencyExchangeWithEuro(Currencies currency, DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                int limit = 5;
+                for(int i=0; i<limit; i++) {
+                    var rates = from p1 in context.ForexRates
+                        join p2 in context.Forex on p1.ForexDBId equals p2.ForexDBId
+                        where currency == p2.currency && date == p1.date
+                        select new { exchange_rate = p1.rate };
+                    if (rates.Count() > 0) {
+                        return 1 / rates.First().exchange_rate;
+                    }
+                    else
+                    {
+                        date = date - TimeSpan.FromDays(1);
+                    }
+                }
+                throw new ArgumentOutOfRangeException("No data for this date");
+            }
+        }
+
+        public static Dictionary<Currencies, Dictionary<DateTime, double>> GetCurrenciesExchangeWithEuro(List<Currencies> currencies, List<DateTime> dates)
+        {
+            int number_data = currencies.Count * dates.Count;
+
+            using (var context = new qpcptfaw())
+            {
+                double l;
+                var rates = from p1 in context.ForexRates
+                            join p2 in context.Forex on p1.ForexDBId equals p2.ForexDBId
+                            where currencies.Contains(p2.currency) && dates.Contains(p1.date)
+                            select new { exchange_rate = p1.rate, date = p1.date, cur = p2.currency };
+                Dictionary<Currencies, Dictionary<DateTime, double>> dic = new Dictionary<Currencies, Dictionary<DateTime, double>>();
+                foreach(var val in rates) {
+                    if (!dic.ContainsKey(val.cur))
+                    {
+                        dic[val.cur] = new Dictionary<DateTime, double>();
+                    }
+                    dic[val.cur][val.date] = 1 / val.exchange_rate;
+                }
+                // on bouche les trous
+                int j = 0;
+                foreach (Currencies en in currencies)
+                {
+                    foreach (DateTime d in dates)
+                    {
+                        j++;
+                        if (!dic[en].ContainsKey(d))
+                        {
+                            dic[en][d] = GetCurrencyExchangeWithEuro(en, d);
+                        }
+                    }
+                }
+                return dic;
+            }
+        }
+
         public static DateTime GetLastConnection(qpcptfaw context)
         {
                 var d = context.DbConnections.FirstOrDefault(p => p.date == context.DbConnections.Max(x => x.date));
@@ -619,7 +677,85 @@ namespace AccessBD
 
         }
 
+        public static double[][] getCholeskyMatrix(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var mats = from m in context.CorrelVol
+                           where m.date <= date && m.date >= date.AddDays(-15)
+                           select m;
+                return mats.OrderBy(m => m.date).Last().matrix;
+            }
+        }
 
+        public static double[] getVolatilityVector(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var mats = from m in context.CorrelVol
+                           where m.date <= date && m.date >= date.AddDays(-15)
+                           select m;
+                return mats.OrderBy(m => m.date).Last().vol;
+            }
+        }
+
+        public static bool ContainsPortCompositionsKey(qpcptfaw context, int id, DateTime date)
+        {
+            var prices = from p in context.PortCompositions
+                         where p.AssetDBId == id && p.date == date
+                         select p;
+            if (prices.Count() == 0) return false;
+            if (prices.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
+        }
+
+        public static bool ContainsHedgPortKey(qpcptfaw context, DateTime date)
+        {
+            var prices = from p in context.Portfolio
+                         where p.date == date
+                         select p;
+            if (prices.Count() == 0) return false;
+            if (prices.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
+        }
+
+        public static bool ContainsCorrelKey(qpcptfaw context, DateTime date)
+        {
+            var prices = from p in context.CorrelVol
+                         where p.date == date
+                         select p;
+            if (prices.Count() == 0) return false;
+            if (prices.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
+        }
+
+        public static double getPortfolioComposition(int AssetId, DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var comp = from c in context.PortCompositions
+                           where c.AssetDBId == AssetId && c.date == date
+                           select c;
+                if (comp.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
+                if (comp.Count() > 1) throw new Exception("Data should be unique.");
+                return comp.First().quantity;
+            }
+        }
+
+        public static void Clear_Portfolio_Composition(DateTime date, int assetId)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var comp = from c in context.PortCompositions
+                           where c.AssetDBId == assetId && c.date == date
+                           select c;
+                if (comp.Count() == 0) throw new ArgumentException("no data for this date", date.ToString());
+                if (comp.Count() > 1) throw new ArgumentException("data should be unique for this date.", date.ToString());
+                context.PortCompositions.Remove(comp.First());
+                context.SaveChanges();
+            }
+        }
+        
 
     }
 }
