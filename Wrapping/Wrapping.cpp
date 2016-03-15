@@ -83,6 +83,33 @@ namespace Wrapping {
 		}
 	}
 
+	void WrapperEverglades::getPriceEvergladesWithForex(int nb_dates, int nb_asset, int nb_currencies, array<double>^ foreign_rates,
+														array<int>^ currency_corres, array<double, 2>^ historic, array<double>^ vol,
+														array<double, 2>^ correl, int nb_day_after, double r, int sampleNb) {
+		h_gsl_vector foreign_rates_vector(nb_currencies, foreign_rates);
+		h_gsl_vector currency_corres_vector(nb_asset, currency_corres);
+		h_gsl_matrix historic_matrix(nb_asset + nb_currencies, nb_dates, historic);
+		h_gsl_vector vol_vector(nb_asset + nb_currencies, vol);
+		h_gsl_matrix correl_matrix(nb_asset + nb_currencies, nb_asset + nb_currencies, correl);
+
+		double price, ic;
+
+		gsl_vector* deltas_temp;
+
+
+		Everglades::get_price_with_forex(price, ic, &deltas_temp, *historic_matrix._matrix, nb_day_after, r,
+			*foreign_rates_vector._vector, *currency_corres_vector._vector, *vol_vector._vector, *correl_matrix._matrix, sampleNb);
+		this->price = price;
+		this->confidenceInterval = ic;
+
+		delta = gcnew array<double>(historic_matrix._matrix->size1);
+		for (int i = 0; i < deltas_temp->size; i++)
+		{
+			this->delta[i] = gsl_vector_get(deltas_temp, i);
+		}
+	}
+
+
 	void WrapperEverglades::getPayoffEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, double vlr) {
 		h_gsl_matrix historic_matrix(nb_asset, nb_dates, historic);
 		bool anticipated;

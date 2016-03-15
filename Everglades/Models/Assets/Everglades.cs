@@ -1,4 +1,6 @@
-﻿using Everglades.Models.DataBase;
+﻿using AccessBD;
+using Everglades.Models.Assets;
+using Everglades.Models.DataBase;
 using Everglades.Models.HistoricCompute;
 using System;
 using System.Collections.Generic;
@@ -16,16 +18,18 @@ namespace Everglades.Models
         private double VLR;
         private Currency currency;
         private List<IAsset> underlying_list;
-        private DateTime Last_Correl_Computation;
+        private List<ICurrency> underlying_list_cur;
+        private DateTime Last_Correl_Computation = DateTime.MinValue;
         private double[,] Last_Cholesky;
         private double[] Last_Vol;
 
-        public Everglades(List<IAsset> underlying_list)
+        public Everglades(List<IAsset> underlying_list, List<ICurrency> underlying_list_cur)
         {
             wp = new Wrapping.WrapperEverglades();
-            this.VLR = 200; //TODO TODO TODO TODO TODO TODO TODO TODO
+            this.VLR = 200; //TODO
             this.underlying_list = underlying_list;
-            currency = new Currency("€");
+            this.underlying_list_cur = underlying_list_cur;
+            currency = new Currency(Currencies.EUR);
         }
 
         public string getName()
@@ -141,9 +145,10 @@ namespace Everglades.Models
             return new Tuple<bool, double>(wp.getPayoffIsAnticipated(), wp.getPayoff());
         }
 
-        private Tuple<double[,], double[]> computeCorrelationAndVol(DateTime priceDate, List<String> assetNames, uint date_nb)
+        private Tuple<double[,], double[]> computeCorrelationAndVol(DateTime priceDate, List<String> assetNames, List<Currencies> currencies, uint date_nb)
         {
             int asset_nb = assetNames.Count;
+            int currencies_nb = currencies.Count;
             // create a list of dates to get price for correlation computing
             int nb_dates_correl = 200;
             List<DateTime> dates_correl = new List<DateTime>();
@@ -160,8 +165,9 @@ namespace Everglades.Models
             }
             // get the prices from database
             Dictionary<Tuple<String, DateTime>, double> hist_correl = AccessDB.Get_Asset_Price_Eur(assetNames, dates_correl);
+            Dictionary<Currencies, Dictionary<DateTime, double>> hist_correl_cur = AccessBD.Access.GetCurrenciesExchangeWithEuro(currencies, dates_correl);
             // transform the Tuple format to double[,] format
-            double[,] hist_correl_double = new double[asset_nb, nb_dates_correl];
+            double[,] hist_correl_double = new double[asset_nb + currencies_nb, nb_dates_correl];
             int k = 0;
             foreach (IAsset ass in underlying_list)
             {
@@ -173,17 +179,31 @@ namespace Everglades.Models
                 }
                 k++;
             }
+            foreach (Currencies cur in currencies)
+            {
+                int j = 0;
+                foreach (DateTime d in dates_correl)
+                {
+                    hist_correl_double[k, j] = hist_correl_cur[cur][d];
+                    j++;
+                }
+                k++;
+            }
             // compute correl and vol using C++ functions
             Wrapping.Tools tools = new Wrapping.Tools();
-            double[,] correl = new double[asset_nb, asset_nb];
-            double[] vol = new double[asset_nb];
-            tools.getCorrelAndVol(nb_dates_correl, asset_nb, hist_correl_double, correl, vol);
+            double[,] correl = new double[asset_nb + currencies_nb, asset_nb + currencies_nb];
+            double[] vol = new double[asset_nb + currencies_nb];
+            tools.getCorrelAndVol(nb_dates_correl, asset_nb + currencies_nb, hist_correl_double, correl, vol);
             return new Tuple<double[,], double[]>(correl, vol);
         }
 
 
         public Tuple<double, double[]> computePrice(DateTime t)
         {
+            // !!!! currencies not expected to work with simulation
+            bool simulation = !(underlying_list.First() is Equity);
+            bool with_currency_change = true;
+
             ModelManage.timers.start("Everglades pre-pricing");
             int asset_nb = underlying_list.Count;
             // risk-free rate
@@ -193,7 +213,6 @@ namespace Everglades.Models
             DateTime priceDate = new DateTime(t.Year, t.Month, t.Day);
             foreach (DateTime d in getObservationDates()) 
             {
-            
                 if (d > priceDate)
                 {
                     break;
@@ -212,53 +231,91 @@ namespace Everglades.Models
                 {
                     dates.AddLast(priceDate);
                 }
-            
             }
-            // create and get data for all arguments
-            double[,] historic = new double[asset_nb, dates.Count];
-            double[] expected_returns = new double[asset_nb];
-            double[] vol = new double[asset_nb];
-            double[,] correl = new double[asset_nb, asset_nb];
-            double[,] cholesky;
-
-            // get historic data for all functions
+            
             ModelManage.timers.start("Everglades historic data");
+            // get assets names
             List<String> assetNames = new List<String>();
             foreach (IAsset ass in underlying_list)
             {
                 assetNames.Add(ass.getName());
             }
-            Dictionary<Tuple<String, DateTime>, double> hist;
+            // get currencies used and correspondance with assets
+            int[] asset_currency_correspondance = new int[asset_nb];
+            List<Currencies> list_currency_enum = new List<Currencies>();
+            if (with_currency_change)
+            {
+                int ass_i = 0;
+                foreach (IAsset asset in underlying_list)
+                {
+                    Currencies cur = asset.getCurrency().getEnum();
+                    asset_currency_correspondance[ass_i] = (int)cur;
+                    if (cur != this.currency.getEnum() && !list_currency_enum.Any(x => x == cur))
+                    {
+                        list_currency_enum.Add(cur);
+                    }
+                    ass_i++;
+                }
+            }
+            int currencies_nb = list_currency_enum.Count;
+            // create data structures
+            double[,] historic = new double[asset_nb + currencies_nb, dates.Count];
+            double[] expected_returns = new double[asset_nb + currencies_nb];
+            double[] foreign_rates = new double[currencies_nb];
+            double[] vol = new double[asset_nb + currencies_nb];
+            double[,] correl = new double[asset_nb + currencies_nb, asset_nb + currencies_nb];
+            double[,] cholesky;
 
-            if (underlying_list.First() is Equity)
+
+            Dictionary<Tuple<String, DateTime>, double> hist;
+            Dictionary<Currencies, Dictionary<DateTime, double>> currencies_hist;
+            // get historic of values + volatility + correlation of assets and currencies
+            if (!simulation)
             {
                 // get prices in BD at constatation dates
                 hist = AccessDB.Get_Asset_Price_Eur(assetNames, dates.ToList());
+                // get currency exchange rates and put DIRECTLY IN DOUBLE MATRIX
+                // STARTING AT asset_nb BECAUSE CURRENCIES ARE IN THE END
+                if (with_currency_change)
+                {
+                    currencies_hist = AccessBD.Access.GetCurrenciesExchangeWithEuro(list_currency_enum, dates.ToList());
+                    foreach (Currencies cur in list_currency_enum)
+                    {
+                        int cur_int = (int)cur;
+                        int d_i = 0;
+                        foreach (DateTime d in dates)
+                        {
+                            historic[asset_nb + cur_int, d_i] = currencies_hist[cur][d];
+                            d_i++;
+                        }
+                    }
+                }
                 // compute or get correlation and vol
-                if ((priceDate - Last_Correl_Computation).TotalDays > 30)
+                if ((priceDate - Last_Correl_Computation).TotalDays > 30 || asset_nb + currencies_nb != Last_Vol.Length)
                 {
                     uint nb_dates_correl = 200;
-                    Tuple<double[,], double[]> temp = computeCorrelationAndVol(priceDate, assetNames, nb_dates_correl);
+                    Tuple<double[,], double[]> temp = computeCorrelationAndVol(priceDate, assetNames, list_currency_enum, nb_dates_correl);
                     correl = temp.Item1;
                     vol = temp.Item2;
-                    cholesky = wp.factCholesky(correl, asset_nb);
+                    cholesky = wp.factCholesky(correl, asset_nb + currencies_nb);
                     Last_Cholesky = cholesky;
                     Last_Vol = vol;
+                    Last_Correl_Computation = priceDate;
                 }
                 else
                 {
                     cholesky = Last_Cholesky;
                     vol = Last_Vol;
-                }
-                
+                }       
             }
             else
             {
+                // if simulated, correl is identity, asset volatility and historic got from object
                 hist = new Dictionary<Tuple<string, DateTime>, double>();
-                correl = new double[asset_nb, asset_nb];
-                for (int i = 0; i < asset_nb; i++)
+                correl = new double[asset_nb + currencies_nb, asset_nb + currencies_nb];
+                for (int i = 0; i < asset_nb + currencies_nb; i++)
                 {
-                    for (int j = 0; j < asset_nb; j++)
+                    for (int j = 0; j < asset_nb + currencies_nb; j++)
                     {
                         if (i == j)
                         {
@@ -269,40 +326,116 @@ namespace Everglades.Models
                             correl[i, j] = 0.0;
                         }
                     }
-                    expected_returns[i] = r;
+                }
+                int ass_i_ = 0;
+                foreach (IAsset ass in underlying_list)
+                {
+                    vol[ass_i_] = ass.getVolatility(t);
+                    ass_i_++;
+                }
+                foreach (Currencies cur in list_currency_enum)
+                {
+                    vol[asset_nb + (int)cur] = 0.1;
                 }
                 cholesky = correl; // cholesky fact of identity is identity
             }
-            
-            int ass_i = 0;
-            foreach (IAsset ass in underlying_list)
+
+            // put historic in a matrix of double and set expected_returns vector for assets
+            if (!simulation)
             {
-                int d_i = 0;
-                foreach (DateTime d in dates)
+                int ass_i = 0;
+                foreach (IAsset ass in underlying_list)
                 {
-                    if (ass is Equity)
+                    int d_i = 0;
+                    foreach (DateTime d in dates)
                     {
                         var key = new Tuple<String, DateTime>(ass.getName(), d);
                         historic[ass_i, d_i] = hist[key];
+                        d_i++;
                     }
-                    else
+                    expected_returns[ass_i] = r;
+                    ass_i++;
+                }
+            }
+            else // is a simulation
+            {
+                // assets
+                int ass_i = 0;
+                foreach (IAsset ass in underlying_list)
+                {
+                    int d_i = 0;
+                    foreach (DateTime d in dates)
                     {
                         historic[ass_i, d_i] = ass.getPrice(d);
+                        d_i++;
                     }
-                    d_i++;
+                    expected_returns[ass_i] = r; //ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
+                    ass_i++;
                 }
-                expected_returns[ass_i] = r; //ass.getCurrency().getInterestRate(t, TimeSpan.FromDays(90));
-                vol[ass_i] = ass.getVolatility(t);
-                ass_i++;
+                // currencies
+                if (with_currency_change)
+                {
+                    ass_i = 0;
+                    foreach (ICurrency cur in underlying_list_cur)
+                    {
+                        int d_i = 0;
+                        foreach (DateTime d in dates)
+                        {
+                            historic[asset_nb + (int)cur.getEnum(), d_i] = cur.getPrice(d);
+                            d_i++;
+                        }
+                        ass_i++;
+                    }
+                }
             }
+            // set expected return of currencies
+            if (with_currency_change)
+            {
+                int ass_i = 0;
+                foreach (Currencies cur in list_currency_enum)
+                {
+                    foreign_rates[(int)cur] = r;
+                    expected_returns[ass_i] = r; // TODO !!!
+                    ass_i++;
+                }
+            }
+            
+            
 
             ModelManage.timers.stop("Everglades historic data");
 
 
-            int sampleNb = 1000; 
+            int sampleNb = 1000;
+            hist = hist;
+            nb_day_after = nb_day_after;
+            r = r;
+            asset_currency_correspondance = asset_currency_correspondance;
+            vol = vol;
+            correl = correl;
+
+            /*
+             * price with Forex :
+             * foreign_rates : taux d'intérets
+             * currency : vect de taille 20 avec l'indice enum de la currency
+             * 
+             * 
+             * 
+            wp.get_price_with_forex(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
+	const gsl_vector& foreign_rates, const gsl_vector& currency, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu);
+            */
+
             // pricing
-            wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, cholesky, nb_day_after, r, sampleNb);
-            
+            if (with_currency_change)
+            {
+                wp.getPriceEvergladesWithForex(dates.Count, asset_nb, currencies_nb, foreign_rates, asset_currency_correspondance,
+                    historic, vol, cholesky, nb_day_after, r, sampleNb);
+            }
+            else
+            {
+                wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, cholesky, nb_day_after, r, sampleNb);
+            }
+            double test = wp.getPrice();
+            double[] deltatest = wp.getDelta();
             //wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
 
             /*
@@ -327,12 +460,22 @@ namespace Everglades.Models
         public Portfolio getDeltaPortfolio(DateTime t)
         {
             double[] delta = computePrice(t).Item2;
+            double test = computePrice(t).Item1;
             Portfolio port = new Portfolio(underlying_list);
+            int nb_asset = underlying_list.Count;
             int i = 0;
             foreach (IAsset ass in underlying_list)
             {
                 port.addAsset(ass, delta[i]);
                 i++;
+            }
+            foreach (ICurrency cur in underlying_list_cur)
+            {
+                if (cur.getEnum() != this.currency.getEnum())
+                {
+                    int idx = nb_asset + (int)cur.getEnum();
+                    port.addAsset(cur, delta[nb_asset + (int)cur.getEnum()]);
+                }
             }
             return port;
         }

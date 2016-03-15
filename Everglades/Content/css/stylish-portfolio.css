@@ -98,6 +98,7 @@ body {
 }
 
 .asset-window {
+    z-index: 1000;
     position: absolute;
     display: none;
     left: 25%;

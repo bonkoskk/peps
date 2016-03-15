@@ -341,6 +341,64 @@ namespace AccessBD
             }
         }
 
+        public static double GetCurrencyExchangeWithEuro(Currencies currency, DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                int limit = 5;
+                for(int i=0; i<limit; i++) {
+                    var rates = from p1 in context.ForexRates
+                        join p2 in context.Forex on p1.ForexDBId equals p2.ForexDBId
+                        where currency == p2.currency && date == p1.date
+                        select new { exchange_rate = p1.rate };
+                    if (rates.Count() > 0) {
+                        return 1 / rates.First().exchange_rate;
+                    }
+                    else
+                    {
+                        date = date - TimeSpan.FromDays(1);
+                    }
+                }
+                throw new ArgumentOutOfRangeException("No data for this date");
+            }
+        }
+
+        public static Dictionary<Currencies, Dictionary<DateTime, double>> GetCurrenciesExchangeWithEuro(List<Currencies> currencies, List<DateTime> dates)
+        {
+            int number_data = currencies.Count * dates.Count;
+
+            using (var context = new qpcptfaw())
+            {
+                double l;
+                var rates = from p1 in context.ForexRates
+                            join p2 in context.Forex on p1.ForexDBId equals p2.ForexDBId
+                            where currencies.Contains(p2.currency) && dates.Contains(p1.date)
+                            select new { exchange_rate = p1.rate, date = p1.date, cur = p2.currency };
+                Dictionary<Currencies, Dictionary<DateTime, double>> dic = new Dictionary<Currencies, Dictionary<DateTime, double>>();
+                foreach(var val in rates) {
+                    if (!dic.ContainsKey(val.cur))
+                    {
+                        dic[val.cur] = new Dictionary<DateTime, double>();
+                    }
+                    dic[val.cur][val.date] = 1 / val.exchange_rate;
+                }
+                // on bouche les trous
+                int j = 0;
+                foreach (Currencies en in currencies)
+                {
+                    foreach (DateTime d in dates)
+                    {
+                        j++;
+                        if (!dic[en].ContainsKey(d))
+                        {
+                            dic[en][d] = GetCurrencyExchangeWithEuro(en, d);
+                        }
+                    }
+                }
+                return dic;
+            }
+        }
+
         public static DateTime GetLastConnection(qpcptfaw context)
         {
                 var d = context.DbConnections.FirstOrDefault(p => p.date == context.DbConnections.Max(x => x.date));

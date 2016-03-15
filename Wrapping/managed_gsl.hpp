@@ -23,6 +23,7 @@ namespace managed_gsl {
 		gsl_vector* _vector;
 		h_gsl_vector(int n);
 		h_gsl_vector(int n, array<double>^ values);
+		h_gsl_vector(int n, array<int>^ values);
 		~h_gsl_vector();
 		void set_value(int i, double x);
 		double get_value(int i);
