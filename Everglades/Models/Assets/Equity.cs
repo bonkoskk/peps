@@ -83,7 +83,7 @@ namespace Everglades.Models
             }
 
             Dictionary<DateTime, double> prices = AccessDB.Get_Asset_Price(this.name, dates);
-            Data data = new Data();
+            Data data = new Data(this.name);
             foreach(DateTime d in dates)
             {
                 if (prices.ContainsKey(d))
@@ -122,9 +122,9 @@ namespace Everglades.Models
             return vol[0];
         }
 
-        public double getCovariance(IAsset a, DateTime t)
+        public double getDividend(DateTime t1, DateTime t2)
         {
-            throw new NotImplementedException();
+            return 0;
         }
     }
 }

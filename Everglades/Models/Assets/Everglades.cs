@@ -90,7 +90,7 @@ namespace Everglades.Models
 
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
-            Data data = new Data();
+            Data data = new Data("everglades");
             DateTime t = t1;
             while (t < t2)
             {
@@ -198,11 +198,10 @@ namespace Everglades.Models
         }
 
 
-        public Tuple<double, double[]> computePrice(DateTime t)
+        public Tuple<double, double[]> computePrice(DateTime t, bool with_currency_change = true)
         {
             // !!!! currencies not expected to work with simulation
             bool simulation = !(underlying_list.First() is Equity);
-            bool with_currency_change = true;
 
             ModelManage.timers.start("Everglades pre-pricing");
             int asset_nb = underlying_list.Count;
@@ -333,9 +332,9 @@ namespace Everglades.Models
                     vol[ass_i_] = ass.getVolatility(t);
                     ass_i_++;
                 }
-                foreach (Currencies cur in list_currency_enum)
+                foreach (ICurrency cur in underlying_list_cur)
                 {
-                    vol[asset_nb + (int)cur] = 0.1;
+                    vol[asset_nb + (int)cur.getEnum()] = cur.getVolatility(t); 
                 }
                 cholesky = correl; // cholesky fact of identity is identity
             }
@@ -434,8 +433,21 @@ namespace Everglades.Models
             {
                 wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, cholesky, nb_day_after, r, sampleNb);
             }
-            double test = wp.getPrice();
-            double[] deltatest = wp.getDelta();
+            double priceReturn = wp.getPrice();
+            double[] deltaReturn = wp.getDelta();
+
+
+            // TODO DELETE THIS
+            /*
+            if (with_currency_change)
+            {
+                for (int i = 0; i < currencies_nb; i++)
+                {
+                    deltaReturn[asset_nb + i] = 0;
+                }
+            }
+            */
+
             //wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
 
             /*
@@ -446,7 +458,7 @@ namespace Everglades.Models
             Wrapping.WrapperDebugVanilla wp = new Wrapping.WrapperDebugVanilla();
             wp.getPriceVanilla(0, asset_nb, historic[0, historic.Length], expected_returns, vol, correl, tau, r, sampleNb, historic[0, historic.Length]);
             */
-            return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
+            return new Tuple<double, double[]>(priceReturn, deltaReturn);
 
 
         }
@@ -457,10 +469,17 @@ namespace Everglades.Models
             return getDeltaPortfolio(DateTime.Now);
         }
 
-        public Portfolio getDeltaPortfolio(DateTime t)
+        public Portfolio getDeltaPortfolio(DateTime t, double[] deltaIn = null, bool with_currency = true)
         {
-            double[] delta = computePrice(t).Item2;
-            double test = computePrice(t).Item1;
+            double[] delta;
+            if (deltaIn != null)
+            {
+                delta = deltaIn;
+            }
+            else
+            {
+                delta = computePrice(t, with_currency).Item2;
+            }
             Portfolio port = new Portfolio(underlying_list);
             int nb_asset = underlying_list.Count;
             int i = 0;
@@ -469,12 +488,15 @@ namespace Everglades.Models
                 port.addAsset(ass, delta[i]);
                 i++;
             }
-            foreach (ICurrency cur in underlying_list_cur)
+            if (with_currency)
             {
-                if (cur.getEnum() != this.currency.getEnum())
+                foreach (ICurrency cur in underlying_list_cur)
                 {
-                    int idx = nb_asset + (int)cur.getEnum();
-                    port.addAsset(cur, delta[nb_asset + (int)cur.getEnum()]);
+                    if (cur.getEnum() != this.currency.getEnum())
+                    {
+                        int idx = nb_asset + (int)cur.getEnum();
+                        port.addAsset(cur, delta[nb_asset + (int)cur.getEnum()]);
+                    }
                 }
             }
             return port;
@@ -493,6 +515,11 @@ namespace Everglades.Models
         public Currency getCurrency()
         {
             return currency;
+        }
+
+        public double getDividend(DateTime t1, DateTime t2)
+        {
+            return 0;
         }
     }
 }

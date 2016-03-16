@@ -80,27 +80,48 @@ function draw_multi_graph(div, data, label, nb_asset) {
     for (var i = 0; i < nb_asset; i++) {
         data_graph.push({ label: label[i], data: data[i] });
     }
-    var parameters = {
-        series: {
-            lines: { show: true },
-            points: { show: true }
-        },
-        legend: {
-            show: true,
-            backgroundOpacity: 0,
-        },
-        grid: {
-            hoverable: true
-        },
-        xaxis: {
-            mode: "time"
-        }
-    };
+    var parameters;
+    
+    if (nb_asset < 4) {
+         parameters = {
+            series: {
+                lines: { show: true },
+                points: { show: true }
+            },
+            legend: {
+                show: true,
+                backgroundOpacity: 0,
+            },
+            grid: {
+                hoverable: true
+            },
+            xaxis: {
+                mode: "time"
+            }
+        };
+    } else {
+        parameters = {
+            series: {
+                lines: { show: true },
+                points: { show: true }
+            },
+            legend: {
+                show: false,
+                backgroundOpacity: 0,
+            },
+            grid: {
+                hoverable: true
+            },
+            xaxis: {
+                mode: "time"
+            }
+        };
+    }
     try {
         $(div).html("");
         $.plot(div, data_graph, parameters);
     } catch (e) {
-        alert(e);
+        console.log(e);
     }
 }
 
@@ -308,10 +329,14 @@ $(function () {
     // simulation
     $("#simulate-button").click(function () {
         $(".simulation-window").show();
-        $("#simulation-graph-prices").html("");
-        $("#simulation-graph-trackingerror").html("loading ...");
+        $("#simulation-graph-assets").html("");
+        $("#simulation-graph-currencies").html("");
+        $("#simulation-graph-prices").html("loading ...");
+        $("#simulation-graph-trackingerror").html("");
         $("#simulation-graph-cash").html("");
-        var data = "operation=simulation";
+        var with_currency = $("#simulate-checkbox-currency")[0].checked;
+        var data = "operation=simulation&with_currency=" + with_currency;
+        console.log(data);
         $.ajax({
             type: "POST",
             url: "/operations",
@@ -324,7 +349,31 @@ $(function () {
                     ["Everglades", "Hedging portfolio"], 2);
                 draw_graph("#simulation-graph-trackingerror", data["simulation-graph-trackingerror"], "tracking error");
                 draw_multi_graph("#simulation-graph-cash", [data["simulation-graph-cash"], data["simulation-graph-soloport"]], ["cash", "couverture seule"], 2);
-                  
+                delete data["simulation-graph-prices-everg"];
+                delete data["simulation-graph-prices-hedge"];
+                delete data["simulation-graph-trackingerror"];
+                delete data["simulation-graph-cash"];
+                delete data["simulation-graph-soloport"];
+                var datAssets = [];
+                var nameAssets = [];
+                var datCurrencies = [];
+                var nameCurrencies = [];
+                for (var d in data) {
+                    if (data.hasOwnProperty(d)) {
+                        if (d.length > 4) {
+                            datAssets.push(data[d]);
+                            nameAssets.push(d);
+                        } else {
+                            datCurrencies.push(data[d]);
+                            nameCurrencies.push(d);
+                        } 
+                    }
+                }
+                console.log(datAssets);
+                console.log(nameAssets);
+                console.log("draw_multi_graph(\"#simulation-graph-assets\", datAssets, nameAssets, nameAssets.length);")
+                draw_multi_graph("#simulation-graph-assets", datAssets, nameAssets, nameAssets.length);
+                draw_multi_graph("#simulation-graph-currencies", datCurrencies, nameCurrencies, nameCurrencies.length);
             }
         })
         .fail(function (jqXHR, textStatus) {

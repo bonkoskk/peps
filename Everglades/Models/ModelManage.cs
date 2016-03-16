@@ -152,7 +152,7 @@ namespace Everglades.Models
 
         public Data getHedgeForOne(DateTime t1, DateTime t2, TimeSpan step)
         {
-            Data data = new Data();
+            Data data = new Data("hedge");
             DateTime t = t1;
             while (t < t2)
             {
@@ -188,7 +188,7 @@ namespace Everglades.Models
          * * Data of cash spent for hedging portfolio evolution
          * 
          */
-        public List<Data> simulateHedgeEvolution()
+        public List<Data> simulateHedgeEvolution(bool with_currency)
         {
             RandomNormal rand = new RandomNormal();
             LinkedList<DateTime> list_dates = everg.getObservationDates();
@@ -199,19 +199,34 @@ namespace Everglades.Models
             foreach (IAsset ass in Assets)
             {
                 simulated_list.Add(new AssetSimulated(ass, list_dates, rand));
-                Currencies curEnum = ass.getCurrency().getEnum();
-                if (!underlying_list_cur.Any(x => x.getEnum() == curEnum) && curEnum != Currencies.EUR)
+                if (with_currency)
                 {
-                    underlying_list_cur.Add(new CurrencySimulated(curEnum, rand));
+                    Currencies curEnum = ass.getCurrency().getEnum();
+                    if (!underlying_list_cur.Any(x => x.getEnum() == curEnum) && curEnum != Currencies.EUR)
+                    {
+                        underlying_list_cur.Add(new CurrencySimulated(curEnum, rand));
+                    }
                 }
             }
             Everglades everg_simul = new Everglades(simulated_list, underlying_list_cur);
             Portfolio hedge_simul = new Portfolio(simulated_list);
-            Data tracking_error = new Data();
-            Data everglades_price = new Data();
-            Data hedge_price = new Data();
-            Data portsolo_price = new Data();
-            Data cash_price = new Data();
+            Data tracking_error = new Data("simulation-graph-trackingerror");
+            Data everglades_price = new Data("simulation-graph-prices-everg");
+            Data hedge_price = new Data("simulation-graph-prices-hedge");
+            Data portsolo_price = new Data("simulation-graph-soloport");
+            Data cash_price = new Data("simulation-graph-cash");
+            Dictionary<String, Data> list_asset_price = new Dictionary<string, Data>();
+            foreach (IAsset asset in simulated_list)
+            {
+                String nameTemp = asset.getName();
+                list_asset_price[nameTemp] = new Data(nameTemp);
+            }
+            foreach (IAsset cur in underlying_list_cur)
+            {
+                String nameTemp = cur.getName();
+                list_asset_price[nameTemp] = new Data(nameTemp);
+            }
+
             double cash_t = 0;
             double portvalue;
             double portsolovalue;
@@ -221,13 +236,26 @@ namespace Everglades.Models
             DateTime date_prev = list_dates.First();
             // used for anticipated end of everglades
             bool breakk = false;
-
             foreach (DateTime date in list_dates)
             {
+                // get prices of assets at these dates in Data
+                foreach (IAsset asset in simulated_list)
+                {
+                    String nameTemp = asset.getName();
+                    list_asset_price[nameTemp].add(new DataPoint(date, asset.getPrice(date)));
+                }
+                foreach (IAsset cur in underlying_list_cur)
+                {
+                    String nameTemp = cur.getName();
+                    list_asset_price[nameTemp].add(new DataPoint(date, cur.getPrice(date)));
+                }
+
+
                 if (date == list_dates.First())
                 {
-                    evergvalue = everg_simul.computePrice(date).Item1;
-                    hedge_simul = everg_simul.getDeltaPortfolio(date);
+                    Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
+                    evergvalue = compute.Item1;
+                    hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                     
                     portsolovalue = hedge_simul.getPrice(date);
                     cash_t = evergvalue - portsolovalue;
@@ -237,7 +265,7 @@ namespace Everglades.Models
                 {
                     // here we (virtually) sell old hedging portfolio
                     double t = (date - date_prev).TotalDays / 360;
-                    portvalue = hedge_simul.getPrice(date) + cash_t * Math.Exp(r * t);
+                    portvalue = hedge_simul.getPrice(date) + hedge_simul.getDividend(date_prev, date) + cash_t * Math.Exp(r * t);
                     cash_t = portvalue;
                     // test if date is a constatation date
                     if (list_anticipated_dates.Contains(date))
@@ -256,8 +284,9 @@ namespace Everglades.Models
                         else
                         {
                             // if not the last date, we simply price the product and ajust our edge
-                            evergvalue = everg_simul.computePrice(date).Item1;
-                            hedge_simul = everg_simul.getDeltaPortfolio(date);
+                            Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
+                            evergvalue = compute.Item1;
+                            hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                             portsolovalue = hedge_simul.getPrice(date);
                             cash_t -= portsolovalue;
                         }
@@ -273,10 +302,16 @@ namespace Everglades.Models
                     else
                     {
                         // if not the last date, we simply price the product and ajust our edge
-                        evergvalue = everg_simul.computePrice(date).Item1;
-                        hedge_simul = everg_simul.getDeltaPortfolio(date);
+                        Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
+                        evergvalue = compute.Item1;
+                        hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                         portsolovalue = hedge_simul.getPrice(date);
                         cash_t -= hedge_simul.getPrice(date);
+                    }
+
+                    if (Math.Abs(portsolovalue) < 0.01)
+                    {
+                        int bla = 1;
                     }
                 }
                 
@@ -314,6 +349,10 @@ namespace Everglades.Models
             list.Add(tracking_error);
             list.Add(cash_price);
             list.Add(portsolo_price);
+            foreach (Data dat in list_asset_price.Values)
+            {
+                list.Add(dat);
+            }
             return list;
         }
 

@@ -44,7 +44,7 @@ namespace Everglades.Models.Assets
             {
                 throw new ArgumentOutOfRangeException("Maturity must be in future");
             }
-            wc.getPriceOptionEuropeanCall(T, underlying.getPrice(t), strike, underlying.getVolatility(t), getCurrency().getInterestRate(t, (maturity - t)), 0);
+            wc.getPriceOptionEuropeanCall(T, underlying.getPrice(t), strike, underlying.getVolatility(t), getCurrency().getInterestRate(t), 0);
             return wc.getPrice();
         }
 
@@ -56,7 +56,7 @@ namespace Everglades.Models.Assets
             {
                 throw new ArgumentOutOfRangeException("Maturity must be in future");
             }
-            wc.getPriceOptionEuropeanCall(T, underlying.getPrice(t), strike, underlying.getVolatility(t), getCurrency().getInterestRate(t, (maturity - t)), 0);
+            wc.getPriceOptionEuropeanCall(T, underlying.getPrice(t), strike, underlying.getVolatility(t), getCurrency().getInterestRate(t), 0);
             return wc.getDelta();
         }
 

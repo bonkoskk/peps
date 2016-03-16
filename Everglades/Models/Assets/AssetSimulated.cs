@@ -53,7 +53,7 @@ namespace Everglades.Models.Assets
 
         public string getName()
         {
-            return "Simulated " + real.getName();
+            return real.getName();
         }
 
         public double getPrice()
@@ -91,6 +91,12 @@ namespace Everglades.Models.Assets
         public double getDelta(DateTime t)
         {
             throw new NotImplementedException();
+        }
+
+
+        public double getDividend(DateTime t1, DateTime t2)
+        {
+            return 0;
         }
     }
 }

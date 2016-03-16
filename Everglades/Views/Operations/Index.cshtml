@@ -172,28 +172,17 @@
         // simulate a product evolution and edging
         else if (String.Compare(Request["operation"], "simulation") == 0)
         {
-            int nb = 0;
-            foreach(Everglades.Models.Data dat in Model.simulateHedgeEvolution()) {
-                switch (nb)
-                {
-                    case 0:
-                        msg += "{\"simulation-graph-prices-everg\": ";
-                        break;
-                    case 1:
-                        msg += ", \"simulation-graph-prices-hedge\": ";
-                        break;
-                    case 2:
-                        msg += ", \"simulation-graph-trackingerror\": ";
-                        break;
-                    case 3:
-                        msg += ", \"simulation-graph-cash\": ";
-                        break;
-                    case 4:
-                        msg += ", \"simulation-graph-soloport\": ";
-                        break;
+            bool with_currency = bool.Parse(Request["with_currency"]);
+            bool first = true;
+            msg += "{";
+            foreach(Everglades.Models.Data dat in Model.simulateHedgeEvolution(with_currency)) {
+                if (first) {
+                    first = false;
+                } else {
+                    msg += ", ";
                 }
+                msg += "\"" + dat.getName() + "\": ";
                 msg += dat.ToString();
-                nb++;
             }
             msg += "}";
         }

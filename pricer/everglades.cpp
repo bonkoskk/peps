@@ -370,7 +370,7 @@ extern int Everglades::get_price_with_forex(double& price, double& ic, gsl_vecto
 	gsl_vector_scale(*delta, 1 / (2 * nbSimu*eps));
 	gsl_vector_div(*delta, temp);
 
-
+	/*
 	for (int action = 0; action < nb_sj; action++){
 		if (gsl_vector_get(&currency, action) == 0) {
 			continue;
@@ -381,7 +381,7 @@ extern int Everglades::get_price_with_forex(double& price, double& ic, gsl_vecto
 			gsl_vector_set(*delta, action, s_temp*s_temp2);
 		}
 	}
-
+	*/
 	//calcul de l'intervalle de confiance
 	double sumIc = sumIc_anticipated*exp(-2 * r*(9 - last_index) * (PERIODE - nb_day_after) / DAY);
 	sumIc += sumIc_final*exp(-2 * r*(25 - last_index + 1) * (PERIODE - nb_day_after) / DAY);

@@ -40,7 +40,7 @@ namespace Everglades.Models.Assets
             {
                 throw new ArgumentOutOfRangeException("Maturity must be in future");
             }
-            wc.getPriceOptionEuropeanPut(T, underlying.getPrice(), strike, underlying.getVolatility(t), getCurrency().getInterestRate(t, (maturity-t)), 0);
+            wc.getPriceOptionEuropeanPut(T, underlying.getPrice(), strike, underlying.getVolatility(t), getCurrency().getInterestRate(t), 0);
             double price = wc.getPrice();
             return wc.getPrice();
         }
