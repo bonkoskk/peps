@@ -8,6 +8,20 @@ using namespace System;
 
 namespace Wrapping {
 
+	public ref class WrapperAmerican
+	{
+	protected:
+		double price;
+		//double delta;
+		//double delta_mc;
+	public:
+		WrapperAmerican() { price = 0; };
+		void getPricePutAmerican(double S0, double K, double T, double R, double vol, int N);
+		double getPrice() { return price; };
+		//double getIC() { return confidenceInterval; };
+		//double getDelta() { return delta; };
+	};
+
 	public ref class WrapperVanilla
 	{
 	protected:

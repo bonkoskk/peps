@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Wrapping;
 
 namespace Everglades.Models.Assets
 {
     public class AmericanPut : AVanillaOption
     {
+        public static int N = 10;
         public override string getType()
         {
             return "American Put";
@@ -24,7 +26,14 @@ namespace Everglades.Models.Assets
 
         public override double getPrice(DateTime t)
         {
-            throw new NotImplementedException();
+            WrapperAmerican wc = new WrapperAmerican();
+            double T = (maturity - t).TotalDays / 365;
+            if (T < 0)
+            {
+                throw new ArgumentOutOfRangeException("Maturity must be in future");
+            }
+            wc.getPricePutAmerican(underlying.getPrice(t), strike, T, getCurrency().getInterestRate(t), underlying.getVolatility(t), AmericanPut.N);
+            return wc.getPrice();
         }
 
         public override double getVolatility(DateTime t)
