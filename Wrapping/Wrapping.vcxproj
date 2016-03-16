@@ -104,13 +104,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Users\Etu\Desktop\peps\pricer;C:\Users\Etu\Desktop\peps\gsl-dir\gsl-include;$(PEPS)\pricer;$(PEPS)\gsl-dir\gsl-include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\pricer;$(SolutionDir)\gsl-dir\gsl-include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>gsl.lib;cblas.lib;</AdditionalDependencies>
       <DelayLoadDLLs>Pricer.dll</DelayLoadDLLs>
-      <AdditionalLibraryDirectories>C:\Users\Etu\Desktop\peps\gsl-dir\gsl-lib\Debug\x64;$(PEPS)\gsl-dir\gsl-lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\gsl-dir\gsl-lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy "C:\Users\ensimag\Desktop\everglades\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Desktop\everglades\peps\Everglades\bin"
@@ -119,12 +119,10 @@ copy "C:\Users\ensimag\Documents\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Do
       <Command>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"
 copy "C:\Users\ensimag\Documents\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Documents\peps\x64\Debug\bin"</Command>
       <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"</Message>
-      <Command>copy "$(PEPS)\x64\Debug\Debug\Wrapping.dll" "$(PEPS)\Everglades\bin"
-copy "$(PEPS)\x64\Debug\Pricer.dll" "$(PEPS)\Everglades\bin"
-copy "C:\Users\Etu\Desktop\peps\x64\Debug\Debug\Wrapping.dll" "C:\Users\Etu\Desktop\peps\Everglades\bin"
-copy "C:\Users\Etu\Desktop\peps\x64\Debug\Pricer.dll" "C:\Users\Etu\Desktop\peps\Everglades\bin"
+      <Command>copy "$(SolutionDir)\x64\Debug\Debug\Wrapping.dll" "$(SolutionDir)\Everglades\bin"
+copy "$(SolutionDir)\x64\Debug\Pricer.dll" "$(SolutionDir)\Everglades\bin"
 </Command>
-      <Message>copy "C:\Users\Etu\Desktop\peps\x64\Debug\Wrapping.dll" "C:\Users\Etu\Desktop\peps\Everglades\bin\Debug\Wrapping.dll"</Message>
+      <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin\Debug\Wrapping.dll"</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

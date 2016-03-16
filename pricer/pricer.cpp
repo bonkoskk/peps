@@ -156,3 +156,80 @@ void Pricer::put_quanto(double &prix, double S, double Q, double K, double R, do
 	double d2 = (log(x / K) + (R - a - sigma4*sigma4 / 2)*tau) / (sigma4*sqrt(tau));
 	prix = -x*exp(-a*tau)*gsl_cdf_ugaussian_P(-d1) + exp(-R*tau)*K*gsl_cdf_ugaussian_P(-d2);
 }
+
+typedef struct {
+	float K;			//Strike price
+	float S0;			//Spot price
+	float T;			//Time to maturity
+	float R;			//Risk-free rate
+	float V;			//volatility
+	int N;			//Steps
+} TOptionData;
+
+
+static double getU(double T, double vol, int N)
+{
+	return exp(vol * sqrt(T / (double)N));
+}
+
+static double getD(double T, double vol, int N)
+{
+	return exp(-vol * sqrt(T / (float)N));
+}
+
+static double* expiryPutValues(double S0, double K, int N, double u, double d)
+{
+	double* PutPayoffs = (double*)malloc((N + 1) * sizeof(double));
+	double ST;
+	double x;
+	int i;
+	for (i = 0; i <= N; i++) {
+		ST = S0 * pow(u, N - i) * pow(d, i);
+		x = K - ST;
+		PutPayoffs[i] = (x > 0) ? x : 0;
+	}
+	return PutPayoffs;
+}
+
+void Pricer::put_american(double &price, double S0, double K, double T, double R, double vol, int N)
+{
+	double *PutPayoffs;
+
+	//calcul des valeurs que l'on aura besoin plus tard pour le pricing
+	//pas de temps
+	const double      h = T / (float)N;
+	const double     rh = R * h;
+	//facteurs d'actualisation et de capitalisation
+	const double      If = exp(rh);
+	const double      Df = exp(-rh);
+	//pseudo-probabilites
+	const double       u = getU(T, vol, N);
+	const double       d = getD(T, vol, N);
+	const double      pu = (If - d) / (u - d);
+	const double      pd = 1.0 - pu;
+	const double  puByDf = pu * Df;
+	const double  pdByDf = pd * Df;
+
+	double x;
+	double s;
+	double payoff;
+	int i, j;
+
+	//calcul des payoffs a maturite
+	PutPayoffs = expiryPutValues(S0, K, N, u, d);
+
+	//descente dans l'arbre
+	for (i = N - 1; i >= 0; i--){
+		for (j = 0; j <= i; j++){
+			x = puByDf * PutPayoffs[j] + pdByDf * PutPayoffs[j + 1];
+			s = S0 * pow(u, i - j) * pow(d, j);
+			payoff = K - s;
+			payoff = (payoff>0) ? payoff : 0;
+			PutPayoffs[j] = (payoff>x) ? payoff : x;
+		}
+	}
+
+	//le prix en 0 est stocke a la premiere position du tableau
+	price = (double)PutPayoffs[0];
+	free(PutPayoffs);
+}

@@ -249,16 +249,15 @@ namespace AccessBD
 
             using (qpcptfaw context = new qpcptfaw())
             {
-                var array = (from p in context.Prices
+                var prices = from p in context.Prices
                              where ids.Contains(p.AssetDBId) && dates.Contains(p.date)
-                             select new { id = p.AssetDBId, date = p.date, price = p.price, priceEur = p.priceEur })
-                                .ToArray();
-                foreach(var price in array)
+                             select p;
+                foreach(var p in prices)
                 {
                     Dictionary<string, double> P = new Dictionary<string, double>();
-                    P["price"] = price.price;
-                    P["priceEur"] = price.priceEur;
-                    dic[new Tuple<int, DateTime>(price.id, price.date)] = P;
+                    P["price"] = p.price;
+                    P["priceEur"] = p.priceEur;
+                    dic[new Tuple<int, DateTime>(p.AssetDBId, p.date)] = P;
                 }
                 return dic;
             }
@@ -677,6 +676,20 @@ namespace AccessBD
 
         }
 
+        public static void Clear_Prices_After(DateTime date, int id)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var prices = from f in context.Prices
+                             where f.date > date && f.AssetDBId == id
+                             select f;
+                foreach (Price p in prices) context.Prices.Remove(p);
+                context.SaveChanges();
+            }
+
+        }
+
+
         public static double[][] getCholeskyMatrix(DateTime date)
         {
             using (var context = new qpcptfaw())
@@ -754,6 +767,22 @@ namespace AccessBD
                 context.PortCompositions.Remove(comp.First());
                 context.SaveChanges();
             }
+        }
+
+        public static Dictionary<string, Currencies> Get_Equities_Currencies()
+        {
+            Dictionary<string, Currencies> dic = new Dictionary<string, Currencies>();
+            using (var context = new qpcptfaw())
+            {
+                var assets = from b in context.Assets.OfType<EquityDB>()
+                             select b;
+                foreach (var asset in assets)
+                {
+                    dic.Add(asset.name, asset.currency);
+                }
+            }
+
+            return dic;
         }
         
 

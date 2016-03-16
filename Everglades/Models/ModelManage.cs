@@ -53,9 +53,11 @@ namespace Everglades.Models
             //Access.Clear_Everglades_Price(new DateTime(2016, 3, 2));
             try
             {
-                Access.Clear_Everglades_Price(new DateTime(2016, 3, 9));
-                Access.Clear_Everglades_Price(new DateTime(2016, 3, 10));
-                Access.Clear_Everglades_Price(new DateTime(2016, 3, 11));
+                //Access.Clear_Everglades_Price(new DateTime(2016, 3, 9));
+                //Access.Clear_Everglades_Price(new DateTime(2016, 3, 10));
+                //Access.Clear_Everglades_Price(new DateTime(2016, 3, 11));
+                //Access.Clear_Everglades_Price(new DateTime(2016, 3, 5));
+                //Access.Clear_Prices_After(new DateTime(2016, 2, 1), Access.GetIdEverglades());
             }
             catch (Exception)
             {
@@ -67,16 +69,17 @@ namespace Everglades.Models
             instance = this;
             Assets = new List<IAsset>();
             List<ICurrency> Currenc = new List<ICurrency>();
-            foreach (string name in AccessDB.Get_Asset_List())
+            Dictionary<string, Currencies> curEnum= Access.Get_Equities_Currencies();
+            foreach (KeyValuePair<string, Currencies> ent in curEnum)
             {
-                Currencies curEnum = Access.GetEquityCurrencyFromSymbol(Access.GetSymbolFromName(name));
-                Currency cur = new Currency(curEnum);
-                Assets.Add(new Equity(name, cur));
-                if (!Currenc.Any(x => x.getEnum() == curEnum) && curEnum != Currencies.EUR)
+                Currency cur = new Currency(ent.Value);
+                Assets.Add(new Equity(ent.Key, cur));
+                if (!Currenc.Any(x => x.getEnum() == ent.Value) && ent.Value != Currencies.EUR)
                 {
                     Currenc.Add(cur);
                 }
             }
+
             everg = new Everglades(Assets, Currenc);
             // TODO : cash should be in database
             shares_everg = 100;
