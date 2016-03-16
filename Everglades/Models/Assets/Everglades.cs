@@ -332,9 +332,9 @@ namespace Everglades.Models
                     vol[ass_i_] = ass.getVolatility(t);
                     ass_i_++;
                 }
-                foreach (Currencies cur in list_currency_enum)
+                foreach (ICurrency cur in underlying_list_cur)
                 {
-                    vol[asset_nb + (int)cur] = 0.1;
+                    vol[asset_nb + (int)cur.getEnum()] = cur.getVolatility(t); 
                 }
                 cholesky = correl; // cholesky fact of identity is identity
             }
@@ -433,8 +433,21 @@ namespace Everglades.Models
             {
                 wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, cholesky, nb_day_after, r, sampleNb);
             }
-            double test = wp.getPrice();
-            double[] deltatest = wp.getDelta();
+            double priceReturn = wp.getPrice();
+            double[] deltaReturn = wp.getDelta();
+
+
+            // TODO DELETE THIS
+            /*
+            if (with_currency_change)
+            {
+                for (int i = 0; i < currencies_nb; i++)
+                {
+                    deltaReturn[asset_nb + i] = 0;
+                }
+            }
+            */
+
             //wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
 
             /*
@@ -445,7 +458,7 @@ namespace Everglades.Models
             Wrapping.WrapperDebugVanilla wp = new Wrapping.WrapperDebugVanilla();
             wp.getPriceVanilla(0, asset_nb, historic[0, historic.Length], expected_returns, vol, correl, tau, r, sampleNb, historic[0, historic.Length]);
             */
-            return new Tuple<double, double[]>(wp.getPrice(), wp.getDelta());
+            return new Tuple<double, double[]>(priceReturn, deltaReturn);
 
 
         }
@@ -502,6 +515,11 @@ namespace Everglades.Models
         public Currency getCurrency()
         {
             return currency;
+        }
+
+        public double getDividend(DateTime t1, DateTime t2)
+        {
+            return 0;
         }
     }
 }

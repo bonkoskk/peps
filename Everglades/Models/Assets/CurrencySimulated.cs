@@ -24,7 +24,7 @@ namespace Everglades.Models.Assets
             this.cur_enum = cur_enum;
             this.r = 0.04;
             this.rforeign = 0.04;
-            this.sigma = 0.2;
+            this.sigma = 0.1;
             this.lastPrice = 1;
             this.lastDate = DateTime.MinValue;
             this.rand = rand;
@@ -38,13 +38,13 @@ namespace Everglades.Models.Assets
 
         public double getChangeToEuro(DateTime date)
         {
-            if(prices.ContainsKey(date)) {
+            if (prices.ContainsKey(date)) {
                 return prices[date];
             }
             else if (lastDate == DateTime.MinValue)
             {
                 lastDate = date;
-                lastPrice = rand.NextDouble()*5;
+                lastPrice = rand.NextDouble() * 5;
             }
             else
             {
@@ -97,9 +97,14 @@ namespace Everglades.Models.Assets
             return this.cur_enum.ToString();
         }
 
-        public double getInterestRate(DateTime start, TimeSpan maturity)
+        public double getInterestRate(DateTime date)
         {
-            throw new NotImplementedException();
+            return rforeign;
+        }
+
+        public double getDividend(DateTime t1, DateTime t2)
+        {
+            return getPrice(t2) * (Math.Exp(rforeign * (t2 - t1).TotalDays / 365) - 1);
         }
     }
 }
