@@ -101,7 +101,7 @@ namespace Everglades.Models
 
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step, double divisor)
         {
-            Data data = new Data();
+            Data data = new Data("portfolio");
             DateTime t = t1;
             while (t < t2)
             {
