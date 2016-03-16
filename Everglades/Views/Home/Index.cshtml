@@ -16,6 +16,9 @@
     Run a simulation
     <br />
     <button id="simulate-button"><span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+    <div class="checkbox">
+        <label><input id="simulate-checkbox-currency" type="checkbox" value="">With currency management</label>
+    </div>
 </div>
 
 <!-- Header -->
@@ -200,6 +203,7 @@
     </div>
 
     <div class="simulation-window">
+        <div id="simulation-graph-assets" class="graph"></div>
         <div id="simulation-graph-prices" class="mini-graph"></div>
         <div id="simulation-graph-trackingerror" class="mini-graph"></div>
         <div id="simulation-graph-cash" class="mini-graph"></div>

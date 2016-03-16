@@ -96,7 +96,6 @@
     <ClCompile Include="payoff.cpp" />
     <ClCompile Include="pricer.cpp" />
     <ClCompile Include="simulations.cpp" />
-    <ClCompile Include="Test.cpp" />
     <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -105,7 +104,6 @@
     <ClInclude Include="payoff.hpp" />
     <ClInclude Include="pricer.hpp" />
     <ClInclude Include="simulations.hpp" />
-    <ClInclude Include="Test.hpp" />
     <ClInclude Include="tools.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

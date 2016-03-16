@@ -53,7 +53,7 @@ namespace Everglades.Models.Assets
 
         public string getName()
         {
-            return "Simulated " + real.getName();
+            return real.getName();
         }
 
         public double getPrice()

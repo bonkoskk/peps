@@ -40,6 +40,9 @@ namespace Everglades
 	*/
 	DLLEXP extern int get_price(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
 		const gsl_vector& expected_returns, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu);
+
+	DLLEXP extern int get_price_with_forex(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
+		const gsl_vector& foreign_rates, const gsl_vector& currency, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu);
 };
 
 #endif // EVERGLADES_HPP
