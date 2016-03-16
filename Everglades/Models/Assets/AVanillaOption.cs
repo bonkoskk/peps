@@ -46,5 +46,11 @@ namespace Everglades.Models.Assets
         public abstract string getType();
         public abstract double getVolatility(DateTime t);
 
+
+
+        public double getDividend(DateTime t1, DateTime t2)
+        {
+            return 0;
+        }
     }
 }

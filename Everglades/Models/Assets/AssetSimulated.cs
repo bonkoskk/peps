@@ -92,5 +92,11 @@ namespace Everglades.Models.Assets
         {
             throw new NotImplementedException();
         }
+
+
+        public double getDividend(DateTime t1, DateTime t2)
+        {
+            return 0;
+        }
     }
 }

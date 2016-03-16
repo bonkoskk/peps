@@ -10,7 +10,7 @@ namespace Everglades.Models.Assets
     {
         Currencies getEnum();
         String getSymbol();
-        double getInterestRate(DateTime start, TimeSpan maturity);
+        double getInterestRate(DateTime date);
         double getChangeToEuro(DateTime date);
     }
 }
