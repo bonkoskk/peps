@@ -10,6 +10,11 @@
 using namespace Pricer;
 
 namespace Wrapping {
+	void WrapperAmerican::getPricePutAmerican(double S0, double K, double T, double R, double vol, int N) {
+		double px;
+		put_american(px, S0, K, T, R, vol, N);
+		this->price = px;
+	}
 
 	void WrapperBarrier::getPriceCallBarrierDownOut(int sampleNb, double T, double S0, double K, double sigma, double r, double J, double L) {
 		double ic, px;
