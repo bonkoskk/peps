@@ -236,7 +236,6 @@ namespace Everglades.Models
             DateTime date_prev = list_dates.First();
             // used for anticipated end of everglades
             bool breakk = false;
-
             foreach (DateTime date in list_dates)
             {
                 // get prices of assets at these dates in Data
@@ -266,7 +265,7 @@ namespace Everglades.Models
                 {
                     // here we (virtually) sell old hedging portfolio
                     double t = (date - date_prev).TotalDays / 360;
-                    portvalue = hedge_simul.getPrice(date) + cash_t * Math.Exp(r * t);
+                    portvalue = hedge_simul.getPrice(date) + hedge_simul.getDividend(date_prev, date) + cash_t * Math.Exp(r * t);
                     cash_t = portvalue;
                     // test if date is a constatation date
                     if (list_anticipated_dates.Contains(date))
@@ -308,6 +307,11 @@ namespace Everglades.Models
                         hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                         portsolovalue = hedge_simul.getPrice(date);
                         cash_t -= hedge_simul.getPrice(date);
+                    }
+
+                    if (Math.Abs(portsolovalue) < 0.01)
+                    {
+                        int bla = 1;
                     }
                 }
                 

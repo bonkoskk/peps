@@ -40,10 +40,10 @@ namespace Everglades.Models
             }
         }
 
-        public double getInterestRate(DateTime start, TimeSpan maturity)
+        public double getInterestRate(DateTime date)
         {
-            //return 0.03;
-            throw new NotImplementedException();
+            // TODO
+            return 0.03;
         }
 
         public double getChangeToEuro(DateTime date)
@@ -86,6 +86,12 @@ namespace Everglades.Models
         public double getDelta(DateTime t)
         {
             throw new NotImplementedException();
+        }
+
+        public double getDividend(DateTime t1, DateTime t2)
+        {
+            // TODO
+            return getInterestRate(t1) * (t2 - t1).TotalDays / 365;
         }
     }
 }

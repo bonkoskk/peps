@@ -330,6 +330,7 @@ $(function () {
     $("#simulate-button").click(function () {
         $(".simulation-window").show();
         $("#simulation-graph-assets").html("");
+        $("#simulation-graph-currencies").html("");
         $("#simulation-graph-prices").html("loading ...");
         $("#simulation-graph-trackingerror").html("");
         $("#simulation-graph-cash").html("");
@@ -355,16 +356,24 @@ $(function () {
                 delete data["simulation-graph-soloport"];
                 var datAssets = [];
                 var nameAssets = [];
+                var datCurrencies = [];
+                var nameCurrencies = [];
                 for (var d in data) {
                     if (data.hasOwnProperty(d)) {
-                        datAssets.push(data[d]);
-                        nameAssets.push(d);
+                        if (d.length > 4) {
+                            datAssets.push(data[d]);
+                            nameAssets.push(d);
+                        } else {
+                            datCurrencies.push(data[d]);
+                            nameCurrencies.push(d);
+                        } 
                     }
                 }
                 console.log(datAssets);
                 console.log(nameAssets);
                 console.log("draw_multi_graph(\"#simulation-graph-assets\", datAssets, nameAssets, nameAssets.length);")
                 draw_multi_graph("#simulation-graph-assets", datAssets, nameAssets, nameAssets.length);
+                draw_multi_graph("#simulation-graph-currencies", datCurrencies, nameCurrencies, nameCurrencies.length);
             }
         })
         .fail(function (jqXHR, textStatus) {

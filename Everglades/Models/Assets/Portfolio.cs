@@ -142,5 +142,16 @@ namespace Everglades.Models
         {
             throw new NotImplementedException();
         }
+
+
+        public double getDividend(DateTime t1, DateTime t2)
+        {
+            double dividend = 0;
+            foreach (KeyValuePair<IAsset, double> entry in assetList)
+            {
+                dividend += entry.Value * entry.Key.getDividend(t1, t2);
+            }
+            return dividend;
+        }
     }
 }

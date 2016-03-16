@@ -122,9 +122,9 @@ namespace Everglades.Models
             return vol[0];
         }
 
-        public double getCovariance(IAsset a, DateTime t)
+        public double getDividend(DateTime t1, DateTime t2)
         {
-            throw new NotImplementedException();
+            return 0;
         }
     }
 }
