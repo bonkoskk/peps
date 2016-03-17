@@ -10,7 +10,7 @@ namespace Everglades.Models
     public class Currency : ICurrency
     {
         private Currencies cur_enum;
-        
+
         public Currency(Currencies cur_enum)
         {
             this.cur_enum = cur_enum;

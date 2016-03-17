@@ -541,6 +541,32 @@ namespace AccessBD
             }
         }
 
+        public static Dictionary<int, double> getHedgingPortfolioTotalComposition(DateTime date)
+        {
+            Dictionary<int, double> composition = new Dictionary<int, double>();
+            using (var context = new qpcptfaw())
+            {
+                System.Linq.IQueryable<AccessBD.PortfolioComposition> comp = null;
+                for (int i = 0; i < 20; i++)
+                {
+                    comp = from c in context.PortCompositions
+                               where c.date == date
+                               select c;
+                    if (comp.Count() > 0)
+                    {
+                        break;
+                    }
+                    date = date - TimeSpan.FromDays(1);
+                }
+                if (comp == null || comp.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
+                foreach (var a in comp)
+                {
+                    composition[a.AssetDBId] = a.quantity;
+                }
+                return composition;
+            }
+        }
+
         public static double getHedgingPortfolioValue(DateTime date)
         {
             using (var context = new qpcptfaw())
@@ -635,6 +661,20 @@ namespace AccessBD
             if (rates.Count() == 0) throw new ArgumentException("No data for this date and currency", date.ToString());
             if (rates.Count() > 1) throw new Exception("The data required should be unique.");
             return rates.First().rate;
+        }
+
+        public static void Clear_Portfolio_Price(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var portfolio = from p in context.Portfolio
+                                where p.date == date
+                                select p;
+                if (portfolio.Count() == 0) throw new ArgumentException("no portfolio value for this date", date.ToString());
+                if (portfolio.Count() > 1) throw new ArgumentException("there shoud be an unique price for this date", date.ToString());
+                context.Portfolio.Remove(portfolio.First());
+                context.SaveChanges();
+            }
         }
 
         public static void Clear_Everglades_Price(DateTime date){
