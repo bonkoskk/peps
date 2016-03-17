@@ -48,7 +48,7 @@ namespace Everglades.Models
         public string portfolioComposition()
         {
             string str = "[";
-            double equ = 0.0, vanilla = 0.0, exo = 0.0;
+            double equ = 0.0, vanilla = 0.0, exo = 0.0, cur = 0.0;
 
             foreach (KeyValuePair<IAsset, double> item in assetList)
             {
@@ -71,6 +71,10 @@ namespace Everglades.Models
                     {
                         exo += price;
                     }
+                    else if (item.Key is ICurrency)
+                    {
+                        cur += price;
+                    }
                 }
             }
 
@@ -83,7 +87,8 @@ namespace Everglades.Models
                 str += "{label: \"Cash\", data: " + XmlConvert.ToString(ModelManage.instance.cash) + "},";
                 str += "{label: \"Equities\", data: " + XmlConvert.ToString(equ) + "},";
                 str += "{label: \"Vanilla Options\", data: " + XmlConvert.ToString(vanilla) + "},";
-                str += "{label: \"Exotic Options\", data: " + XmlConvert.ToString(exo) + "}";
+                str += "{label: \"Exotic Options\", data: " + XmlConvert.ToString(exo) + "},";
+                str += "{label: \"Currencies\", data: " + XmlConvert.ToString(cur) + "}";
             }
             str += "]";
             return str;

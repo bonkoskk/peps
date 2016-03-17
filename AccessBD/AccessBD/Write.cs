@@ -20,7 +20,7 @@ namespace AccessBD
                 Price price_everglades;
 
                 // si la date existe déjà dans la table des prix on la remplace
-                if (Access.ContainsPricesKey(context, id, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
+                if (Access.ContainsPricesKey(context, id, date)) //list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
                     // on vérifie que la valeur de prix est différente
                     var priceBD = Access.Get_Price(id, date);
@@ -59,6 +59,7 @@ namespace AccessBD
                     HedgingPortfolio hp = Access.getHedgingPortfolio(date);
                     if (value == hp.value) return;
                     hp.value = value;
+                    Access.Clear_Portfolio_Price(date);
                     context.Portfolio.Add(hp);
                     context.SaveChanges();
                     return;

@@ -393,10 +393,14 @@ namespace Everglades.Models
                 int ass_i = 0;
                 foreach (Currencies cur in list_currency_enum)
                 {
-                    foreign_rates[(int)cur] = r;
                     expected_returns[ass_i] = r; // TODO !!!
                     ass_i++;
                 }
+                foreach (ICurrency cur in underlying_list_cur)
+                {
+                    foreign_rates[(int)cur.getEnum()] = cur.getInterestRate(priceDate); // TODO
+                }
+
             }
             
             
@@ -405,12 +409,6 @@ namespace Everglades.Models
 
 
             int sampleNb = 1000;
-            hist = hist;
-            nb_day_after = nb_day_after;
-            r = r;
-            asset_currency_correspondance = asset_currency_correspondance;
-            vol = vol;
-            correl = correl;
 
             /*
              * price with Forex :
