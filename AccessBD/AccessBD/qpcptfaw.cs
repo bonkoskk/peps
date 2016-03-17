@@ -14,6 +14,7 @@ namespace AccessBD
         public DbSet<Price> Prices { get; set; }
         public DbSet<LastConnectionDB> DbConnections { get; set; }
         public DbSet<EvergladesDB> Everglades { get; set; }
+        public DbSet<CashDB> Cash { get; set; }
         public DbSet<ForexDB> Forex { get; set; }
         public DbSet<ForexRateDB> ForexRates { get; set; }
         public DbSet<CorrelDB> CorrelVol { get; set; }

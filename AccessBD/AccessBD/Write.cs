@@ -162,6 +162,31 @@ namespace AccessBD
 
         }
 
+            public static void storeCashValue(DateTime date, double value)
+            {
+                using (var context = new qpcptfaw())
+                {
+                    //List<DateTime> list_dates_db = Access.getAllKeysHedgingPortfolio(context);
+                    if (Access.ContainsCashKey(context, date))
+                    {
+                        CashDB cash = Access.getCashDB(date);
+                        if (value == cash.value) return;
+                        cash.value = value;
+                        context.Cash.Add(cash);
+                        context.SaveChanges();
+                        return;
+                    }
+                    else
+                    {
+                        CashDB c = new CashDB { date = date, value = value };
+                        context.Cash.Add(c);
+                        context.SaveChanges();
+                        return;
+                    }
+                }
+
+            }
+
 
 
     }

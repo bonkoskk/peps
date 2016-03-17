@@ -89,5 +89,31 @@ namespace AccessBD
             return price/rate;
         }
 
+        public static Dictionary<string, double> convertToEuro(Dictionary<string, double> prices, Currencies currency, DateTime date, qpcptfaw context)
+        {
+            if (currency.Equals(Currencies.EUR)) return prices;
+            Dictionary<string, double> p_converti = new Dictionary<string, double>(); 
+            double rate = 1;
+            bool isException = true;
+            DateTime datelocal = date;
+            while (isException)
+            {
+                try
+                {
+                    rate = Access.getExchangeRate(currency, datelocal, context);
+                    isException = false;
+                }
+                catch (Exception)
+                {
+                    datelocal = datelocal.AddDays(-1);
+                }
+            }
+            foreach (KeyValuePair<string,double> p in prices)
+            {
+                p_converti.Add(p.Key, p.Value / rate);    
+            }
+            return p_converti;
+        }
+
     }
 }

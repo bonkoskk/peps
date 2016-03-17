@@ -68,6 +68,10 @@ namespace AccessBD
             List<Price> list_prices = new List<Price>();
 
             double c = 0;
+            double open = 0;
+            double high = 0;
+            double low = 0;
+            double volume = 0;
             string name;
 
             //si la bd ne contient pas le symbole concerné, on crée une nouvelle action et on la stocke dans la BD (table asset)
@@ -80,7 +84,8 @@ namespace AccessBD
                 AssetDB.assetCounter();
             }
 
-            //["Date","Open","High","Low","Close","Volume","Adjusted Close"]
+            //Yahoo ["Date","Open","High","Low","Close","Volume","Adjusted Close"]
+            //Google ["Date","Open","High","Low","Close","Volume"
 
             //récupère l'id correspondant au symbole de l'action
             aid = Access.GetEquityIdFromSymbol(symbol);
@@ -96,6 +101,10 @@ namespace AccessBD
                     //keyValue = new KeyValuePair<int, DateTime>(aid, date);
                      //si la bd ne contient pas les données pour cette action pour ce jour, on ajoute les données  
                     if (!Access.ContainsPricesKey(context, aid, date)){//!list_pair_db.Contains(keyValue)){
+                        open = double.Parse(data[1].ToString());
+                        high = double.Parse(data[2].ToString());
+                        low = double.Parse(data[3].ToString());
+                        volume = double.Parse(data[5].ToString());
                         if (source == "YAHOO")
                         {
                             c = double.Parse(data[6].ToString());
@@ -105,15 +114,29 @@ namespace AccessBD
                             c = double.Parse(data[4].ToString());
                         }
            
-                        Price p = new Price { AssetDBId = aid, price = c, date = date };
+                        Price p = new Price { AssetDBId = aid, price = c, date = date, high = high, low=low, open=open, volume=volume };
                         //conversion en euro
+                        Dictionary<string, double> dic = new Dictionary<string, double>();
+                        dic.Add("open", open);
+                        dic.Add("high", high);
+                        dic.Add("low", low);
+                        dic.Add("price", c);
+                        Dictionary<string, double> pricesEur = new Dictionary<string, double>();
                         if (!curr.Equals(Currencies.EUR))
                         {
-                            p.priceEur = CurrencyAsset.convertToEuro(p.price, curr, date, context);
+                            pricesEur = CurrencyAsset.convertToEuro(dic, curr, date, context);
+                            p.priceEur = pricesEur["price"];
+                            p.highEur = pricesEur["high"];
+                            p.lowEur = pricesEur["low"];
+                            p.openEur = pricesEur["open"];
+                            //p.priceEur = CurrencyAsset.convertToEuro(p.price, curr, date, context);
                         }
                         else
                         {
                             p.priceEur = p.price;
+                            p.highEur = p.high;
+                            p.lowEur = p.low;
+                            p.openEur = p.open;
                         }
                         list_prices.Add(p);
                     }

@@ -12,7 +12,6 @@ namespace AccessBD{
     public class ForexRateDB
     {
         public DateTime date { get; set; }
-
         public double rate { get; set; }
 
         public int ForexDBId { get; set; }

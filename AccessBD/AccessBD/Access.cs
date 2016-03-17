@@ -347,7 +347,7 @@ namespace AccessBD
                 int limit = 5;
                 for(int i=0; i<limit; i++) {
                     var rates = from p1 in context.ForexRates
-                        join p2 in context.Forex on p1.ForexDBId equals p2.ForexDBId
+                        join p2 in context.Forex on p1.ForexDBId equals p2.AssetDBId
                         where currency == p2.currency && date == p1.date
                         select new { exchange_rate = p1.rate };
                     if (rates.Count() > 0) {
@@ -370,7 +370,7 @@ namespace AccessBD
             {
                 double l;
                 var rates = from p1 in context.ForexRates
-                            join p2 in context.Forex on p1.ForexDBId equals p2.ForexDBId
+                            join p2 in context.Forex on p1.ForexDBId equals p2.AssetDBId
                             where currencies.Contains(p2.currency) && dates.Contains(p1.date)
                             select new { exchange_rate = p1.rate, date = p1.date, cur = p2.currency };
                 Dictionary<Currencies, Dictionary<DateTime, double>> dic = new Dictionary<Currencies, Dictionary<DateTime, double>>();
@@ -540,6 +540,18 @@ namespace AccessBD
             }
         }
 
+        public static CashDB getCashDB(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var portfolio = from p in context.Cash
+                                where p.date == date
+                                select p;
+                if (portfolio.Count() == 0) throw new ArgumentException("no portfolio value for this date", date.ToString());
+                return new CashDB { date = date, value = portfolio.First().value };
+            }
+        }
+
         public static double getHedgingPortfolioValue(DateTime date)
         {
             using (var context = new qpcptfaw())
@@ -588,7 +600,7 @@ namespace AccessBD
                         select currency;
                 if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", c.ToString());
                 if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", c.ToString());
-                id = a.First().ForexDBId;
+                id = a.First().AssetDBId;
                 return id;
             }
         }
@@ -648,6 +660,7 @@ namespace AccessBD
                 context.SaveChanges();
             }
         }
+
 
         public static void Clear_Everglades_Prices()
         {
@@ -725,6 +738,16 @@ namespace AccessBD
         public static bool ContainsHedgPortKey(qpcptfaw context, DateTime date)
         {
             var prices = from p in context.Portfolio
+                         where p.date == date
+                         select p;
+            if (prices.Count() == 0) return false;
+            if (prices.Count() == 1) return true;
+            throw new Exception("Data should be unique.");
+        }
+
+        public static bool ContainsCashKey(qpcptfaw context, DateTime date)
+        {
+            var prices = from p in context.Cash
                          where p.date == date
                          select p;
             if (prices.Count() == 0) return false;

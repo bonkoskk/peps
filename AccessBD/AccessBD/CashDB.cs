@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace AccessBD
 {
-    [Table("Forex")]
-    public class ForexDB : AssetDB
+    [Table("Cash")]
+    public class CashDB
     {
-        public Currencies currency {get; set;}
+        [Key]
+        public DateTime date { get; set; }
+        public double value { get; set; }
     }
 }

@@ -8,7 +8,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AccessBD
 {
-    class Rate
+    [Table("InterestRates")]
+    public class InterestRate
     {
         [Key, Column(Order = 0)]
         public DateTime date { get; set; }
