@@ -13,6 +13,7 @@ namespace AccessBD
         public static List<KeyValuePair<String, int>> _id_name = new List<KeyValuePair<String, int>>();
         public static List<String> _name = new List<string>();
         public static Dictionary<Currencies, int> _id_forex = new Dictionary<Currencies,int>(4);
+        public static Dictionary<Irate, int> _id_irate = new Dictionary<Irate, int>(4);
         public static Dictionary<String, int> _id_Everglades = new Dictionary<string, int>(1);
 
 
@@ -335,6 +336,20 @@ namespace AccessBD
                 var rates = from p in context.ForexRates
                              where p.ForexDBId == id
                              select p;
+                if (rates.Count() == 0) return DBInitialisation.DBstart;
+                return rates.OrderByDescending(x => x.date).First().date;
+            }
+        }
+
+        public static DateTime GetLastData(Irate interestRate)
+        {
+            using (var context = new qpcptfaw())
+            {
+                //double l;
+                int id = getForexRateIdFromIrate(interestRate);
+                var rates = from p in context.ForexRates //est ce bien forexRate
+                            where p.ForexDBId == id
+                            select p;
                 if (rates.Count() == 0) return DBInitialisation.DBstart;
                 return rates.OrderByDescending(x => x.date).First().date;
             }
@@ -824,7 +839,34 @@ namespace AccessBD
 
             return dic;
         }
-        
 
+
+        public static bool InterestRateContains(Irate ir)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var interestRate = from f in context.ForexRates
+                                 where f.irate == ir
+                                 select f;
+                if (interestRate.Count() == 1) return true;
+                if (interestRate.Count() == 0) return false;
+                throw new Exception("The data should be unique. Problem in the database.");
+            }
+        }
+
+        public static int getForexRateIdFromIrate(Irate ir)
+        {
+            int id = -1;
+            using (var context = new qpcptfaw())
+            {
+                var a = from irate in context.ForexRates
+                        where irate.irate == ir
+                        select irate;
+                if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", ir.ToString());
+                if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", ir.ToString());
+                id = a.First().ForexDBId;
+                return id;
+            }
+        }
     }
 }
