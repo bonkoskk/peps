@@ -23,7 +23,7 @@ namespace Everglades.Models.Assets
         {
             this.cur_enum = cur_enum;
             this.r = 0.04;
-            this.rforeign = 0.02 + 0.03 * rand.NextDouble();
+            this.rforeign = 0.01 + 0.05 * rand.NextDouble();
             this.sigma = 0.1;
             this.lastPrice = 1;
             this.lastDate = DateTime.MinValue;
@@ -50,7 +50,7 @@ namespace Everglades.Models.Assets
             {
                 double T = (date - lastDate).TotalDays / 365; // time in year
                 double WT = Math.Sqrt(T) * rand.NextNormal();
-                lastPrice = lastPrice * Math.Exp((rforeign - r - sigma * sigma / 2) * T + sigma * WT);
+                lastPrice = lastPrice * Math.Exp((r - rforeign - sigma * sigma / 2) * T + sigma * WT);
                 lastDate = date;
             }
             prices[date] = lastPrice;
