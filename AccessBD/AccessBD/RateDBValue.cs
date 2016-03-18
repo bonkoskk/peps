@@ -6,17 +6,16 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace AccessBD
 {
-    [Table("InterestRates")]
-    public class InterestRate
+    [Table("InterestRatesValues")]
+    public class RateDBValue
     {
-        [Key, Column(Order = 0)]
         public DateTime date { get; set; }
-        [Key, Column(Order = 1)]
-        public string currency { get; set; }
-        [Key, Column(Order = 2)]
-        public TimeSpan maturity { get; set; }
-        public double rate { get; set; }
+        public double value { get; set; }
+
+        public int RateDBId { get; set; }
+        public RateDB ratetype { get; set; }
     }
 }

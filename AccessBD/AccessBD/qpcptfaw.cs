@@ -15,8 +15,8 @@ namespace AccessBD
         public DbSet<LastConnectionDB> DbConnections { get; set; }
         public DbSet<EvergladesDB> Everglades { get; set; }
         public DbSet<CashDB> Cash { get; set; }
-        public DbSet<ForexDB> Forex { get; set; }
-        public DbSet<ForexRateDB> ForexRates { get; set; }
+        public DbSet<RateDB> InteresRatesType { get; set; }
+        public DbSet<RateDBValue> Rates { get; set; }
         public DbSet<CorrelDB> CorrelVol { get; set; }
         public DbSet<PortfolioComposition> PortCompositions { get; set; }
 
@@ -28,7 +28,7 @@ namespace AccessBD
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Price>().HasKey(t => new { t.AssetDBId, t.date });
-            modelBuilder.Entity<ForexRateDB>().HasKey(t => new {t.ForexDBId, t.date});
+            modelBuilder.Entity<RateDBValue>().HasKey(t => new { t.RateDBId, t.date });
             modelBuilder.Entity<PortfolioComposition>().HasKey(t => new { t.AssetDBId, t.date });
         }
 

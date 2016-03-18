@@ -23,7 +23,7 @@ namespace Everglades.Models.Assets
         {
             this.cur_enum = cur_enum;
             this.r = 0.04;
-            this.rforeign = 0.04;
+            this.rforeign = 0.02 + 0.03 * rand.NextDouble();
             this.sigma = 0.1;
             this.lastPrice = 1;
             this.lastDate = DateTime.MinValue;

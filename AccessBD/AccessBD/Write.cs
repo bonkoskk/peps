@@ -14,36 +14,36 @@ namespace AccessBD
             {
                 //récupère l'id d'Everglades
                 int id = Access.GetIdEverglades();
-                //récupère tous les clés id-date de la BD (table Prices)
-                //List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllPricesKey(context);
 
-                Price price_everglades;
-
-                // si la date existe déjà dans la table des prix on la remplace
-                if (Access.ContainsPricesKey(context, id, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
+                var ev = from e in context.Prices
+                         where e.AssetDBId == id && e.date == date
+                         select e;
+                    // si la date existe déjà dans la table des prix on la remplace
+                if (ev.Count()==1) //list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
                     // on vérifie que la valeur de prix est différente
-                    var priceBD = Access.Get_Price(id, date);
                     // si identiques on return (rien à faire)
-                    if (price == priceBD["price"] && price == priceBD["priceEur"])
+                    if (ev.First().price == price && ev.First().priceEur == price)
                     {
                         return;
                     }
                     // sinon on remplace
-                    //price_everglades = Access.Get_PriceDB(id, date);
-                    Access.Clear_Everglades_Price(date);
-                    price_everglades = new Price { AssetDBId = id, date = date, price = price, priceEur = price };
-                    context.Prices.Add(price_everglades);
+                    ev.First().price = price;
+                    ev.First().priceEur = price;
                     context.SaveChanges();
                     return;
                 }
-                else
+                else if (ev.Count()==0)
                 {
                     // sinon on l'ajoute
                     Price p = new Price { AssetDBId = id, date = date, price = price, priceEur =price };
                     context.Prices.Add(p);
                     context.SaveChanges();
                     return;
+                }
+                else
+                {
+                    throw new Exception("Problème dans la BD.");
                 }
             }
         }
@@ -53,22 +53,35 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
-                //List<DateTime> list_dates_db = Access.getAllKeysHedgingPortfolio(context);
-                if (Access.ContainsHedgPortKey(context, date))
+
+                var ev = from e in context.Portfolio
+                         where e.date == date
+                         select e;
+                // si la date existe déjà dans la table des prix on la remplace
+                if (ev.Count() == 1) //list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
-                    HedgingPortfolio hp = Access.getHedgingPortfolio(date);
-                    if (value == hp.value) return;
-                    hp.value = value;
-                    context.Portfolio.Add(hp);
+                    // on vérifie que la valeur de prix est différente
+                    // si identiques on return (rien à faire)
+                    if (ev.First().value == value)
+                    {
+                        return;
+                    }
+                    // sinon on remplace
+                    ev.First().value = value;
+                    context.SaveChanges();
+                    return;
+                }
+                else if (ev.Count() == 0)
+                {
+                    // sinon on l'ajoute
+                    HedgingPortfolio p = new HedgingPortfolio { date = date, value =value };
+                    context.Portfolio.Add(p);
                     context.SaveChanges();
                     return;
                 }
                 else
                 {
-                    HedgingPortfolio port = new HedgingPortfolio { date = date, value = value };
-                    context.Portfolio.Add(port);
-                    context.SaveChanges();
-                    return;
+                    throw new Exception("Problème dans la BD.");
                 }
             }
 
@@ -79,32 +92,34 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
+
+                var ev = from e in context.PortCompositions
+                         where e.date == date && e.AssetDBId == assetId
+                         select e;
                 // si la date existe déjà dans la table des prix on la remplace
-                if (Access.ContainsPortCompositionsKey(context, assetId, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
+                if (ev.Count() == 1) //list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
-                    PortfolioComposition pc;
                     // on vérifie que la valeur de prix est différente
-                    double quant = Access.getPortfolioComposition(assetId, date);
                     // si identiques on return (rien à faire)
-                    if (quant==quantity)
+                    if (ev.First().quantity == quantity)
                     {
                         return;
                     }
                     // sinon on remplace
-                    //price_everglades = Access.Get_PriceDB(id, date);
-                    Access.Clear_Portfolio_Composition(date, assetId);
-                    pc = new PortfolioComposition { AssetDBId = assetId, date = date, quantity = quantity};
-                    context.PortCompositions.Add(pc);
+                    ev.First().quantity = quantity;
                     context.SaveChanges();
                     return;
                 }
-                else
+                else if (ev.Count() == 0)
                 {
                     // sinon on l'ajoute
                     PortfolioComposition p = new PortfolioComposition { AssetDBId = assetId, date = date, quantity = quantity };
                     context.PortCompositions.Add(p);
                     context.SaveChanges();
                     return;
+                }else
+                {
+                    throw new Exception("Problème dans la BD.");
                 }
             }
         }
@@ -166,22 +181,33 @@ namespace AccessBD
             {
                 using (var context = new qpcptfaw())
                 {
-                    //List<DateTime> list_dates_db = Access.getAllKeysHedgingPortfolio(context);
-                    if (Access.ContainsCashKey(context, date))
+
+                    var ev = from e in context.Cash
+                             where e.date == date 
+                             select e;
+                    // si la date existe déjà dans la table des prix on la remplace
+                    if (ev.Count() == 1) //list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                     {
-                        CashDB cash = Access.getCashDB(date);
-                        if (value == cash.value) return;
-                        cash.value = value;
-                        context.Cash.Add(cash);
+                        // on vérifie que la valeur de prix est différente
+                        // si identiques on return (rien à faire)
+                        if (ev.First().value == value)
+                        {
+                            return;
+                        }
+                        // sinon on remplace
+                        ev.First().value = value;
                         context.SaveChanges();
                         return;
                     }
-                    else
+                    else if (ev.Count() == 0)
                     {
                         CashDB c = new CashDB { date = date, value = value };
                         context.Cash.Add(c);
                         context.SaveChanges();
                         return;
+                    }else
+                    {
+                        throw new Exception("Problème dans la BD.");
                     }
                 }
 

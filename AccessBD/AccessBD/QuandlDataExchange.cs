@@ -68,7 +68,7 @@ namespace AccessBD
             JObject jObj = JObject.Parse(json);
             JArray datas = (JArray)jObj["data"];
 
-            List<Currencies> list_currencies_db;
+            //List<Currencies> list_currencies_db;
             //tous les currencies présents dans la BD
             /*try
             {
@@ -82,14 +82,14 @@ namespace AccessBD
             //Si la BD ne contient pas ce currency, on le crée
             if (!Access.CurrenciesContains(current_currency))//!list_currencies_db.Contains(current_currency))
             {
-                ForexDB fdb = new ForexDB{currency = current_currency};
-                context.Forex.Add(fdb);
+                ForexDB fdb = new ForexDB{forex = current_currency, name = code};
+                context.Assets.Add(fdb);
                 context.SaveChanges();
             }
 
             //List<KeyValuePair<int, DateTime>> list_pair_db = Access.getAllForexRateKey(context);
             //KeyValuePair<int, DateTime> keyValue;
-            List<ForexRateDB> list_rates = new List<ForexRateDB>();
+            List<Price> list_rates = new List<Price>();
 
             double rate = 0;
 
@@ -105,12 +105,12 @@ namespace AccessBD
                    if (!Access.ForexRateContainsKey(context, date, id)) //if (!list_pair_db.Contains(keyValue))
                     {
                         rate = double.Parse(data[1].ToString());
-                        ForexRateDB f = new ForexRateDB { ForexDBId = id, date = date, rate = rate };
+                        Price f = new Price {price = rate, priceEur = 1/rate, date = date, AssetDBId = id};
                         list_rates.Add(f);
                     }
                 }
             }
-            list_rates.ForEach(p => context.ForexRates.Add(p));
+            list_rates.ForEach(p => context.Prices.Add(p));
             context.SaveChanges();
         }
 

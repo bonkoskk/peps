@@ -78,7 +78,7 @@ namespace AccessBD
             if (!Access.ContainsEquitySymbol(context, symbol))//!list_symbols_db.Contains(symbol))
             {
                 name = (string)jObj["name"];
-                EquityDB e = new EquityDB { name = name, symbol = symbol, currency = CurrencyAsset.getCurrencyOf(name) };
+                EquityDB e = new EquityDB { name = name, symbol = symbol, PriceCurrency = CurrencyAsset.getCurrencyOf(name) };
                 context.Assets.Add(e);
                 context.SaveChanges();
                 AssetDB.assetCounter();

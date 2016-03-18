@@ -13,34 +13,30 @@ namespace AccessBD
         public static List<KeyValuePair<String, int>> _id_name = new List<KeyValuePair<String, int>>();
         public static List<String> _name = new List<string>();
         public static Dictionary<Currencies, int> _id_forex = new Dictionary<Currencies,int>(4);
+        public static Dictionary<Irate, int> _id_irate = new Dictionary<Irate, int>(4);
         public static Dictionary<String, int> _id_Everglades = new Dictionary<string, int>(1);
 
 
-        /*public void AccessData()
+        public static List<int> Get_List_Equities_id()
         {
-            using (var context = new smweyoke())
+            using (var context = new qpcptfaw())
             {
-                var a = from b in context.Assets
-                        select b;
-                foreach(var p in a)
-                {
-                    Console.WriteLine("--------------------------------------------");
-                    Console.WriteLine(p.AssetDBId);
-                    Console.WriteLine(p.name);
-                    
-                }
-
-                var c = from b in context.Prices
-                        select b;
-                foreach (var p in c)
-                {
-                    Console.WriteLine("--------------------------------------------");
-                    Console.WriteLine(p.AssetDBId);
-                    Console.WriteLine(p.date);
-                    Console.WriteLine(p.close);
-                }
+                var assets = from b in context.Assets.OfType<EquityDB>()
+                             select b.AssetDBId;
+                return assets.ToList();
             }
-        }*/
+        }
+
+        public static List<int> Get_List_Forex_id()
+        {
+            using (var context = new qpcptfaw())
+            {
+                var assets = from b in context.Assets.OfType<ForexDB>()
+                             where b.forex != Currencies.EUR
+                             select b.AssetDBId;
+                return assets.ToList();
+            }
+        }
 
         public static List<string> Get_List_Assets()
         {
@@ -64,7 +60,7 @@ namespace AccessBD
             if (_name.Count()==0){
                 using (var context = new qpcptfaw())
                 {
-                    var a = from asset in context.Assets.OfType<EquityDB>()
+                    var a = from asset in context.Assets
                             where asset.name == name
                             select asset;
                     if (a.Count() == 0) throw new ArgumentException("name does not exist in the database", name);
@@ -151,7 +147,7 @@ namespace AccessBD
                         select asset;
                 if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", symbol);
                 if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", symbol);
-                return a.First().currency;
+                return a.First().PriceCurrency;
             }
         }
 
@@ -332,9 +328,23 @@ namespace AccessBD
             {
                 double l;
                 int id = getForexIdFromCurrency(currency);
-                var rates = from p in context.ForexRates
-                             where p.ForexDBId == id
+                var rates = from p in context.Prices
+                             where p.AssetDBId == id
                              select p;
+                if (rates.Count() == 0) return DBInitialisation.DBstart;
+                return rates.OrderByDescending(x => x.date).First().date;
+            }
+        }
+
+        public static DateTime GetLastData(Irate interestRate)
+        {
+            using (var context = new qpcptfaw())
+            {
+                //double l;
+                int id = getInterestRateIdFromIrate(interestRate);
+                var rates = from p in context.Rates //est ce bien forexRate
+                            where p.RateDBId == id
+                            select p;
                 if (rates.Count() == 0) return DBInitialisation.DBstart;
                 return rates.OrderByDescending(x => x.date).First().date;
             }
@@ -344,14 +354,14 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
+                int id = getForexIdFromCurrency(currency);
                 int limit = 5;
                 for(int i=0; i<limit; i++) {
-                    var rates = from p1 in context.ForexRates
-                        join p2 in context.Forex on p1.ForexDBId equals p2.AssetDBId
-                        where currency == p2.currency && date == p1.date
-                        select new { exchange_rate = p1.rate };
+                    var rates = from p1 in context.Prices
+                                where p1.AssetDBId == id && p1.date == date
+                                select p1;
                     if (rates.Count() > 0) {
-                        return 1 / rates.First().exchange_rate;
+                        return rates.First().priceEur;
                     }
                     else
                     {
@@ -369,17 +379,17 @@ namespace AccessBD
             using (var context = new qpcptfaw())
             {
                 double l;
-                var rates = from p1 in context.ForexRates
-                            join p2 in context.Forex on p1.ForexDBId equals p2.AssetDBId
-                            where currencies.Contains(p2.currency) && dates.Contains(p1.date)
-                            select new { exchange_rate = p1.rate, date = p1.date, cur = p2.currency };
+                var rates = from p1 in context.Prices
+                            join p2 in context.Assets.OfType<ForexDB>() on p1.AssetDBId equals p2.AssetDBId
+                            where currencies.Contains(p2.forex) && dates.Contains(p1.date)
+                            select new { exchange_rate = p1.priceEur, date = p1.date, cur = p2.forex };
                 Dictionary<Currencies, Dictionary<DateTime, double>> dic = new Dictionary<Currencies, Dictionary<DateTime, double>>();
                 foreach(var val in rates) {
                     if (!dic.ContainsKey(val.cur))
                     {
                         dic[val.cur] = new Dictionary<DateTime, double>();
                     }
-                    dic[val.cur][val.date] = 1 / val.exchange_rate;
+                    dic[val.cur][val.date] = val.exchange_rate;
                 }
                 // on bouche les trous
                 int j = 0;
@@ -549,6 +559,33 @@ namespace AccessBD
                                 select p;
                 if (portfolio.Count() == 0) throw new ArgumentException("no portfolio value for this date", date.ToString());
                 return new CashDB { date = date, value = portfolio.First().value };
+
+            }
+        }
+
+        public static Dictionary<int, double> getHedgingPortfolioTotalComposition(DateTime date)
+        {
+            Dictionary<int, double> composition = new Dictionary<int, double>();
+            using (var context = new qpcptfaw())
+            {
+                System.Linq.IQueryable<AccessBD.PortfolioComposition> comp = null;
+                for (int i = 0; i < 20; i++)
+                {
+                    comp = from c in context.PortCompositions
+                               where c.date == date
+                               select c;
+                    if (comp.Count() > 0)
+                    {
+                        break;
+                    }
+                    date = date - TimeSpan.FromDays(1);
+                }
+                if (comp == null || comp.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
+                foreach (var a in comp)
+                {
+                    composition[a.AssetDBId] = a.quantity;
+                }
+                return composition;
             }
         }
 
@@ -581,8 +618,8 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
-                var currencies = from f in context.Forex
-                                 where f.currency == c
+                var currencies = from f in context.Assets.OfType<ForexDB>()
+                                 where f.forex == c
                                  select f;
                 if (currencies.Count() == 1) return true;
                 if (currencies.Count() == 0) return false;
@@ -595,8 +632,8 @@ namespace AccessBD
             int id = -1;
             using (var context = new qpcptfaw())
             {
-                var a = from currency in context.Forex
-                        where currency.currency == c
+                var a = from currency in context.Assets.OfType<ForexDB>()
+                        where currency.forex == c
                         select currency;
                 if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", c.ToString());
                 if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", c.ToString());
@@ -619,8 +656,18 @@ namespace AccessBD
 
         public static bool ForexRateContainsKey(qpcptfaw context, DateTime date, int id)
         {
-            var rates = from r in context.ForexRates
-                        where r.date == date && r.ForexDBId == id
+            var rates = from r in context.Prices
+                        where r.date == date && r.AssetDBId == id
+                        select r;
+            if (rates.Count() == 0) return false;
+            if (rates.Count() == 1) return true;
+            throw new Exception("The data returned should be unique. There is a problem in the Database.");
+        }
+
+        public static bool InterestRatesContainsKey(qpcptfaw context, DateTime date, int id)
+        {
+            var rates = from r in context.Rates
+                        where r.date == date && r.RateDBId == id
                         select r;
             if (rates.Count() == 0) return false;
             if (rates.Count() == 1) return true;
@@ -640,12 +687,26 @@ namespace AccessBD
                 _id_forex.Add(currency, cid);
             }
 
-            var rates = from r in context.ForexRates
-                        where r.ForexDBId == cid && r.date == date
+            var rates = from r in context.Prices
+                        where r.AssetDBId == cid && r.date == date
                         select r;
             if (rates.Count() == 0) throw new ArgumentException("No data for this date and currency", date.ToString());
             if (rates.Count() > 1) throw new Exception("The data required should be unique.");
-            return rates.First().rate;
+            return rates.First().price;
+        }
+
+        public static void Clear_Portfolio_Price(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var portfolio = from p in context.Portfolio
+                                where p.date == date
+                                select p;
+                if (portfolio.Count() == 0) throw new ArgumentException("no portfolio value for this date", date.ToString());
+                if (portfolio.Count() > 1) throw new ArgumentException("there shoud be an unique price for this date", date.ToString());
+                context.Portfolio.Remove(portfolio.First());
+                context.SaveChanges();
+            }
         }
 
         public static void Clear_Everglades_Price(DateTime date){
@@ -778,6 +839,19 @@ namespace AccessBD
             }
         }
 
+        public static PortfolioComposition getPortfolioCompositionDB(int AssetId, DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var comp = from c in context.PortCompositions
+                           where c.AssetDBId == AssetId && c.date == date
+                           select c;
+                if (comp.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
+                if (comp.Count() > 1) throw new Exception("Data should be unique.");
+                return comp.First();
+            }
+        }
+
         public static void Clear_Portfolio_Composition(DateTime date, int assetId)
         {
             using (var context = new qpcptfaw())
@@ -801,13 +875,73 @@ namespace AccessBD
                              select b;
                 foreach (var asset in assets)
                 {
-                    dic.Add(asset.name, asset.currency);
+                    dic.Add(asset.name, asset.PriceCurrency);
                 }
             }
 
             return dic;
         }
-        
+
+
+        public static bool InterestRateContains(Irate ir)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var interestRate = from f in context.InteresRatesType
+                                 where f.rate == ir
+                                 select f;
+                if (interestRate.Count() == 1) return true;
+                if (interestRate.Count() == 0) return false;
+                throw new Exception("The data should be unique. Problem in the database.");
+            }
+        }
+
+        public static int getInterestRateIdFromIrate(Irate ir)
+        {
+            int id = -1;
+            using (var context = new qpcptfaw())
+            {
+                var a = from irate in context.InteresRatesType
+                        where irate.rate == ir
+                        select irate;
+                if (a.Count() == 0) throw new ArgumentException("symbol does not exist in the database", ir.ToString());
+                if (a.Count() > 1) throw new ArgumentException("duplicate symbol in the database", ir.ToString());
+                id = a.First().RateDBId;
+                return id;
+            }
+        }
+
+        public static void ClearHedgingPortValue(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var assets = from a in context.Portfolio
+                             where a.date == date
+                             select a;
+                foreach (var a in assets)
+                {
+                    a.value = 0;
+                }
+                context.SaveChanges();
+            }
+        }
+
+
+        public static void ClearPortComposition(DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var assets = from a in context.PortCompositions
+                             where a.date == date
+                             select a;
+                foreach (var a in assets)
+                {
+                    a.quantity = 0;
+                }
+                context.SaveChanges();
+            }
+        }
+
 
     }
 }

@@ -12,6 +12,6 @@ namespace AccessBD
     [Table("Forex")]
     public class ForexDB : AssetDB
     {
-        public Currencies currency {get; set;}
+        public Currencies forex {get; set;}
     }
 }
