@@ -38,7 +38,7 @@ namespace Everglades.Models.Assets
             sigma = 0.2;
 
             // debug kevin
-            double St = 100;
+            double St = 75 + 50*rand.NextDouble();
             DateTime lastDate = first_date;
             //double S0 = real.getPrice(first_date);
             foreach (DateTime date in dates_simul)
