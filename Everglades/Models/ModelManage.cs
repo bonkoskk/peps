@@ -86,7 +86,8 @@ namespace Everglades.Models
             everg = new Everglades(Assets, Assets_Currencies);
             // TODO : cash should be in database
             shares_everg = 100;
-            cash = shares_everg * everg.getPrice();
+            //cash = shares_everg * everg.getPrice();
+            cash = Access.getCashDB(DateTime.Today).value;
 
             DateTime d_temp = DateTime.Today;
             Hedging_Portfolio = getHedgingPortfolioFromBD(DateTime.Today);
