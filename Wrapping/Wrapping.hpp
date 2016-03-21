@@ -158,4 +158,17 @@ namespace Wrapping {
 		bool getPayoffIsAnticipated() { return payoffIsAnticipated; };
 		double getPayoff() { return payoff; };
 	};
+
+	public ref class WrapperAsian
+	{
+	protected:
+		double price;
+		double ic;
+	public:
+		WrapperAsian() { price = ic = 0; };
+		void getPriceCallAsian( int nb_samples, double T,
+			double S0, double K, double sigma, double r, double J);
+		double getPrice() { return price; };
+		double getIC() { return ic; };
+	};
 }

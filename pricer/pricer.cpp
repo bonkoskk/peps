@@ -233,3 +233,73 @@ void Pricer::put_american(double &price, double S0, double K, double T, double R
 	price = (double)PutPayoffs[0];
 	free(PutPayoffs);
 }
+
+static double calculate_controle(gsl_vector* simulations, struct simulations::Params data, int J)
+{
+	double sum = log(gsl_vector_get(simulations, 0)) / 2.0;
+	double S_temp;
+
+	for (int i = 1; i < J; i++)
+	{
+		S_temp = gsl_vector_get(simulations, i);
+		sum += log(S_temp);
+	}
+
+	sum += log(gsl_vector_get(simulations, J)) / 2.0;
+
+	sum /=J;
+	double result = exp(sum);
+	result -= data.K;
+
+	if (result > 0)
+	{
+		return exp(-data.r*data.T)*result;
+	}
+	return 0;
+}
+
+void Pricer::option_asian(double &ic, double &prix, int nb_samples, double T,
+	double S0, double K, double sigma, double r, double J)
+{
+	struct simulations::Params data;
+	data.M = nb_samples;
+	data.S = S0;
+	data.K = K;
+	data.r = r;
+	data.v = sigma;
+	data.T = T;
+	//data.J = J;
+
+	double sum = 0;
+	double var = 0;
+
+	double payoff;
+	gsl_rng *rng = gsl_rng_alloc(gsl_rng_default);
+	gsl_rng_set(rng, (unsigned long int)time(NULL));
+
+	gsl_vector* simulations;
+
+
+	double temp;
+
+	double d = sqrt(3.0 / data.T) * (log(data.K / data.S) - (data.r - data.v * data.v / 2.0)* (data.T / 2.0)) / data.v;
+	double esperance_controle2 = exp(-data.r*data.T) * (-data.K * gsl_cdf_ugaussian_P(-d) + data.S*exp((data.r - data.v * data.v / 6)*T / 2.0)*gsl_cdf_ugaussian_P(-d + data.v*sqrt(data.T / 3.0)));
+
+	for (int i = 0; i < nb_samples; i++)
+	{
+		simulations = simulate_sj_integral(data, J, rng);
+
+		payoff = payoff_call_asian(simulations, data, J);
+		temp = exp(-r*T) * payoff - calculate_controle(simulations, data, J) + esperance_controle2;
+		sum += temp;
+		var += temp * temp;
+	}
+
+
+
+	prix = sum / nb_samples;
+	var = var / nb_samples - prix * prix;
+	ic = 1.96 * sqrt(var / nb_samples);
+	gsl_vector_free(simulations);
+	gsl_rng_free(rng);
+}

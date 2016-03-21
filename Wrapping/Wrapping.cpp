@@ -155,4 +155,12 @@ namespace Wrapping {
 			this->delta[i] = delta_temp;
 		}
 	}
+
+	void WrapperAsian::getPriceCallAsian( int nb_samples, double T,
+		double S0, double K, double sigma, double r, double J){
+		double ic, px;
+		Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
+		this->price = px;
+		this->ic = ic;
+	}
 }
