@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Access.cs" />
     <Compile Include="AssetDB.cs" />
+    <Compile Include="CashDB.cs" />
     <Compile Include="CorrelDB.cs" />
     <Compile Include="CurrencyAsset.cs" />
     <Compile Include="DBInitialisation.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="ForexDB.cs" />
     <Compile Include="ForexRateDB.cs" />
     <Compile Include="HedgingPortfolio.cs" />
+    <Compile Include="InterestRate.cs" />
     <Compile Include="LastConnectionDB.cs" />
     <Compile Include="OptionDB.cs" />
     <Compile Include="PortfolioComposition.cs" />
@@ -126,8 +128,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuandlData.cs" />
     <Compile Include="QuandlDataExchange.cs" />
-    <Compile Include="Rate.cs" />
     <Compile Include="qpcptfaw.cs" />
+    <Compile Include="QuandlInterestRate.cs" />
+    <Compile Include="RateDB.cs" />
+    <Compile Include="RateDBValue.cs" />
     <Compile Include="Write.cs" />
     <Compile Include="XMLParser.cs" />
   </ItemGroup>

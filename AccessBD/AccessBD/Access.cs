@@ -554,12 +554,29 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
-                var portfolio = from p in context.Cash
-                                where p.date == date
-                                select p;
-                if (portfolio.Count() == 0) throw new ArgumentException("no portfolio value for this date", date.ToString());
-                return new CashDB { date = date, value = portfolio.First().value };
-
+                int i;
+                System.Linq.IQueryable<AccessBD.CashDB> cash = null;
+                for (i = 0; i < 20; i++)
+                {
+                    cash = from p in context.Cash
+                                    where p.date == date
+                                    select p;
+                    if (cash.Count() > 0)
+                    {
+                        break;
+                    }
+                    date = date - TimeSpan.FromDays(1);
+                }
+                if (cash == null || cash.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
+                CashDB cash0 = cash.First();
+                // if data from past date, save at the right date
+                if (i != 0)
+                {
+                    cash0.date = date;
+                    context.Cash.Add(cash0);
+                    context.SaveChanges();
+                }
+                return cash0;
             }
         }
 
@@ -569,7 +586,8 @@ namespace AccessBD
             using (var context = new qpcptfaw())
             {
                 System.Linq.IQueryable<AccessBD.PortfolioComposition> comp = null;
-                for (int i = 0; i < 20; i++)
+                int i;
+                for (i = 0; i < 20; i++)
                 {
                     comp = from c in context.PortCompositions
                                where c.date == date
@@ -581,6 +599,17 @@ namespace AccessBD
                     date = date - TimeSpan.FromDays(1);
                 }
                 if (comp == null || comp.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
+                // if data from past date, save at the right date
+                if (i > 1)
+                {
+                    foreach (var a in comp)
+                    {
+                        a.date = date;
+                        context.PortCompositions.Add(a);
+                    }
+                    context.SaveChanges();
+                }
+                // get composition in the dictionnary
                 foreach (var a in comp)
                 {
                     composition[a.AssetDBId] = a.quantity;
@@ -826,16 +855,48 @@ namespace AccessBD
             throw new Exception("Data should be unique.");
         }
 
+
+
+
+
+
+
+
+
         public static double getPortfolioComposition(int AssetId, DateTime date)
         {
             using (var context = new qpcptfaw())
             {
-                var comp = from c in context.PortCompositions
-                           where c.AssetDBId == AssetId && c.date == date
-                           select c;
-                if (comp.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
+                System.Linq.IQueryable<AccessBD.PortfolioComposition> comp = null;
+                int i;
+                for (i = 0; i < 20; i++)
+                {
+                    comp = from c in context.PortCompositions
+                               where c.AssetDBId == AssetId && c.date == date
+                               select c;
+                    if (comp.Count() > 0)
+                    {
+                        break;
+                    }
+                    date = date - TimeSpan.FromDays(1);
+                }
+                if (i > 1)
+                {
+                    foreach (var a in comp)
+                    {
+                        a.date = date;
+                        context.PortCompositions.Add(a);
+                    }
+                    context.SaveChanges();
+                }
+                if (comp == null || comp.Count() == 0) throw new ArgumentException("No data for this date", date.ToString());
                 if (comp.Count() > 1) throw new Exception("Data should be unique.");
                 return comp.First().quantity;
+
+                // if data from past date, save at the right date
+                
+
+
             }
         }
 
