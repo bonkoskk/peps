@@ -300,6 +300,5 @@ void Pricer::option_asian(double &ic, double &prix, int nb_samples, double T,
 	prix = sum / nb_samples;
 	var = var / nb_samples - prix * prix;
 	ic = 1.96 * sqrt(var / nb_samples);
-	gsl_vector_free(simulations);
 	gsl_rng_free(rng);
 }
