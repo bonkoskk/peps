@@ -121,7 +121,9 @@ copy "C:\Users\ensimag\Documents\peps\x64\Debug\Pricer.dll" "C:\Users\ensimag\Do
       <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin"</Message>
       <Command>copy "$(SolutionDir)\x64\Debug\Debug\Wrapping.dll" "$(SolutionDir)\Everglades\bin"
 copy "$(SolutionDir)\x64\Debug\Pricer.dll" "$(SolutionDir)\Everglades\bin"
-</Command>
+copy "$(SolutionDir)\Everglades\obj\x64\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" "$(SolutionDir)\Everglades\obj\Debug\"
+copy "$(SolutionDir)\Everglades\obj\x64\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" "$(SolutionDir)\Everglades\obj\Debug\"
+copy "$(SolutionDir)\Everglades\obj\x64\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" "$(SolutionDir)\Everglades\obj\Debug\"</Command>
       <Message>copy "C:\Users\ensimag\Documents\peps\x64\Debug\Wrapping.dll" "C:\Users\ensimag\Documents\peps\Everglades\bin\Debug\Wrapping.dll"</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>

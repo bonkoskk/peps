@@ -293,6 +293,7 @@ void Pricer::option_asian(double &ic, double &prix, int nb_samples, double T,
 		temp = exp(-r*T) * payoff - calculate_controle(simulations, data, J) + esperance_controle2;
 		sum += temp;
 		var += temp * temp;
+		gsl_vector_free(simulations);
 	}
 
 

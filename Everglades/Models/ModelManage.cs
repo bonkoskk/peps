@@ -86,7 +86,8 @@ namespace Everglades.Models
             everg = new Everglades(Assets, Assets_Currencies);
             // TODO : cash should be in database
             shares_everg = 100;
-            cash = shares_everg * everg.getPrice();
+            //cash = shares_everg * everg.getPrice();
+            cash = Access.getCashDB(DateTime.Today).value;
 
             DateTime d_temp = DateTime.Today;
             Hedging_Portfolio = getHedgingPortfolioFromBD(DateTime.Today);
@@ -110,15 +111,18 @@ namespace Everglades.Models
             double price = asset.getPrice();
             if (price * number < cash)
             {
+                // manage C# portfolio
                 Hedging_Portfolio.addAsset(asset, number);
                 cash -= price * number;
                 Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "buy", asset, number, asset.getPrice()));
-                if (asset is Equity)
-                {
-                    AccessBD.Write.storePortfolioComposition(DateTime.Today, Access.GetIdFromName(asset.getName()), number);
+                // manage BD portfolio
+                if (asset is Equity) {
+                    int asset_id = Access.GetIdFromName(asset.getName());
+                    double total = Access.getPortfolioComposition(asset_id, DateTime.Today);
+                    AccessBD.Write.storePortfolioComposition(DateTime.Today, Access.GetIdFromName(asset.getName()), total + number);
+                    AccessDB.setHedgingPortfolioValue(DateTime.Today, (Hedging_Portfolio.getPrice() + cash));
+                    Write.storeCashValue(DateTime.Today, cash);
                 }
-                double test = Hedging_Portfolio.getPrice() + cash;
-                AccessDB.setHedgingPortfolioValue(DateTime.Today, (Hedging_Portfolio.getPrice() + cash));
             }
             else
             {
@@ -128,15 +132,20 @@ namespace Everglades.Models
 
         public void sell(IAsset asset, int number)
         {
+            // manage C# portfolio
             double price = asset.getPrice();
             Hedging_Portfolio.removeAsset(asset, number);
             cash += price * number;
             Operations_History.AddFirst(new Operation.Operation(DateTime.Now, "sell", asset, number, asset.getPrice()));
+            // manage BD portfolio
             if (asset is Equity)
             {
-                AccessBD.Write.storePortfolioComposition(DateTime.Today, Access.GetIdFromName(asset.getName()), number);
+                int asset_id = Access.GetIdFromName(asset.getName());
+                double total = Access.getPortfolioComposition(asset_id, DateTime.Today);
+                AccessBD.Write.storePortfolioComposition(DateTime.Today, Access.GetIdFromName(asset.getName()), total + number);
+                AccessDB.setHedgingPortfolioValue(DateTime.Today, (Hedging_Portfolio.getPrice() + cash));
+                Write.storeCashValue(DateTime.Today, cash);
             }
-            AccessDB.setHedgingPortfolioValue(DateTime.Today, (Hedging_Portfolio.getPrice() + cash));
         }
 
         public List<Advice> getHedgingAdvice()
@@ -437,8 +446,6 @@ namespace Everglades.Models
                 //s'il n'y a pas de portefeuille en BD, on retourne le portefeuille vide
                 return port;
             }
-
-
         }
 
     }

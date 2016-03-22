@@ -14,7 +14,6 @@ namespace AccessBD
             {
                 //récupère l'id d'Everglades
                 int id = Access.GetIdEverglades();
-
                 var ev = from e in context.Prices
                          where e.AssetDBId == id && e.date == date
                          select e;
