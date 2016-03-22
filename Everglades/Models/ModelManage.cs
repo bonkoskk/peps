@@ -446,8 +446,6 @@ namespace Everglades.Models
                 //s'il n'y a pas de portefeuille en BD, on retourne le portefeuille vide
                 return port;
             }
-
-
         }
 
     }

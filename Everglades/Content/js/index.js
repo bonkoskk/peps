@@ -326,6 +326,24 @@ $(function () {
         $(".advice-window").show();
     });
 
+    // function to apply advices given
+    $("#apply-advice").click(function () {
+        var data = "operation=applyAdvice";
+        $.ajax({
+            type: "POST",
+            url: "/operations",
+            data: data,
+            datatype: "html",
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            alert("Connection error");
+        });
+    });
+
     // simulation
     $("#simulate-button").click(function () {
         $(".simulation-window").show();

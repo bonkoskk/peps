@@ -110,7 +110,42 @@
                     </div>
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-2">
+                    <h2>Currencies</h2>
+                    <div id="currencies">
+                        <table id="table_currencies" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Currency</th>
+                                    <th>Price</th>
+                                    <th>Buy</th>
+                                    <th>Sell</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Everglades.Models.Currency a in Model.Assets_Currencies)
+                                {
+                                    <tr>
+                                        <td class="asset-clickable" currency="@a.getName()">@a.getName()</td>
+                                        <td>@a.getPrice().ToString("F") € </td>
+                                        <td>
+                                            <button class="buybutton btn btn-default btn-xs" currency="@a.getName()" type="button">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="sellbutton btn btn-default btn-xs" currency="@a.getName()" type="button">
+                                                <span class="glyphicon glyphicon-minus"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
                     <h2>Derivatives</h2>
                     <div id="derivatives">
                         <table id="table_derivatives" class="table table-hover">
@@ -155,7 +190,20 @@
                                     {
                                         <tr>
                                             <td class="asset-clickable" asset="@entry.Key.getName()">@entry.Key.getName()</td>
-                                            <td>@entry.Key.getPrice().ToString("F") @entry.Key.getCurrency().getSymbol()</td>
+                                            <td>
+                                                @entry.Key.getPrice().ToString("F")
+                                                @{
+                                                    if (!(entry.Key is Everglades.Models.Currency))
+                                                    {
+                                                        Html.Raw(entry.Key.getCurrency().getSymbol());
+                                                    }
+                                                    else
+                                                    {
+                                                        Html.Raw("€");
+                                                    }   
+                                                }
+                                            
+                                            </td>
                                             <td>@entry.Value</td>
                                         </tr>
                                     }
@@ -186,7 +234,19 @@
                                     <td>@a.getOperation()</td>
                                     <td class="asset-clickable" asset="@a.getAsset().getName()">@a.getAsset().getName()</td>
                                     <td>@a.getNumber()</td>
-                                    <td>@a.getPrice().ToString("F") @a.getAsset().getCurrency().getSymbol()</td>
+                                    <td>
+                                        @a.getPrice().ToString("F")
+                                        @{
+                                            if (!(a.getAsset() is Everglades.Models.Currency))
+                                            {
+                                                Html.Raw(a.getAsset().getCurrency().getSymbol());
+                                            }
+                                            else
+                                            {
+                                                Html.Raw("€");
+                                            }
+                                        }
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -224,6 +284,7 @@
     <div id="tooltip"></div>
 
     <div class="advice-window">
+        <button type="button" class="btn btn-warning" id="apply-advice">Apply all advices</button>
         @if (hedging_advice.Count == 0)
         {
             <span>The hedge seems good</span>
