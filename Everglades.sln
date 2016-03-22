@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Everglades", "Everglades\Everglades.csproj", "{083942C7-D548-463F-976F-7A6713590431}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -111,7 +111,6 @@ Global
 		{3839AEA2-4391-4D52-9811-E3FB8937EAFA}.Release|x64.ActiveCfg = Release|Any CPU
 		{4144FAA5-9A19-42AD-9DCF-5D6EEA291E73}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{4144FAA5-9A19-42AD-9DCF-5D6EEA291E73}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{4144FAA5-9A19-42AD-9DCF-5D6EEA291E73}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{4144FAA5-9A19-42AD-9DCF-5D6EEA291E73}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4144FAA5-9A19-42AD-9DCF-5D6EEA291E73}.Debug|Win32.Build.0 = Debug|Win32
 		{4144FAA5-9A19-42AD-9DCF-5D6EEA291E73}.Debug|x64.ActiveCfg = Debug|x64
@@ -124,7 +123,6 @@ Global
 		{4144FAA5-9A19-42AD-9DCF-5D6EEA291E73}.Release|x64.ActiveCfg = Release|Win32
 		{2759565C-2952-4732-908A-325E689B681D}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{2759565C-2952-4732-908A-325E689B681D}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{2759565C-2952-4732-908A-325E689B681D}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{2759565C-2952-4732-908A-325E689B681D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{2759565C-2952-4732-908A-325E689B681D}.Debug|Win32.Build.0 = Debug|Win32
 		{2759565C-2952-4732-908A-325E689B681D}.Debug|x64.ActiveCfg = Debug|x64
