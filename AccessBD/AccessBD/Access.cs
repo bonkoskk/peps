@@ -16,6 +16,35 @@ namespace AccessBD
         public static Dictionary<Irate, int> _id_irate = new Dictionary<Irate, int>(4);
         public static Dictionary<String, int> _id_Everglades = new Dictionary<string, int>(1);
 
+        public static double get_irate_from_currency(Currencies c, DateTime date){
+            using (var context = new qpcptfaw())
+            {
+                var currencies = from curr in context.Assets.OfType<ForexDB>()
+                                 where curr.forex == c
+                                 select curr;
+                int irateid = currencies.First().RateDBId;
+                return getInterestRate(irateid, date);
+            }
+        }
+
+        public static double getInterestRate(int rateid, DateTime date)
+        {
+            DateTime datelocal = date;
+
+            using (var context = new qpcptfaw())
+            {
+                while (datelocal>=DBInitialisation.DBstart)
+                {
+                    var rates = from r in context.Rates
+                                where r.date == datelocal
+                                select r;
+                    if (rates.Count() == 0) datelocal.AddDays(-1);
+                    if (rates.Count() == 1) return rates.First().value;
+                    if (rates.Count() > 1) throw new ArgumentException("Data returned should be unique.");
+                }
+                throw new ArgumentException("No Data.");
+            }
+        }
 
         public static List<int> Get_List_Equities_id()
         {

@@ -8,9 +8,6 @@ namespace Everglades.Models.Assets
 {
     public class EuropeanPut : AVanillaOption
     {
-        private IAsset underlying;
-        private double strike;
-        private DateTime maturity;
 
         public EuropeanPut()
         {

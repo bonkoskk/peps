@@ -21,7 +21,7 @@ namespace AccessBD
         public double low { get; set; }
         public double lowEur { get; set; }
         public double volume { get; set; }
-
+        
         public int AssetDBId { get; set; }
         public AssetDB AssetDB { get; set; }
     }
