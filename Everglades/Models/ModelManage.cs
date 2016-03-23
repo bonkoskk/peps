@@ -87,11 +87,17 @@ namespace Everglades.Models
             // TODO : cash should be in database
             shares_everg = 100;
             //cash = shares_everg * everg.getPrice();
-            cash = Access.getCashDB(DateTime.Today).value;
-
+            try
+            {
+                cash = Access.getCashDB(DateTime.Today).value;
+                Hedging_Portfolio = getHedgingPortfolioFromBD(DateTime.Today);
+            }
+            catch (Exception e)
+            {
+                cash = shares_everg * everg.getPrice();
+                Hedging_Portfolio = new Portfolio(Assets.Concat(Assets_Currencies.ConvertAll(x => (IAsset)x)).ToList());
+            }
             DateTime d_temp = DateTime.Today;
-            Hedging_Portfolio = getHedgingPortfolioFromBD(DateTime.Today);
-
             //Hedging_Portfolio = new Portfolio(Assets.Concat(Assets_Currencies.ConvertAll(x => (IAsset)x)).ToList());
             
             
