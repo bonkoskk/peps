@@ -186,6 +186,12 @@
             }
             msg += "}";
         }
+        // operation apply hedging advice
+        else if (String.Compare(Request["operation"], "applyAdvice") == 0)
+        {
+            Model.applyHedgingAdvice();
+            msg = "advices have been applyed";
+        }
         else
         {
             msg = "unknown operation";
