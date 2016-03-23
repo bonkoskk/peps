@@ -27,4 +27,7 @@ namespace Pricer{
 		double S0, double K, double sigma, double r, double J, double L);
 		*/
 	DLLEXP void put_american(double &price, double S0, double K, double T, double R, double vol, int N);
+	
+	DLLEXP void option_asian(double &ic, double &prix, int nb_samples, double T,
+		double S0, double K, double sigma, double r, double J);
 }

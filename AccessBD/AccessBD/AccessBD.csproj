@@ -128,8 +128,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuandlData.cs" />
     <Compile Include="QuandlDataExchange.cs" />
-    <Compile Include="QuandlInterestRate.cs" />
     <Compile Include="qpcptfaw.cs" />
+    <Compile Include="QuandlInterestRate.cs" />
     <Compile Include="RateDB.cs" />
     <Compile Include="RateDBValue.cs" />
     <Compile Include="Write.cs" />
