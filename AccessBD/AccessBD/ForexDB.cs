@@ -13,5 +13,7 @@ namespace AccessBD
     public class ForexDB : AssetDB
     {
         public Currencies forex {get; set;}
+        public int RateDBId { get; set; }
+        public RateDB RateDB { get; set; }
     }
 }

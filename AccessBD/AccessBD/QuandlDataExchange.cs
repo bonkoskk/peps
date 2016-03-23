@@ -46,6 +46,25 @@ namespace AccessBD
             }
         }
 
+        public static Irate getIrateFromCurrency(Currencies c)
+        {
+            switch (c)
+            {
+                case Currencies.CHF:
+                    return Irate.LiborCHF;
+                case Currencies.EUR:
+                    return Irate.Euribor;
+                case Currencies.GBP:
+                    return Irate.LiborGBP;
+                case Currencies.HKD:
+                    return Irate.Hibor;
+                case Currencies.USD:
+                    return Irate.LiborUSD;
+                default:
+                    return Irate.Euribor;
+            }
+        }
+
         public static KeyValuePair<string, string> getCodeQuandl(Currencies currency)
         {
             switch (currency)
@@ -82,7 +101,7 @@ namespace AccessBD
             //Si la BD ne contient pas ce currency, on le crée
             if (!Access.CurrenciesContains(current_currency))//!list_currencies_db.Contains(current_currency))
             {
-                ForexDB fdb = new ForexDB{forex = current_currency, name = code};
+                ForexDB fdb = new ForexDB{forex = current_currency, name = code, RateDBId = Access.getInterestRateIdFromIrate(getIrateFromCurrency(current_currency))};
                 context.Assets.Add(fdb);
                 context.SaveChanges();
             }

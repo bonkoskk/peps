@@ -56,7 +56,7 @@ namespace AccessBD
                 case Irate.LiborUSD:
                     return new KeyValuePair<string, string>("FRED", "USD3MTD156N");
                 case Irate.Hibor:
-                    return new KeyValuePair<string, string>("WSJ", "HIB1M"); //à changer
+                    return new KeyValuePair<string, string>("WSJ", "HIB1M"); 
                 case Irate.LiborGBP:
                     return new KeyValuePair<string, string>("FRED", "GBP3MTD156N");
                 case Irate.LiborCHF:
@@ -80,7 +80,7 @@ namespace AccessBD
             //Si la BD ne contient pas ce currency, on le crée
             if (!Access.InterestRateContains(current_interestrate))//!list_currencies_db.Contains(current_currency))
             {
-                RateDB rate = new RateDB { rate = current_interestrate, name = current_interestrate.ToString() };
+                RateDB rate = new RateDB { rate = current_interestrate, name = current_interestrate.ToString()};
                 //ForexDB fdb = new ForexDB { currency = current_currency };
                 context.InteresRatesType.Add(rate);
                 context.SaveChanges();
