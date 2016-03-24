@@ -31,7 +31,7 @@ namespace Everglades.Models.HistoricCompute
             return list_dates;
         }
 
-        public static double[,] var0()
+        public static double[][] var0()
         {
             if (_list_id.Count() == 0)
             {
@@ -44,7 +44,7 @@ namespace Everglades.Models.HistoricCompute
 
             List<DateTime> list_dates = getWorkingDaysBefore(t0, T);
 
-            double[,] var = new double[asset_nb, asset_nb];
+            double[][] var = new double[asset_nb][];
 
             list_dates.Sort();
             int dates_nb = list_dates.Count();
@@ -63,17 +63,18 @@ namespace Everglades.Models.HistoricCompute
 
             for (int i = 0; i < asset_nb; i++)
             {
+                var[i] = new double[asset_nb];
                 for (int j = 0; j < asset_nb; j++)
                 {
-                    var[i,j] = (1-lambda)*ComputationTools.WeightedSum(logret[i], logret[j], lambda);
-                    var[j,i] = var[i,j];
+                    var[i][j] = (1-lambda)*ComputationTools.WeightedSum(logret[i], logret[j], lambda);
                 }
             }
+
             return var;
         }
 
 
-        public static double[,] var(double[,] varprec, DateTime date)
+        public static double[][] var(double[][] varprec, DateTime date)
         {
             if (_list_id.Count() == 0)
             {
@@ -84,11 +85,10 @@ namespace Everglades.Models.HistoricCompute
             }
             int asset_nb = _list_id.Count();
 
-            double[,] varcurr = new double[asset_nb, asset_nb];
+            double[][] varcurr = new double[asset_nb][];
 
             Dictionary<DateTime, double>[] prices_mat = new Dictionary<DateTime, double>[asset_nb];
             Dictionary<DateTime, double>[] logret = new Dictionary<DateTime, double>[asset_nb];
-            double[] means = new double[asset_nb];
 
             List<DateTime> list_dates = new List<DateTime>(){date.AddDays(-2), date.AddDays(-1)};
 
@@ -100,13 +100,66 @@ namespace Everglades.Models.HistoricCompute
 
             for (int i = 0; i < asset_nb; i++)
             {
+                varcurr[i] = new double[asset_nb];
                 for (int j = 0; j < asset_nb; j++)
                 {
-                    varcurr[i, j] = lambda * varprec[i, j] + (1 - lambda) * logret[i].First().Value * logret[j].First().Value;
+                    varcurr[i][j] = lambda * varprec[i][j] + (1 - lambda) * logret[i].First().Value * logret[j].First().Value;
                 }
             }
 
             return varcurr;
         }
+
+    
+
+        public static void initRiskMetrics()
+        {
+            //double[,] var0 = HistoricCompute.RiskMetrics.var0();
+                //double[,] var = HistoricCompute.RiskMetrics.var(var0, HistoricCompute.RiskMetrics.t0.AddDays(1));
+            using(var context = new qpcptfaw()){
+                if (context.CorrelVol.Count() == 0)
+                {
+                    double[][] varprec;
+                    double[][] var;
+                    double[][] var0 = HistoricCompute.RiskMetrics.var0();
+                    varprec = var0;
+                    AccessBD.Write.storeCholeskyMat(RiskMetrics.t0, var0);
+                    DateTime date = t0.AddDays(1);
+                    while (date <= DateTime.Today)
+                    {
+                        if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            var = HistoricCompute.RiskMetrics.var(varprec, date);
+                            AccessBD.Write.storeCholeskyMat(date, var);
+                            varprec = var;
+                        }
+                        date = date.AddDays(1);
+                    }
+                }
+                else
+                {
+                    double[][] varprec;
+                    double[][] var;
+                    Dictionary<DateTime, double[][]> dic = AccessBD.Access.GetLastVarMat();
+                    varprec = dic.First().Value;
+                    DateTime dateprec = dic.First().Key;
+                    while (dateprec < DateTime.Today)
+                    {
+                        dateprec = dateprec.AddDays(1);
+                        if (dateprec.DayOfWeek != DayOfWeek.Saturday && dateprec.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            var = HistoricCompute.RiskMetrics.var(varprec, dateprec);
+                            AccessBD.Write.storeCholeskyMat(dateprec, var);
+                            varprec = var;
+                        }
+                    }
+                }
+            }
+            
+        }
+
+
+
+
     }
 }
