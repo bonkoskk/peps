@@ -353,8 +353,6 @@ namespace AccessBD
             }
         }
 
-        /*
->>>>>>> 1e84bbe397902002ebd4174f47ab4c5c0f8be2b8
         public static double get_Price_Eur(int id, DateTime date)
         {
             using (var context = new qpcptfaw())
@@ -367,7 +365,7 @@ namespace AccessBD
                 return prices.First().priceEur;
             }
         }
-        */
+        
         public static EquityDB GetEquityFromSymbol(string symbol)
         {
             using(var context = new qpcptfaw())
@@ -812,6 +810,30 @@ namespace AccessBD
             if (rates.Count() == 0) throw new ArgumentException("No data for this date and currency", date.ToString());
             if (rates.Count() > 1) throw new Exception("The data required should be unique.");
             return rates.First().price;
+        }
+/// <summary>
+/// /////////////////////////////////////////////////////////////////////////////
+/// </summary>
+/// <param name="currency"></param>
+/// <param name="context"></param>
+/// <returns></returns>
+        public static double getFirstExchangeRate(Currencies currency, qpcptfaw context)
+        {
+            int cid;
+            if (_id_forex.ContainsKey(currency))
+            {
+                cid = _id_forex[currency];
+            }
+            else
+            {
+                cid = getForexIdFromCurrency(currency);
+                _id_forex.Add(currency, cid);
+            }
+
+            var rates = from r in context.Prices
+                        where r.AssetDBId == cid
+                        select r;
+            return rates.OrderBy(x => x.date).First().price;
         }
 
         public static void Clear_Portfolio_Price(DateTime date)
