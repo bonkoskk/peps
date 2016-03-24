@@ -134,6 +134,15 @@ $(function () {
 			{ label: label_graph_hedge, data: data_graph_hedge },
 			{ label: label_graph_product, data: data_graph_product }
     ];
+    var length_data = data_graph_product.length;
+    var min_x = data_graph_product[0][0];
+    var max_x = data_graph_product[length_data - 1][0];
+    var max_zoom_x = (max_x - min_x);
+    var min_zoom_x = max_zoom_x * 0.01;
+    var min_y = 0;
+    var max_y = 300;
+    var max_zoom_y = 300;
+    var min_zoom_y = 10;
     var parameters = {
         series: {
             lines: { show: true },
@@ -147,7 +156,19 @@ $(function () {
             backgroundOpacity: 0,
         },
         xaxis: {
-            mode: "time"
+            mode: "time",
+            zoomRange: [min_zoom_x, max_zoom_x],
+            panRange: [min_x, max_x]
+        },
+        yaxis: {
+            zoomRange: false,
+            panRange: [min_y, max_y]
+        },
+        zoom: {
+            interactive: true
+        },
+        pan: {
+            interactive: true
         }
     };
     try {

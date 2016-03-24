@@ -94,7 +94,7 @@ namespace Wrapping {
 		void getPriceEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double,2>^ correl, int nb_day_after, double r, int sampleNb);
 		void getPriceEvergladesWithForex(int nb_dates, int nb_asset, int nb_currencies, array<double>^ foreign_rates, array<int>^ currency_corres,
 			array<double, 2>^ historic, array<double>^ vol, array<double, 2>^ correl, int nb_day_after, double r, int sampleNb);
-		void getPayoffEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, double vlr);
+		//void getPayoffEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, double vlr);
 		WrapperEverglades() { 
 			confidenceInterval = price = 0;
 		};
@@ -104,36 +104,9 @@ namespace Wrapping {
 		bool getPayoffIsAnticipated() { return payoffIsAnticipated; };
 		double getPayoff() { return payoff; };
 		array<double, 2>^ factCholesky(array<double, 2>^ correl, int nb_asset);
+		
 	};
 
-
-	public ref class Tools
-	{
-	public:
-		void getCorrelAndVol(int nb_dates, int nb_asset, array<double, 2>^ prices, array<double, 2>^ correl, array<double>^ vol) {
-			h_gsl_matrix prices_gsl(nb_asset, nb_dates, prices);
-			h_gsl_matrix covariance_gsl(nb_asset, nb_asset);
-			h_gsl_matrix correl_gsl(nb_asset, nb_asset);
-			h_gsl_vector vol_gsl(nb_asset);
-			compute_covariance(prices_gsl._matrix, covariance_gsl._matrix);
-			get_correlation_and_volatility(covariance_gsl._matrix, correl_gsl._matrix, vol_gsl._vector);
-
-			for (int i = 0; i < correl_gsl._matrix->size1; i++)
-			{
-				for (int j = 0; j < correl_gsl._matrix->size2; j++)
-				{
-					correl[i, j] = gsl_matrix_get(correl_gsl._matrix, i, j);
-				}
-			}
-
-			for (int i = 0; i < vol_gsl._vector->size; i++)
-			{
-				vol[i] = gsl_vector_get(vol_gsl._vector, i);
-			}
-		}
-
-
-	};
 
 	public ref class WrapperDebugVanilla
 	{
@@ -171,4 +144,11 @@ namespace Wrapping {
 		double getPrice() { return price; };
 		double getIC() { return ic; };
 	};
+	public ref class Tools
+	{
+	public:
+		void getCorrelAndVol(int nb_dates, int nb_asset, array<double, 2>^ prices, array<double, 2>^ correl, array<double>^ vol);
+		void getCorrelAndVol_Yang_Zhang(int nb_dates, int nb_asset, array<double, 2>^ open_prices, array<double, 2>^ close_prices, array<double, 2>^ high_prices, array<double, 2>^ low_prices, array<double, 2>^ correl, array<double>^ vol);
+	};
 }
+

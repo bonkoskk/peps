@@ -41,6 +41,7 @@ namespace Everglades.Models.Assets
             double St = 75 + 50*rand.NextDouble();
             DateTime lastDate = first_date;
             //double S0 = real.getPrice(first_date);
+            int i = 0;
             foreach (DateTime date in dates_simul)
             {
                 double T = (date - lastDate).TotalDays / 365; // time in year
@@ -48,6 +49,7 @@ namespace Everglades.Models.Assets
                 St = St * Math.Exp((r - sigma * sigma / 2) * T + sigma * WT);
                 prices[date] = St;
                 lastDate = date;
+                i++;
             }
         }
 
@@ -97,6 +99,12 @@ namespace Everglades.Models.Assets
         public double getDividend(DateTime t1, DateTime t2)
         {
             return 0;
+        }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return getPrice(t);
         }
     }
 }

@@ -63,17 +63,12 @@ namespace Everglades.Models
                 //Access.Clear_Prices_After(new DateTime(2016, 2, 1), Access.GetIdEverglades());
             }
             catch (Exception)
-            {
-                int balek = 1000000000;
-            }
+            {}
 
-
-
+            // initialize main variables and lists
             instance = this;
             Assets = new List<IAsset>();
-
             Assets_Currencies = new List<ICurrency>();
-
             Dictionary<string, Currencies> curEnum = Access.Get_Equities_Currencies();
             foreach (KeyValuePair<string, Currencies> ent in curEnum)
             {
@@ -84,16 +79,24 @@ namespace Everglades.Models
                     Assets_Currencies.Add(cur);
                 }
             }
-
             everg = new Everglades(Assets, Assets_Currencies);
-            // TODO : cash should be in database
             shares_everg = 100;
+            // TODO : change or delete
+            simulateBackTestEvolution(true, DateTime.Today - TimeSpan.FromDays(10), TimeSpan.FromDays(1));
+            
+           
             //cash = shares_everg * everg.getPrice();
-            cash = Access.getCashDB(DateTime.Today).value;
-
+            try
+            {
+                cash = Access.getCashDB(DateTime.Today).value;
+                Hedging_Portfolio = getHedgingPortfolioFromBD(DateTime.Today);
+            }
+            catch (Exception)
+            {
+                cash = shares_everg * everg.getPrice();
+                Hedging_Portfolio = new Portfolio(Assets.Concat(Assets_Currencies.ConvertAll(x => (IAsset)x)).ToList());
+            }
             DateTime d_temp = DateTime.Today;
-            Hedging_Portfolio = getHedgingPortfolioFromBD(DateTime.Today);
-
             //Hedging_Portfolio = new Portfolio(Assets.Concat(Assets_Currencies.ConvertAll(x => (IAsset)x)).ToList());
             
             
@@ -124,6 +127,10 @@ namespace Everglades.Models
                     AccessBD.Write.storePortfolioComposition(DateTime.Today, Access.GetIdFromName(asset.getName()), total + number);
                     AccessDB.setHedgingPortfolioValue(DateTime.Today, (Hedging_Portfolio.getPrice() + cash));
                     Write.storeCashValue(DateTime.Today, cash);
+                }
+                else if (asset is Currency)
+                {
+                    
                 }
             }
             else
@@ -257,6 +264,7 @@ namespace Everglades.Models
             DateTime first = list_dates.First();
             List<IAsset> simulated_list = new List<IAsset>();
             List<ICurrency> underlying_list_cur = new List<ICurrency>();
+            double r = everg.getCurrency().getInterestRate(first);
             foreach (IAsset ass in Assets)
             {
                 simulated_list.Add(new AssetSimulated(ass, list_dates, rand));
@@ -265,7 +273,7 @@ namespace Everglades.Models
                     Currencies curEnum = ass.getCurrency().getEnum();
                     if (!underlying_list_cur.Any(x => x.getEnum() == curEnum) && curEnum != Currencies.EUR)
                     {
-                        underlying_list_cur.Add(new CurrencySimulated(curEnum, rand));
+                        underlying_list_cur.Add(new CurrencySimulated(curEnum, rand, r));
                     }
                 }
             }
@@ -292,7 +300,6 @@ namespace Everglades.Models
             double portvalue;
             double portsolovalue;
             double evergvalue;
-            double r = 0.04;
             
             DateTime date_prev = list_dates.First();
             // used for anticipated end of everglades
@@ -314,7 +321,7 @@ namespace Everglades.Models
 
                 if (date == list_dates.First())
                 {
-                    Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
+                    Tuple<double, double[], bool> compute = everg_simul.computePrice(date, with_currency);
                     evergvalue = compute.Item1;
                     hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                     
@@ -328,16 +335,16 @@ namespace Everglades.Models
                     double t = (date - date_prev).TotalDays / 360;
                     portvalue = hedge_simul.getPrice(date) + hedge_simul.getDividend(date_prev, date) + cash_t * Math.Exp(r * t);
                     cash_t = portvalue;
+                    Tuple<double, double[], bool> compute = everg_simul.computePrice(date, with_currency);
                     // test if date is a constatation date
                     if (list_anticipated_dates.Contains(date))
                     {
                         // if the date is an anticipated constatation date, we check if
                         // we must break now, and if we do we set the price of everglades
                         // with payoff and set breakk to true.
-                        Tuple<bool, double> payoff = everg_simul.getPayoff(date);
-                        if (payoff.Item1)
+                        if (compute.Item3)
                         {
-                            evergvalue = payoff.Item2;
+                            evergvalue = compute.Item1;
                             portsolovalue = hedge_simul.getPrice(date);
                             cash_t -= evergvalue;
                             breakk = true;
@@ -345,7 +352,6 @@ namespace Everglades.Models
                         else
                         {
                             // if not the last date, we simply price the product and ajust our edge
-                            Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
                             evergvalue = compute.Item1;
                             hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                             portsolovalue = hedge_simul.getPrice(date);
@@ -354,16 +360,13 @@ namespace Everglades.Models
                     }
                     else if (date == everg_simul.getLastDate())
                     {
-                        // if last date, we ge payoff and bam
-                        //Tuple<bool, double> payoff = everg_simul.getPayoff(date);
-                        evergvalue = everg_simul.computePrice(date, with_currency).Item1; //payoff.Item2;
+                        evergvalue = compute.Item1;
                         cash_t -= evergvalue;
                         portsolovalue = hedge_simul.getPrice(date);
                     }
                     else
                     {
                         // if not the last date, we simply price the product and ajust our edge
-                        Tuple<double, double[]> compute = everg_simul.computePrice(date, with_currency);
                         evergvalue = compute.Item1;
                         hedge_simul = everg_simul.getDeltaPortfolio(date, compute.Item2, with_currency);
                         portsolovalue = hedge_simul.getPrice(date);
@@ -411,6 +414,126 @@ namespace Everglades.Models
             }
             return list;
         }
+
+        /**
+         * recalculate everglades price and hedging portfolio on the firstDate -> Today period
+         * with a date every step, with currency management if with_currency is true
+         */
+        public void simulateBackTestEvolution(bool with_currency, DateTime firstDate, TimeSpan step)
+        {
+            firstDate = new DateTime(firstDate.Year, firstDate.Month, firstDate.Day);
+            RandomNormal rand = new RandomNormal();
+            DateTime current_date;
+            // clean data from firstDate to today
+            current_date = firstDate;
+            while (current_date <= DateTime.Today)
+            {
+                try
+                {
+                    Access.Clear_Everglades_Price(current_date);
+                } catch (ArgumentException) { }
+                try
+                {
+                    Access.Clear_Portfolio_Price(current_date);
+                } catch (ArgumentException) { }
+                current_date = current_date + TimeSpan.FromDays(1);
+            }
+            // create list of date for calculus            
+            current_date = firstDate;
+            LinkedList<DateTime> list_dates = new LinkedList<DateTime>();
+            while (current_date <= DateTime.Today)
+            {
+                list_dates.AddLast(current_date);
+                current_date = current_date + step;
+            }
+            LinkedList<DateTime> list_anticipated_dates = everg.getAnticipatedDates();
+            Portfolio hedge_simul = null;
+
+            double cash_t = 0;
+            double portvalue;
+            double portsolovalue;
+            double evergvalue;
+
+            DateTime date_prev = list_dates.First();
+            // used for anticipated end of everglades
+            bool breakk = false;
+            foreach (DateTime date in list_dates)
+            {
+                double r = everg.getCurrency().getInterestRate(date_prev);
+                if (date == list_dates.First())
+                {
+                    Tuple<double, double[], bool> compute = everg.computePrice(date, with_currency);
+                    evergvalue = compute.Item1;
+                    hedge_simul = everg.getDeltaPortfolio(date, compute.Item2, with_currency);
+                    portsolovalue = hedge_simul.getPrice(date);
+                    cash_t = evergvalue - portsolovalue;
+                    portvalue = portsolovalue + cash_t;
+                }
+                else
+                {
+                    // here we (virtually) sell old hedging portfolio
+                    double t = (date - date_prev).TotalDays / 360;
+                    portvalue = hedge_simul.getPrice(date) + hedge_simul.getDividend(date_prev, date) + cash_t * Math.Exp(r * t);
+                    cash_t = portvalue;
+                    Tuple<double, double[], bool> compute = everg.computePrice(date, with_currency);
+                    // test if date is a constatation date
+                    if (list_anticipated_dates.Contains(date))
+                    {
+                        // if the date is an anticipated constatation date, we check if
+                        // we must break now, and if we do we set the price of everglades
+                        // with payoff and set breakk to true.
+                        if (compute.Item3)
+                        {
+                            evergvalue = compute.Item1;
+                            portsolovalue = hedge_simul.getPrice(date);
+                            cash_t -= evergvalue;
+                            breakk = true;
+                        }
+                        else
+                        {
+                            // if not the last date, we simply price the product and ajust our edge
+                            evergvalue = compute.Item1;
+                            hedge_simul = everg.getDeltaPortfolio(date, compute.Item2, with_currency);
+                            portsolovalue = hedge_simul.getPrice(date);
+                            cash_t -= portsolovalue;
+                        }
+                    }
+                    else if (date == everg.getLastDate())
+                    {
+                        // if last date, we ge payoff and bam
+                        //Tuple<bool, double> payoff = everg_simul.getPayoff(date);
+                        evergvalue = compute.Item1; //payoff.Item2;
+                        cash_t -= evergvalue;
+                        portsolovalue = hedge_simul.getPrice(date);
+                    }
+                    else
+                    {
+                        // if not the last date, we simply price the product and ajust our edge
+                        evergvalue = compute.Item1;
+                        hedge_simul = everg.getDeltaPortfolio(date, compute.Item2, with_currency);
+                        portsolovalue = hedge_simul.getPrice(date);
+                        cash_t -= hedge_simul.getPrice(date);
+                    }
+                }
+
+                double err = (evergvalue - portvalue) / evergvalue;
+
+                if (!double.IsInfinity(evergvalue) && !double.IsNaN(evergvalue))
+                {
+                    Write.storeEvergladesPrice(date, evergvalue);
+                }
+                if (!double.IsInfinity(portvalue) && !double.IsNaN(portvalue))
+                {
+                    Write.storePortfolioValue(date, portvalue * shares_everg);
+                }
+                if (breakk)
+                {
+                    break;
+                }
+                date_prev = date;
+            }
+        }
+
 
         //retourne la composition d'un portefeuille stocké en BD à une date t
         private Portfolio getHedgingPortfolioFromBD(DateTime t)

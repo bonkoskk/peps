@@ -16,7 +16,7 @@ namespace AccessBD
         public static Dictionary<Irate, int> _id_irate = new Dictionary<Irate, int>(4);
         public static Dictionary<String, int> _id_Everglades = new Dictionary<string, int>(1);
 
-        public static double get_irate_from_currency(Currencies c, DateTime date){
+        public static double get_irate_from_currency(Currencies c, DateTime date) {
             using (var context = new qpcptfaw())
             {
                 var currencies = from curr in context.Assets.OfType<ForexDB>()
@@ -353,6 +353,8 @@ namespace AccessBD
             }
         }
 
+        /*
+>>>>>>> 1e84bbe397902002ebd4174f47ab4c5c0f8be2b8
         public static double get_Price_Eur(int id, DateTime date)
         {
             using (var context = new qpcptfaw())
@@ -365,7 +367,7 @@ namespace AccessBD
                 return prices.First().priceEur;
             }
         }
-
+        */
         public static EquityDB GetEquityFromSymbol(string symbol)
         {
             using(var context = new qpcptfaw())

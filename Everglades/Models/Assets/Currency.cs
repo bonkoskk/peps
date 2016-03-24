@@ -42,14 +42,26 @@ namespace Everglades.Models
 
         public double getInterestRate(DateTime date)
         {
-            // TODO
             return 0.03;
+            for (int i = 0; i < 100; i++)
+            {
+                try
+                {
+                    return Access.get_irate_from_currency(this.cur_enum, date);
+                }
+                catch (InvalidOperationException)
+                {
+
+                }
+                date = date - TimeSpan.FromDays(1);
+            }
+            return Access.get_irate_from_currency(this.cur_enum, date);
         }
 
         public double getChangeToEuro(DateTime date)
         {
-            throw new NotImplementedException();
-            //return 1;
+            date = new DateTime(date.Year, date.Month, date.Day);
+            return Access.GetCurrencyExchangeWithEuro(this.cur_enum, date);
         }
 
         public string getName()
@@ -90,8 +102,13 @@ namespace Everglades.Models
 
         public double getDividend(DateTime t1, DateTime t2)
         {
-            // TODO
             return getInterestRate(t1) * (t2 - t1).TotalDays / 365;
+        }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return getChangeToEuro(t);
         }
     }
 }

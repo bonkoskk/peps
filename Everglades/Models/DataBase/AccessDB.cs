@@ -102,7 +102,7 @@ namespace Everglades.Models.DataBase
         //retourne prix d'une action en euro
         public static double Get_Asset_Price_Eur(string name, DateTime date){
             int id = Access.GetIdFromName(name);
-            return Access.get_Price_Eur(id, date);
+            return Access.Get_Price(id, date)["priceEur"];
         }
 
         public static double getEvergladesPrice(DateTime date)
@@ -150,13 +150,5 @@ namespace Everglades.Models.DataBase
         {
             throw new NotImplementedException();
         }
-
-        // return interest rate of a particular money
-        public static double Get_Interest_Rate(String moneyName, DateTime date)
-        {
-            return 0.02; // TODO : taux libor 3M
-        }
-
-
     }
 }

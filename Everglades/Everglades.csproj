@@ -202,7 +202,6 @@
     <Compile Include="Models\HistoricCompute\ComputationTools.cs" />
     <Compile Include="Models\HistoricCompute\RiskMetrics.cs" />
     <Compile Include="Models\ModelManage.cs" />
-    <Compile Include="Models\Assets\Option.cs" />
     <Compile Include="Models\Assets\Portfolio.cs" />
     <Compile Include="Models\DataBase\NoDataException.cs" />
     <Compile Include="Models\Operation\Operation.cs" />
@@ -323,6 +322,7 @@
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\index.js" />
     <Content Include="Content\js\jquery.flot.js" />
+    <Content Include="Content\js\jquery.flot.navigate.js" />
     <Content Include="Content\js\jquery.flot.pie.js" />
     <Content Include="Content\js\jquery.flot.time.js" />
     <Content Include="Content\js\jquery.js" />

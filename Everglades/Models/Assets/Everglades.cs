@@ -26,7 +26,7 @@ namespace Everglades.Models
         public Everglades(List<IAsset> underlying_list, List<ICurrency> underlying_list_cur)
         {
             wp = new Wrapping.WrapperEverglades();
-            this.VLR = 200; //TODO
+            this.VLR = 200;
             this.underlying_list = underlying_list;
             this.underlying_list_cur = underlying_list_cur;
             currency = new Currency(Currencies.EUR);
@@ -115,6 +115,7 @@ namespace Everglades.Models
             }
         }
 
+        /*
         public Tuple<bool, double> getPayoff(DateTime t)
         {
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
@@ -144,6 +145,7 @@ namespace Everglades.Models
             wp.getPayoffEverglades(nb_dates, nb_asset, historic, this.VLR);
             return new Tuple<bool, double>(wp.getPayoffIsAnticipated(), wp.getPayoff());
         }
+         * */
 
         private Tuple<double[,], double[]> computeCorrelationAndVol(DateTime priceDate, List<String> assetNames, List<Currencies> currencies, uint date_nb)
         {
@@ -198,7 +200,7 @@ namespace Everglades.Models
         }
 
 
-        public Tuple<double, double[]> computePrice(DateTime t, bool with_currency_change = true)
+        public Tuple<double, double[], bool> computePrice(DateTime t, bool with_currency_change = true)
         {
             // !!!! currencies not expected to work with simulation
             bool simulation = !(underlying_list.First() is Equity);
@@ -206,7 +208,7 @@ namespace Everglades.Models
             ModelManage.timers.start("Everglades pre-pricing");
             int asset_nb = underlying_list.Count;
             // risk-free rate
-            double r = 0.04;//this.getCurrency().getInterestRate(new DateTime(2011, 03, 1), new DateTime(2013, 03, 1) - new DateTime(2011, 03, 1));
+            double r;
             // determine dates to get data for : all observation dates before now + now
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
             DateTime priceDate = new DateTime(t.Year, t.Month, t.Day);
@@ -342,6 +344,8 @@ namespace Everglades.Models
             // put historic in a matrix of double and set expected_returns vector for assets
             if (!simulation)
             {
+                // risk-free rate
+                r = this.getCurrency().getInterestRate(priceDate);
                 int ass_i = 0;
                 foreach (IAsset ass in underlying_list)
                 {
@@ -352,12 +356,14 @@ namespace Everglades.Models
                         historic[ass_i, d_i] = hist[key];
                         d_i++;
                     }
-                    expected_returns[ass_i] = r;
+                    expected_returns[ass_i] = ass.getCurrency().getInterestRate(priceDate);
                     ass_i++;
                 }
             }
             else // is a simulation
             {
+                // risk-free rate
+                r = 0.03;
                 // assets
                 int ass_i = 0;
                 foreach (IAsset ass in underlying_list)
@@ -410,17 +416,6 @@ namespace Everglades.Models
 
             int sampleNb = 1000;
 
-            /*
-             * price with Forex :
-             * foreign_rates : taux d'intérets
-             * currency : vect de taille 20 avec l'indice enum de la currency
-             * 
-             * 
-             * 
-            wp.get_price_with_forex(double& price, double& ic, gsl_vector** delta, const gsl_matrix& historic, int nb_day_after, double r,
-	const gsl_vector& foreign_rates, const gsl_vector& currency, const gsl_vector& vol, const gsl_matrix& correl, int nbSimu);
-            */
-
             // pricing
             if (with_currency_change)
             {
@@ -433,32 +428,14 @@ namespace Everglades.Models
             }
             double priceReturn = wp.getPrice();
             double[] deltaReturn = wp.getDelta();
-
-
-            // TODO DELETE THIS
-            /*
-            if (with_currency_change)
-            {
-                for (int i = 0; i < currencies_nb; i++)
-                {
-                    deltaReturn[asset_nb + i] = 0;
-                }
-            }
-            */
-
-            //wp.getPriceEverglades(dates.Count, asset_nb, historic, expected_returns, vol, correl, nb_day_after, r, sampleNb);
+            bool isAnticipated = wp.getPayoffIsAnticipated(); 
 
             /*
-            DateTime T = new DateTime(2017, 03, 14);
-            double tau = (T - t).TotalDays / 365;
-
-
             Wrapping.WrapperDebugVanilla wp = new Wrapping.WrapperDebugVanilla();
             wp.getPriceVanilla(0, asset_nb, historic[0, historic.Length], expected_returns, vol, correl, tau, r, sampleNb, historic[0, historic.Length]);
             */
-            return new Tuple<double, double[]>(priceReturn, deltaReturn);
-
-
+            
+            return new Tuple<double, double[], bool>(priceReturn, deltaReturn, isAnticipated);
         }
 
         //TODO
@@ -518,6 +495,12 @@ namespace Everglades.Models
         public double getDividend(DateTime t1, DateTime t2)
         {
             return 0;
+        }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return getPrice(t);
         }
     }
 }
