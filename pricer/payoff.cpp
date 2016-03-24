@@ -15,7 +15,7 @@ extern double payoff_call_barrier_down_out(struct simulations::Params data, int 
 
 	for (int i = 1; i <= J; i++)
 	{
-		if (gsl_vector_get(simulations, i-1) < L || gsl_vector_get(simulations, i) < L)
+		if (gsl_vector_get(simulations, i - 1) < L || gsl_vector_get(simulations, i) < L)
 		{
 			return 0;
 		}
@@ -41,7 +41,6 @@ extern double payoff_call_vanilla(struct simulations::Params data, double st)
 	return 0;
 
 }
-
 extern double payoff_call_asian(gsl_vector* simulations, struct simulations::Params data, int J)
 {
 	double sum = gsl_vector_get(simulations, 0) / 2.0;
