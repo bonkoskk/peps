@@ -354,3 +354,54 @@ int Pricer::option_asian(double &ic, double &prix, int nb_samples, double T,
 	gsl_rng_free(rng);
 	return err;
 }
+
+int Pricer::option_put_asian(double &ic, double &prix, int nb_samples, double T,
+	double S0, double K, double sigma, double r, double J)
+{
+	if (S0 <= 0 || K <= 0 || sigma <= 0 || T <= 0 || nb_samples <= 0 || J <= 0)  {
+		//std::cout << "the asset price, the exchange rate, the maturity, the strike and the volatilities must be positive " << std::endl;
+		return 10;
+	}
+
+	struct simulations::Params data;
+	data.M = nb_samples;
+	data.S = S0;
+	data.K = K;
+	data.r = r;
+	data.v = sigma;
+	data.T = T;
+	//data.J = J;
+
+	double sum = 0;
+	double var = 0;
+
+	double payoff;
+	gsl_rng *rng = gsl_rng_alloc(gsl_rng_default);
+	gsl_rng_set(rng, (unsigned long int)time(NULL));
+
+	gsl_vector* simulations;
+
+
+	double temp;
+	int err = 0;
+	double d = sqrt(3.0 / data.T) * (log(data.K / data.S) - (data.r - data.v * data.v / 2.0)* (data.T / 2.0)) / data.v;
+	double esperance_controle2 = exp(-data.r*data.T) * (-data.K * gsl_cdf_ugaussian_P(-d) + data.S*exp((data.r - data.v * data.v / 6)*T / 2.0)*gsl_cdf_ugaussian_P(-d + data.v*sqrt(data.T / 3.0)));
+
+	for (int i = 0; i < nb_samples; i++)
+	{
+		err = simulate_sj_integral(data, J, rng, &simulations);
+		payoff = payoff_put_asian(simulations, data, J);
+		temp = exp(-r*T) * payoff - calculate_controle(simulations, data, J) + esperance_controle2;
+		sum += temp;
+		var += temp * temp;
+		gsl_vector_free(simulations);
+	}
+
+
+
+	prix = sum / nb_samples;
+	var = var / nb_samples - prix * prix;
+	ic = 1.96 * sqrt(var / nb_samples);
+	gsl_rng_free(rng);
+	return err;
+}

@@ -30,4 +30,7 @@ namespace Pricer{
 	
 	DLLEXP int option_asian(double &ic, double &prix, int nb_samples, double T,
 		double S0, double K, double sigma, double r, double J);
+
+	DLLEXP int option_put_asian(double &ic, double &prix, int nb_samples, double T,
+		double S0, double K, double sigma, double r, double J);
 }
