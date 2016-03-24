@@ -12,7 +12,19 @@ namespace AccessBD
 
         public static void DBInit(qpcptfaw context)
         {
-            DateTime lastConn;
+            DateTime begin = new DateTime(2010, 1, 1);
+            DateTime end = new DateTime(2010, 12, 26);
+            List<Currencies> list_currencies = new List<Currencies> { Currencies.USD, Currencies.HKD, Currencies.GBP, Currencies.CHF };
+            List<string> list = new List<string> { "AAPL:US", "SAN:SM", "939:HK", "941:HK", "CSGN:VX", "XOM:US", "HSBA:LN", "1398:HK", "JNJ:US", "MSFT:US", "NESN:VX", "NOVN:VX", "PG", "ROG:VX", "SAN:FP", "SIE:GR", "TEF:SM", "FP:FP", "UBSG:VX", "VOD:LN" };
+            List<Irate> list_interest_rates = new List<Irate> { Irate.Euribor, Irate.Hibor, Irate.LiborCHF, Irate.LiborGBP, Irate.LiborUSD };
+            //récupération des taux d'intérêts
+            QuandlInterestRate.storeAllInDB(list_interest_rates, context, begin, end);
+            //récupération des taux de change
+            QuandlDataExchange.storeAllInDB(list_currencies, context, begin, end);
+            //récupération des prix des actions
+            QuandlData.storeAllInDB(list, context, begin, end);
+
+            /*DateTime lastConn;
             if (context.DbConnections.FirstOrDefault(p => p.date == context.DbConnections.Max(x => x.date)) == null)
             {
                 lastConn = DBstart;
@@ -74,14 +86,10 @@ namespace AccessBD
 
                 Write.storePortfolioValue(DateTime.Today, 0);
             }
+            */
 
-            /*DateTime end = new DateTime(2010, 12, 31);
-            XMLParser.XMLParser.CreateXML(list, DBstart, end, XMLParser.XMLParser.dir+"/YahooDataPeps.xml");
-            XMLParser.XMLParser parserXML = new XMLParser.XMLParser();
-            parserXML.XMLtoDB(XMLParser.XMLParser.dir + "/YahooDataPeps.xml", context);*/
 
-            //QuandlData.storeAllInDB(new List<string> { "FP:FP" }, context, DBInitialisation.DBstart, DateTime.Today);
-
+        
         }
     }
 }

@@ -30,11 +30,13 @@ namespace Everglades.Models
 
         public ModelManage()
         {
+            //double[,] var0 = HistoricCompute.RiskMetrics.var0();
+            //double[,] var = HistoricCompute.RiskMetrics.var(var0, HistoricCompute.RiskMetrics.t0.AddDays(1));
             timers.start("ModelManage initialization");
             timers.start("Database initialization");
             qpcptfaw db = new qpcptfaw();
             //Access.Clear_Everglades_Prices();
-            DBInitialisation.DBInit(db);
+            //DBInitialisation.DBInit(db);
             timers.stop("Database initialization");
             /*
             for (int i = 1; i < 50 ; i++ )

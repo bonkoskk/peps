@@ -288,6 +288,23 @@ namespace AccessBD
             }
         }
 
+        public static Dictionary<Tuple<int, DateTime>, double> Get_PriceEur(List<int> ids, List<DateTime> dates)
+        {
+            Dictionary<Tuple<int, DateTime>, double> dic = new Dictionary<Tuple<int, DateTime>, double>();
+
+            using (qpcptfaw context = new qpcptfaw())
+            {
+                var prices = from p in context.Prices
+                             where ids.Contains(p.AssetDBId) && dates.Contains(p.date)
+                             select p;
+                foreach (var p in prices)
+                {
+                    dic[new Tuple<int, DateTime>(p.AssetDBId, p.date)] = p.priceEur;
+                }
+                return dic;
+            }
+        }
+
         public static Dictionary<DateTime, Dictionary<string, double>> Get_Price(int id, List<DateTime> dates)
         {
             Dictionary<DateTime, Dictionary<string, double>> dic = new Dictionary<DateTime, Dictionary<string, double>>();
@@ -304,6 +321,33 @@ namespace AccessBD
                     P["price"] = price.price;
                     P["priceEur"] = price.priceEur;
                     dic[price.date] = P;
+                }
+                return dic;
+            }
+        }
+
+        public static Dictionary<DateTime, double> Get_PriceEur_RM(int id, List<DateTime> dates)
+        {
+            Dictionary<DateTime, double> dic = new Dictionary<DateTime, double>();
+
+            using (qpcptfaw context = new qpcptfaw())
+            {
+                DateTime datelocal;
+                foreach(DateTime date in dates){
+                    datelocal = date;
+                    var array = from p in context.Prices
+                                where id == p.AssetDBId && p.date==datelocal
+                                select p;
+                    datelocal = datelocal.AddDays(-1);
+                    while (array.Count() == 0)
+                    {
+                        if (datelocal < DBInitialisation.DBstart) throw new ArgumentException("no data.");
+                        array = from p in context.Prices
+                                where id == p.AssetDBId && p.date == datelocal
+                                select p;
+                        datelocal = datelocal.AddDays(-1);
+                    }
+                    dic[date] = array.First().priceEur;
                 }
                 return dic;
             }
