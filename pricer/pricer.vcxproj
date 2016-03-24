@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="dll_define.hpp" />
+    <ClInclude Include="error.hpp" />
     <ClInclude Include="everglades.hpp" />
     <ClInclude Include="pricer.hpp" />
     <ClInclude Include="payoff.hpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="tools.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="error.cpp" />
     <ClCompile Include="everglades.cpp" />
     <ClCompile Include="pricer.cpp" />
     <ClCompile Include="payoff.cpp" />

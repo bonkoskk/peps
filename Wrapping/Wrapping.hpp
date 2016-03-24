@@ -94,7 +94,7 @@ namespace Wrapping {
 		void getPriceEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, array<double>^ expected_returns, array<double>^ vol, array<double,2>^ correl, int nb_day_after, double r, int sampleNb);
 		void getPriceEvergladesWithForex(int nb_dates, int nb_asset, int nb_currencies, array<double>^ foreign_rates, array<int>^ currency_corres,
 			array<double, 2>^ historic, array<double>^ vol, array<double, 2>^ correl, int nb_day_after, double r, int sampleNb);
-		void getPayoffEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, double vlr);
+		//void getPayoffEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, double vlr);
 		WrapperEverglades() { 
 			confidenceInterval = price = 0;
 		};

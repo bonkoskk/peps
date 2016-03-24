@@ -308,7 +308,7 @@ namespace AccessBD
                 return dic;
             }
         }
-
+        /*
         public static double get_Price_Eur(int id, DateTime date)
         {
             using (var context = new qpcptfaw())
@@ -321,7 +321,7 @@ namespace AccessBD
                 return prices.First().priceEur;
             }
         }
-
+        */
         public static EquityDB GetEquityFromSymbol(string symbol)
         {
             using(var context = new qpcptfaw())

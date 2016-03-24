@@ -20,7 +20,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction put_american a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction put_american a rencontré une erreur inconnue");
 		}
 		this->price = px;
@@ -35,7 +35,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction call_barrier_down_out a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction call_barrier_down_out a rencontré une erreur inconnue");
 		}
 		this->confidenceInterval = ic;
@@ -51,7 +51,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction call_quanto a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction call_quanto a rencontré une erreur inconnue");
 		}
 		this->confidenceInterval = 0;
@@ -67,7 +67,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction put_quanto a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction put_quanto a rencontré une erreur inconnue");
 		}
 		this->confidenceInterval = 0;
@@ -82,7 +82,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction call_vanilla a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction call_vanilla a rencontré une erreur inconnue");
 		}
 		this->price = px;
@@ -92,7 +92,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction call_vanilla_delta a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction call_vanilla_delta a rencontré une erreur inconnue");
 		}
 		this->delta = delta;
@@ -107,7 +107,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction put_vanilla a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction put_vanilla a rencontré une erreur inconnue");
 		}
 		this->price = px;
@@ -123,7 +123,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction call_vanilla_mc a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction call_vanilla_mc a rencontré une erreur inconnue");
 		}
 		this->price = px;
@@ -143,27 +143,28 @@ namespace Wrapping {
 		bool anticipated;
 		int err;
 
-		gsl_vector* deltas_temp;
+		h_gsl_vector deltas_temp(nb_asset);
 
 		try{
-			err = Everglades::get_price(price, ic, anticipated, *deltas_temp, *historic_matrix._matrix, nb_day_after, r,
+			err = Everglades::get_price(price, ic, anticipated, *deltas_temp._vector, *historic_matrix._matrix, nb_day_after, r,
 				*vol_vector._vector, *correl_matrix._matrix, sampleNb);
 			if (err != 0){
 				throw std::logic_error("La fonction get_price a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction get_price a rencontré une erreur inconnue");
 		}
 		this->price = price;
 		this->confidenceInterval = ic;
+		this->payoffIsAnticipated = anticipated;
 
-		delta = gcnew array<double>(historic_matrix._matrix->size1);
+		delta = gcnew array<double>((int)historic_matrix._matrix->size1);
 
 
-		for (int i = 0; i < deltas_temp->size; i++)
+		for (int i = 0; i < deltas_temp._vector->size; i++)
 		{
-			this->delta[i] = gsl_vector_get(deltas_temp, i);
+			this->delta[i] = gsl_vector_get(deltas_temp._vector, i);
 		}
 	}
 
@@ -178,30 +179,30 @@ namespace Wrapping {
 
 		double price, ic;
 		bool anticipated;
-		gsl_vector* deltas_temp;
+		h_gsl_vector deltas_temp(nb_asset + nb_currencies);
 		int err;
 		try{
-			err = Everglades::get_price_with_forex(price, ic, anticipated, *deltas_temp, *historic_matrix._matrix, nb_day_after, r,
+			err = Everglades::get_price_with_forex(price, ic, anticipated, *deltas_temp._vector, *historic_matrix._matrix, nb_day_after, r,
 				*foreign_rates_vector._vector, *currency_corres_vector._vector, *vol_vector._vector, *correl_matrix._matrix, sampleNb);
 			if (err != 0){
 				throw std::logic_error("La fonction get_price_with_forex a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction get_price_with_forex a rencontré une erreur inconnue");
 		}
 		this->price = price;
 		this->confidenceInterval = ic;
-		this->payoffIsAnticipated;
+		this->payoffIsAnticipated = anticipated;
 
-		delta = gcnew array<double>(historic_matrix._matrix->size1);
-		for (int i = 0; i < deltas_temp->size; i++)
+		delta = gcnew array<double>((int)historic_matrix._matrix->size1);
+		for (int i = 0; i < deltas_temp._vector->size; i++)
 		{
-			this->delta[i] = gsl_vector_get(deltas_temp, i);
+			this->delta[i] = gsl_vector_get(deltas_temp._vector, i);
 		}
 	}
 
-
+	/*
 	void WrapperEverglades::getPayoffEverglades(int nb_dates, int nb_asset, array<double, 2>^ historic, double vlr) {
 		h_gsl_matrix historic_matrix(nb_asset, nb_dates, historic);
 		bool anticipated;
@@ -219,6 +220,7 @@ namespace Wrapping {
 		this->payoff = res;
 		this->payoffIsAnticipated = anticipated;
 	}
+	*/
 
 	void WrapperDebugVanilla::getPriceVanilla(int nb_dates, int nb_asset, double S0, array<double>^ expected_returns, array<double>^ vol, array<double, 2>^ correl, double tau, double r, int sampleNb, double Strike) {
 
@@ -234,7 +236,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction call_vanilla_mc a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction call_vanilla_mc a rencontré une erreur inconnue");
 		}
 		this->price = price;
@@ -261,7 +263,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction option_asian a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction option_asian a rencontré une erreur inconnue");
 		}
 		this->price = px;
@@ -279,7 +281,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction fact_cholesky a rencontré une erreur :" + get_error_message(err));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction fact_cholesky a rencontré une erreur inconnue");
 		}
 		for (int i = 0; i < nb_asset; i++)
@@ -309,7 +311,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction get_correlation_and_volatility a rencontré une erreur :" + get_error_message(err2));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction a rencontré une erreur inconnue");
 		}
 		for (int i = 0; i < correl_gsl._matrix->size1; i++)
@@ -345,7 +347,7 @@ namespace Wrapping {
 				throw std::logic_error("La fonction get_correlation_and_volatility a rencontré une erreur :" + get_error_message(err2));
 			}
 		}
-		catch (std::exception const& e) {
+		catch (std::exception) {
 			throw std::logic_error("la fonction a rencontré une erreur inconnue");
 		}
 		for (int i = 0; i < correl_gsl._matrix->size1; i++)

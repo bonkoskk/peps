@@ -126,5 +126,11 @@ namespace Everglades.Models
         {
             return 0;
         }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return AccessDB.Get_Asset_Price_Eur(this.name, t);
+        }
     }
 }

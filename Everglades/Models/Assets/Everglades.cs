@@ -115,6 +115,7 @@ namespace Everglades.Models
             }
         }
 
+        /*
         public Tuple<bool, double> getPayoff(DateTime t)
         {
             LinkedList<DateTime> dates = new LinkedList<DateTime>();
@@ -144,6 +145,7 @@ namespace Everglades.Models
             wp.getPayoffEverglades(nb_dates, nb_asset, historic, this.VLR);
             return new Tuple<bool, double>(wp.getPayoffIsAnticipated(), wp.getPayoff());
         }
+         * */
 
         private Tuple<double[,], double[]> computeCorrelationAndVol(DateTime priceDate, List<String> assetNames, List<Currencies> currencies, uint date_nb)
         {
@@ -198,7 +200,7 @@ namespace Everglades.Models
         }
 
 
-        public Tuple<double, double[]> computePrice(DateTime t, bool with_currency_change = true)
+        public Tuple<double, double[], bool> computePrice(DateTime t, bool with_currency_change = true)
         {
             // !!!! currencies not expected to work with simulation
             bool simulation = !(underlying_list.First() is Equity);
@@ -426,14 +428,14 @@ namespace Everglades.Models
             }
             double priceReturn = wp.getPrice();
             double[] deltaReturn = wp.getDelta();
-            // TODO double isAnticipated = 
+            bool isAnticipated = wp.getPayoffIsAnticipated(); 
 
             /*
             Wrapping.WrapperDebugVanilla wp = new Wrapping.WrapperDebugVanilla();
             wp.getPriceVanilla(0, asset_nb, historic[0, historic.Length], expected_returns, vol, correl, tau, r, sampleNb, historic[0, historic.Length]);
             */
             
-            return new Tuple<double, double[]>(priceReturn, deltaReturn);
+            return new Tuple<double, double[], bool>(priceReturn, deltaReturn, isAnticipated);
         }
 
         //TODO
@@ -493,6 +495,12 @@ namespace Everglades.Models
         public double getDividend(DateTime t1, DateTime t2)
         {
             return 0;
+        }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return getPrice(t);
         }
     }
 }

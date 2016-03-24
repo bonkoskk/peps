@@ -101,7 +101,7 @@ namespace Everglades.Models
 
         public double getPrice()
         {
-            return getPrice(DateTime.Now);
+            return getPriceEuro(DateTime.Now);
         }
 
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step, double divisor)
@@ -110,10 +110,10 @@ namespace Everglades.Models
             DateTime t = t1;
             while (t < t2)
             {
-                data.add(new DataPoint(t, getPrice(t) / divisor));
+                data.add(new DataPoint(t, getPriceEuro(t) / divisor));
                 t += step;
             }
-            data.add(new DataPoint(t2, getPrice(t2) / divisor));
+            data.add(new DataPoint(t2, getPriceEuro(t2) / divisor));
             return data;
         }
 
@@ -127,7 +127,7 @@ namespace Everglades.Models
             double price = 0;
             foreach (KeyValuePair<IAsset, double> entry in assetList)
             {
-                price += entry.Value * entry.Key.getPrice(t);
+                price += entry.Value * entry.Key.getPriceEuro(t);
             }
             return price;
         }
@@ -156,6 +156,12 @@ namespace Everglades.Models
                 dividend += entry.Value * entry.Key.getDividend(t1, t2);
             }
             return dividend;
+        }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return getPrice(t);
         }
     }
 }

@@ -100,5 +100,11 @@ namespace Everglades.Models.Assets
         {
             return 0;
         }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return getPrice(t);
+        }
     }
 }

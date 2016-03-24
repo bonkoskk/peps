@@ -112,5 +112,11 @@ namespace Everglades.Models.Assets
         {
             return getPrice(t2) * (Math.Exp(rforeign * (t2 - t1).TotalDays / 365) - 1);
         }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return getChangeToEuro(t);
+        }
     }
 }

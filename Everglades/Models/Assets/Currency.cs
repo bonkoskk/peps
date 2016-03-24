@@ -60,6 +60,7 @@ namespace Everglades.Models
 
         public double getChangeToEuro(DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day);
             return Access.GetCurrencyExchangeWithEuro(this.cur_enum, date);
         }
 
@@ -102,6 +103,12 @@ namespace Everglades.Models
         public double getDividend(DateTime t1, DateTime t2)
         {
             return getInterestRate(t1) * (t2 - t1).TotalDays / 365;
+        }
+
+
+        public double getPriceEuro(DateTime t)
+        {
+            return getChangeToEuro(t);
         }
     }
 }
