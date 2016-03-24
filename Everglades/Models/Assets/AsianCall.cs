@@ -8,7 +8,6 @@ namespace Everglades.Models.Assets
 {
     public class AsianCall : AVanillaOption
     {
-        public static int N = 10;
         public override string getType()
         {
             return "Asian Call";
@@ -29,12 +28,13 @@ namespace Everglades.Models.Assets
         {
             WrapperAsian wa = new WrapperAsian();
             double T = (maturity - t).TotalDays / 365;
+            int MC = (int)(T*10000);
+            int J = (int)(T*250);
             if (T < 0)
             {
                 throw new ArgumentOutOfRangeException("Maturity must be in future");
             }
-            //wa.getPriceCallAsian(5000,)
-            wa.getPriceCallAsian(5000, 2, underlying.getPrice(t), strike, 0.3, 0.05, AsianCall.N);
+            wa.getPriceCallAsian(MC, T, underlying.getPrice(t), strike, underlying.getVolatility(t), getCurrency().getInterestRate(t), J);
 
             return wa.getPrice();
         }
