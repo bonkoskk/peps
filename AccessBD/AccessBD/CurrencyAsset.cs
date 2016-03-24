@@ -96,7 +96,7 @@ namespace AccessBD
             double rate = 1;
             bool isException = true;
             DateTime datelocal = date;
-            while (isException)
+            while (isException && datelocal>=DBInitialisation.DBstart)
             {
                 try
                 {
@@ -107,6 +107,10 @@ namespace AccessBD
                 {
                     datelocal = datelocal.AddDays(-1);
                 }
+            }
+            if (datelocal < DBInitialisation.DBstart)
+            {
+                rate = Access.getFirstExchangeRate(currency, context);
             }
             foreach (KeyValuePair<string,double> p in prices)
             {
