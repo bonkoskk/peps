@@ -250,14 +250,13 @@ namespace Wrapping {
 	void WrapperAsian::getPriceCallAsian(int nb_samples, double T,
 		double S0, double K, double sigma, double r, double J){
 		double ic, px;
-<<<<<<< HEAD
-		Pricer::option_asian(ic, px, nb_samples, 1, 100, 100, 0.2, 0.095, J);
 
-		//Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
-=======
 		int err;
 		try{
-			err = Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
+			//err = Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
+			err = Pricer::option_asian(ic, px, nb_samples, 1, 100, 100, 0.2, 0.095, J);
+
+			//er = Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
 			if (err != 0){
 				throw std::logic_error("La fonction option_asian a rencontré une erreur :" + get_error_message(err));
 			}
@@ -265,7 +264,6 @@ namespace Wrapping {
 		catch (std::exception const& e) {
 			throw std::logic_error("la fonction option_asian a rencontré une erreur inconnue");
 		}
->>>>>>> 101126d1095e4d45989810c5ec2ad3f7ad9b6b4d
 		this->price = px;
 		this->ic = ic;
 	}
