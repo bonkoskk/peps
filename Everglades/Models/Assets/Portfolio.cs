@@ -132,7 +132,6 @@ namespace Everglades.Models
             return price;
         }
 
-        //TODO
         public double getDelta(DateTime t)
         {
             throw new NotImplementedException();

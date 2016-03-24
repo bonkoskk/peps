@@ -150,13 +150,5 @@ namespace Everglades.Models.DataBase
         {
             throw new NotImplementedException();
         }
-
-        // return interest rate of a particular money
-        public static double Get_Interest_Rate(String moneyName, DateTime date)
-        {
-            return 0.02; // TODO : taux libor 3M
-        }
-
-
     }
 }
