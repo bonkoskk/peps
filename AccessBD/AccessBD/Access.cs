@@ -16,7 +16,7 @@ namespace AccessBD
         public static Dictionary<Irate, int> _id_irate = new Dictionary<Irate, int>(4);
         public static Dictionary<String, int> _id_Everglades = new Dictionary<string, int>(1);
 
-        public static double get_irate_from_currency(Currencies c, DateTime date){
+        public static double get_irate_from_currency(Currencies c, DateTime date) {
             using (var context = new qpcptfaw())
             {
                 var currencies = from curr in context.Assets.OfType<ForexDB>()
