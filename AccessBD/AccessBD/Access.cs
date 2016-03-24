@@ -353,6 +353,7 @@ namespace AccessBD
             }
         }
 
+
         public static double get_Price_Eur(int id, DateTime date)
         {
             using (var context = new qpcptfaw())
@@ -365,7 +366,7 @@ namespace AccessBD
                 return prices.First().priceEur;
             }
         }
-        
+
         public static EquityDB GetEquityFromSymbol(string symbol)
         {
             using(var context = new qpcptfaw())
@@ -1112,6 +1113,20 @@ namespace AccessBD
                     a.quantity = 0;
                 }
                 context.SaveChanges();
+            }
+        }
+
+
+        public static Dictionary<DateTime, double[][]> GetLastVarMat()
+        {
+            using (var context = new qpcptfaw())
+            {
+                var prices = from p in context.CorrelVol
+                             select p;
+                Dictionary<DateTime, double[][]> res = new Dictionary<DateTime, double[][]>();
+                CorrelDB c = prices.OrderByDescending(x => x.date).First();
+                res.Add(c.date, c.matrix);
+                return res;
             }
         }
 
