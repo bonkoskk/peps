@@ -35,8 +35,20 @@ namespace Everglades.Models
             timers.start("ModelManage initialization");
             timers.start("Database initialization");
             qpcptfaw db = new qpcptfaw();
+            //Access.ClearAllMatrix();
             //Access.Clear_Everglades_Prices();
-            //DBInitialisation.DBInit(db);
+            double[][] id = new double[2][];
+            for (int i = 0; i<2; i++){
+                id[i] = new double[2];
+                for (int j=0; j<2; j++){
+                    id[i][j] = 1;
+                }
+            }
+            
+            DBInitialisation.DBInit(db);
+            //AccessBD.Write.storeCholeskyMat(DateTime.Today.AddDays(1), id);
+            //double[][] mat = AccessBD.Access.getCholeskyMatrix(DateTime.Today.AddDays(1));
+
             timers.stop("Database initialization");
             /*
             for (int i = 1; i < 50 ; i++ )

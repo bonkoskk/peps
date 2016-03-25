@@ -882,18 +882,36 @@ namespace AccessBD
         }
 
 
-        public static double[][] getCholeskyMatrix(DateTime date)
+        /*public static double[][] getCholeskyMatrix(DateTime date)
         {
             using (var context = new qpcptfaw())
             {
-                var mats = from m in context.CorrelVol
-                           where m.date <= date && m.date >= date.AddDays(-15)
-                           select m;
-                return mats.OrderBy(m => m.date).Last().matrix;
+                double[][] mat;
+                DateTime datePlus = date - TimeSpan.FromDays(15);
+                var mats = (from m in context.CorrelVol
+                            where m.date <= date && m.date >= datePlus
+                           select m).ToArray();
+                if (mats.Length == 0)
+                {
+                    throw new IndexOutOfRangeException("No data for this date");
+                }
+                else
+                {
+                    CorrelDB matDB = mats.OrderBy(m => m.date).Last();
+                    int l = matDB.matrix.Length;
+                    mat = new double[l][];
+                    for(int i = 0; i<l; i++) {
+                        mat[i] = new double[l];
+                        for(int j = 0; j<l; j++) {
+                            mat[i][j] = matDB.matrix[i][j];
+                        }
+                    }
+                }
+                return mat;
             }
-        }
+        }*/
 
-        public static double[] getVolatilityVector(DateTime date)
+        /*public static double[] getVolatilityVector(DateTime date)
         {
             using (var context = new qpcptfaw())
             {
@@ -902,7 +920,7 @@ namespace AccessBD
                            select m;
                 return mats.OrderBy(m => m.date).Last().vol;
             }
-        }
+        }*/
 
         public static bool ContainsPortCompositionsKey(qpcptfaw context, int id, DateTime date)
         {
@@ -1101,11 +1119,21 @@ namespace AccessBD
                              select p;
                 Dictionary<DateTime, double[][]> res = new Dictionary<DateTime, double[][]>();
                 CorrelDB c = prices.OrderByDescending(x => x.date).First();
-                res.Add(c.date, c.matrix);
+                //res.Add(c.date, c.matrix);
                 return res;
             }
         }
 
+        public static void ClearAllMatrix()
+        {
+            using (var context = new qpcptfaw())
+            {
+                var mat = from m in context.CorrelVol
+                          select m;
+                foreach(var m in mat) context.CorrelVol.Remove(m);
+                context.SaveChanges();
+            }
+        }
 
     }
 }

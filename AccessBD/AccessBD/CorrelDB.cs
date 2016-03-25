@@ -16,7 +16,8 @@ namespace AccessBD
         [Key]
         public DateTime date { get; set; }
 
-        public double[][] matrix { get; set; }
-        public double[] vol { get; set; }
+        public int indexX { get; set; }
+        public int indexY { get; set; }
+        public double value { get; set; }
     }
 }

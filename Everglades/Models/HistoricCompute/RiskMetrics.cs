@@ -123,14 +123,14 @@ namespace Everglades.Models.HistoricCompute
                     double[][] var;
                     double[][] var0 = HistoricCompute.RiskMetrics.var0();
                     varprec = var0;
-                    AccessBD.Write.storeCholeskyMat(RiskMetrics.t0, var0);
+                    //AccessBD.Write.storeCholeskyMat(RiskMetrics.t0, var0);
                     DateTime date = t0.AddDays(1);
                     while (date <= DateTime.Today)
                     {
                         if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
                         {
                             var = HistoricCompute.RiskMetrics.var(varprec, date);
-                            AccessBD.Write.storeCholeskyMat(date, var);
+                            //AccessBD.Write.storeCholeskyMat(date, var);
                             varprec = var;
                         }
                         date = date.AddDays(1);
@@ -149,7 +149,7 @@ namespace Everglades.Models.HistoricCompute
                         if (dateprec.DayOfWeek != DayOfWeek.Saturday && dateprec.DayOfWeek != DayOfWeek.Sunday)
                         {
                             var = HistoricCompute.RiskMetrics.var(varprec, dateprec);
-                            AccessBD.Write.storeCholeskyMat(dateprec, var);
+                            //AccessBD.Write.storeCholeskyMat(dateprec, var);
                             varprec = var;
                         }
                     }
