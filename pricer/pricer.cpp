@@ -142,6 +142,7 @@ int Pricer::call_barrier_down_out(double &ic, double &prix, int nb_samples, doub
 		payoff = payoff_call_barrier_down_out(data, J, L, simulations);
 		sum += exp(-r*T) * payoff;
 		var += exp(-2.*r*T) * payoff * payoff;
+		gsl_vector_free(simulations);
 	}
 
 

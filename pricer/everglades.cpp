@@ -353,16 +353,16 @@ extern int Everglades::get_price(double& price, double& ic, bool& is_anticipated
 		is_constatation_date = 1;
 	}
 	price = 0;
-	price += sumPayoff_anticipated*exp(-r*((9 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
-	price += sumPayoff_final*exp(-r*((25 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
+	price += sumPayoff_anticipated*exp(-r*((10 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
+	price += sumPayoff_final*exp(-r*((26 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
 	price /= ((double)nbSimu);
 
 	//Calcul des deltas
 	gsl_vector_set_all(&delta, 0); //remise à zéro
-	gsl_vector_scale(payoff_up_anticipated, exp(-r*((9 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
-	gsl_vector_scale(payoff_up_final, exp(-r*((25 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
-	gsl_vector_scale(payoff_down_anticipated, exp(-r*((9 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
-	gsl_vector_scale(payoff_down_final, exp(-r*((25 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
+	gsl_vector_scale(payoff_up_anticipated, exp(-r*((10 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
+	gsl_vector_scale(payoff_up_final, exp(-r*((26 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
+	gsl_vector_scale(payoff_down_anticipated, exp(-r*((10 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
+	gsl_vector_scale(payoff_down_final, exp(-r*((26 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
 	gsl_vector_add(&delta, payoff_up_anticipated);
 	gsl_vector_add(&delta, payoff_up_final);
 	gsl_vector_sub(&delta, payoff_down_anticipated);
@@ -371,8 +371,8 @@ extern int Everglades::get_price(double& price, double& ic, bool& is_anticipated
 	gsl_vector_div(&delta, temp);
 
 	//calcul de l'intervalle de confiance
-	double sumIc = sumIc_anticipated*exp(-2 * r * ((9 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
-	sumIc += sumIc_final*exp(-2 * r * ((25 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
+	double sumIc = sumIc_anticipated*exp(-2 * r * ((10 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
+	sumIc += sumIc_final*exp(-2 * r * ((26 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
 	double xi2 = sumIc / ((double)nbSimu) - (price)*(price);
 	ic = 1.96*sqrt(xi2) / sqrt((double)nbSimu);
 
@@ -630,16 +630,16 @@ extern int Everglades::get_price_with_forex(double& price, double& ic, bool& is_
 	}
 	//calcul du prix
 	price = 0;
-	price += sumPayoff_anticipated*exp(-r*((9 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
-	price += sumPayoff_final*exp(-r*((25 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
+	price += sumPayoff_anticipated*exp(-r*((10 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
+	price += sumPayoff_final*exp(-r*((26 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
 	price /= ((double)nbSimu);
 
 	//Calcul des deltas
 	gsl_vector_set_all(&delta, 0); //remise à zéro
-	gsl_vector_scale(payoff_up_anticipated, exp(-r*((9 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
-	gsl_vector_scale(payoff_up_final, exp(-r*((25 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
-	gsl_vector_scale(payoff_down_anticipated, exp(-r*((9 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
-	gsl_vector_scale(payoff_down_final, exp(-r*((25 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
+	gsl_vector_scale(payoff_up_anticipated, exp(-r*((10 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
+	gsl_vector_scale(payoff_up_final, exp(-r*((26 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
+	gsl_vector_scale(payoff_down_anticipated, exp(-r*((10 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
+	gsl_vector_scale(payoff_down_final, exp(-r*((26 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY));
 	gsl_vector_add(&delta, payoff_up_anticipated);
 	gsl_vector_add(&delta, payoff_up_final);
 	gsl_vector_sub(&delta, payoff_down_anticipated);
@@ -648,8 +648,8 @@ extern int Everglades::get_price_with_forex(double& price, double& ic, bool& is_
 	gsl_vector_div(&delta, temp);
 
 	//calcul de l'intervalle de confiance
-	double sumIc = sumIc_anticipated*exp(-2 * r *((9 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
-	sumIc += sumIc_final*exp(-2 * r *((25 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
+	double sumIc = sumIc_anticipated*exp(-2 * r *((10 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
+	sumIc += sumIc_final*exp(-2 * r *((26 - last_index - is_constatation_date) * PERIODE - nb_day_after) / DAY);
 	double xi2 = sumIc / ((double)nbSimu) - (price)*(price);
 	ic = 1.96*sqrt(xi2) / sqrt((double)nbSimu);
 
