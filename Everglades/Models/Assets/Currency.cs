@@ -42,19 +42,6 @@ namespace Everglades.Models
 
         public double getInterestRate(DateTime date)
         {
-            return 0.03;
-            for (int i = 0; i < 100; i++)
-            {
-                try
-                {
-                    return Access.get_irate_from_currency(this.cur_enum, date);
-                }
-                catch (InvalidOperationException)
-                {
-
-                }
-                date = date - TimeSpan.FromDays(1);
-            }
             return Access.get_irate_from_currency(this.cur_enum, date);
         }
 

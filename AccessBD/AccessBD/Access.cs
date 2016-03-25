@@ -19,30 +19,54 @@ namespace AccessBD
         public static double get_irate_from_currency(Currencies c, DateTime date) {
             using (var context = new qpcptfaw())
             {
-                var currencies = from curr in context.Assets.OfType<ForexDB>()
-                                 where curr.forex == c
-                                 select curr;
-                int irateid = currencies.First().RateDBId;
+                int irateid;
+                if (c == Currencies.EUR)
+                {
+                    irateid = 1;
+                }
+                else
+                {
+                    var currencies = from curr in context.Assets.OfType<ForexDB>()
+                                     where curr.forex == c
+                                     select curr;
+                    irateid = currencies.First().RateDBId;
+                }
                 return getInterestRate(irateid, date);
             }
         }
 
         public static double getInterestRate(int rateid, DateTime date)
         {
-            DateTime datelocal = date;
-
             using (var context = new qpcptfaw())
             {
-                while (datelocal>=DBInitialisation.DBstart)
+                // we search for explicit date
+                RateDBValue[] rates = (from r in context.Rates
+                            where r.date == date && r.RateDBId == rateid
+                            select r).ToArray();
+                // if not found we serch for closest date
+                if (rates.Count() == 0) // descending
                 {
-                    var rates = from r in context.Rates
-                                where r.date == datelocal
-                                select r;
-                    if (rates.Count() == 0) datelocal.AddDays(-1);
-                    if (rates.Count() == 1) return rates.First().value;
-                    if (rates.Count() > 1) throw new ArgumentException("Data returned should be unique.");
+                    rates = (from r in context.Rates
+                                where r.RateDBId == rateid && r.date < date
+                                orderby r.date descending
+                                select r).Take(1).ToArray();
                 }
-                throw new ArgumentException("No Data.");
+                if (rates.Count() == 0) // and ascending
+                {
+                    rates = (from r in context.Rates
+                             where r.RateDBId == rateid && r.date > date
+                             orderby r.date ascending
+                             select r).Take(1).ToArray();
+                }
+                // finally we return or throw exception if no date
+                if (rates.Count() == 0)
+                {
+                    throw new ArgumentException("No Data in database for this rateid.");
+                }
+                else
+                {
+                    return rates.First().value / 100.0;
+                }
             }
         }
 
@@ -811,6 +835,30 @@ namespace AccessBD
             if (rates.Count() == 0) throw new ArgumentException("No data for this date and currency", date.ToString());
             if (rates.Count() > 1) throw new Exception("The data required should be unique.");
             return rates.First().price;
+        }
+/// <summary>
+/// /////////////////////////////////////////////////////////////////////////////
+/// </summary>
+/// <param name="currency"></param>
+/// <param name="context"></param>
+/// <returns></returns>
+        public static double getFirstExchangeRate(Currencies currency, qpcptfaw context)
+        {
+            int cid;
+            if (_id_forex.ContainsKey(currency))
+            {
+                cid = _id_forex[currency];
+            }
+            else
+            {
+                cid = getForexIdFromCurrency(currency);
+                _id_forex.Add(currency, cid);
+            }
+
+            var rates = from r in context.Prices
+                        where r.AssetDBId == cid
+                        select r;
+            return rates.OrderBy(x => x.date).First().price;
         }
 
         public static void Clear_Portfolio_Price(DateTime date)

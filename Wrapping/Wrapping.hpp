@@ -141,6 +141,8 @@ namespace Wrapping {
 		WrapperAsian() { price = ic = 0; };
 		void getPriceCallAsian( int nb_samples, double T,
 			double S0, double K, double sigma, double r, double J);
+		void getPricePutAsian(int nb_samples, double T,
+			double S0, double K, double sigma, double r, double J);
 		double getPrice() { return price; };
 		double getIC() { return ic; };
 	};

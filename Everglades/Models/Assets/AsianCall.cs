@@ -15,7 +15,7 @@ namespace Everglades.Models.Assets
 
         public override string getName()
         {
-            throw new NotImplementedException();
+            return "Asian Call on asset " + underlying.getName();
         }
 
         public override Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
@@ -41,7 +41,7 @@ namespace Everglades.Models.Assets
 
         public override double getVolatility(DateTime t)
         {
-            throw new NotImplementedException();
+            return this.underlying.getVolatility(t);
         }
 
         public override double getDelta(DateTime t)

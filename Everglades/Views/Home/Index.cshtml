@@ -92,7 +92,7 @@
                                 {
                                     <tr>
                                         <td class="asset-clickable" asset="@a.getName()">@a.getName()</td>
-                                        <td>@a.getPrice().ToString("F") @a.getCurrency().getSymbol()</td>
+                                        <td>@a.getPrice().ToString("F2") @a.getCurrency().getSymbol()</td>
                                         <td>
                                             <button class="buybutton btn btn-default btn-xs" asset="@a.getName()" type="button">
                                                 <span class="glyphicon glyphicon-plus"></span>
@@ -284,13 +284,14 @@
     <div id="tooltip"></div>
 
     <div class="advice-window">
-        <button type="button" class="btn btn-warning" id="apply-advice">Apply all advices</button>
         @if (hedging_advice.Count == 0)
         {
             <span>The hedge seems good</span>
         }
         else
         {
+            <button type="button" class="btn btn-warning" id="apply-advice">Apply all advices</button>
+            <div id="loading-advice"></div>
             <table id="table_closedpositions" class="table table-hover">
                 <thead>
                     <tr>
@@ -375,19 +376,19 @@
     @{
         Everglades.Models.ModelManage.timers.start("Page data script loading hedge");
     }
-    var data_graph_hedge = @Model.getHedgeForOne(DateTime.Now - TimeSpan.FromDays(90), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var data_graph_hedge = @Model.getHedgeForOne(DateTime.Now - TimeSpan.FromDays(10), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_hedge = "hedge";
     @{
         Everglades.Models.ModelManage.timers.stop("Page data script loading hedge");
         Everglades.Models.ModelManage.timers.start("Page data script loading everg");
     }
-    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(90), DateTime.Now, TimeSpan.FromDays(1)).ToString();
+    var data_graph_product = @Model.everg.getPrice(DateTime.Now - TimeSpan.FromDays(10), DateTime.Now, TimeSpan.FromDays(1)).ToString();
     var label_graph_product = "product";
     @{
         Everglades.Models.ModelManage.timers.stop("Page data script loading everg");
         Everglades.Models.ModelManage.timers.start("Page data script loading donut");
     }
-    var data_donut = @Html.Raw(Model.Hedging_Portfolio.portfolioComposition());
+    var data_donut = @Html.Raw(Model.hedgingPortfolioComposition());
     @{
         Everglades.Models.ModelManage.timers.stop("Page data script loading donut");
     }

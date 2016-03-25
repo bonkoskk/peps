@@ -349,6 +349,8 @@ $(function () {
 
     // function to apply advices given
     $("#apply-advice").click(function () {
+        $("#apply-advice").hide();
+        $("#loading-advice").show();
         var data = "operation=applyAdvice";
         $.ajax({
             type: "POST",
@@ -362,6 +364,9 @@ $(function () {
         })
         .fail(function (jqXHR, textStatus) {
             alert("Connection error");
+        })
+        .complete(function () {
+            $("#loading-advice").hide();
         });
     });
 

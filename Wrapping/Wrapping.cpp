@@ -255,10 +255,25 @@ namespace Wrapping {
 
 		int err;
 		try{
-			//err = Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
-			err = Pricer::option_asian(ic, px, nb_samples, 1, 100, 100, 0.2, 0.095, J);
+			err = Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
+			if (err != 0){
+				throw std::logic_error("La fonction option_asian a rencontré une erreur :" + get_error_message(err));
+			}
+		}
+		catch (std::exception) {
+			throw std::logic_error("la fonction option_asian a rencontré une erreur inconnue");
+		}
+		this->price = px;
+		this->ic = ic;
+	}
 
-			//er = Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
+	void WrapperAsian::getPricePutAsian(int nb_samples, double T,
+		double S0, double K, double sigma, double r, double J){
+		double ic, px;
+
+		int err;
+		try{
+			err = Pricer::option_asian(ic, px, nb_samples, T, S0, K, sigma, r, J);
 			if (err != 0){
 				throw std::logic_error("La fonction option_asian a rencontré une erreur :" + get_error_message(err));
 			}

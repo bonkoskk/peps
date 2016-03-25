@@ -49,7 +49,7 @@ namespace Everglades.Models.Assets
 
         public override double getVolatility(DateTime t)
         {
-            throw new NotImplementedException();
+            return this.underlying.getVolatility(t);
         }
     }
 }

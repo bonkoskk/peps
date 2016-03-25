@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.UI;
 using AccessBD;
 using Everglades.Models.Timers;
+using System.Xml;
 
 namespace Everglades.Models
 {
@@ -37,18 +38,11 @@ namespace Everglades.Models
             qpcptfaw db = new qpcptfaw();
             //Access.ClearAllMatrix();
             //Access.Clear_Everglades_Prices();
-            double[][] id = new double[2][];
-            for (int i = 0; i<2; i++){
-                id[i] = new double[2];
-                for (int j=0; j<2; j++){
-                    id[i][j] = 1;
-                }
-            }
-            
-            DBInitialisation.DBInit(db);
-            //AccessBD.Write.storeCholeskyMat(DateTime.Today.AddDays(1), id);
-            //double[][] mat = AccessBD.Access.getCholeskyMatrix(DateTime.Today.AddDays(1));
 
+
+            DBInitialisation.DBInit(db);
+            //HistoricCompute.RiskMetrics.initRiskMetrics();
+            
             timers.stop("Database initialization");
             /*
             for (int i = 1; i < 50 ; i++ )
@@ -92,12 +86,16 @@ namespace Everglades.Models
                 }
             }
             everg = new Everglades(Assets, Assets_Currencies);
-            shares_everg = 100;
+            shares_everg = 100000;
             // TODO : change or delete
-            simulateBackTestEvolution(true, DateTime.Today - TimeSpan.FromDays(10), TimeSpan.FromDays(1));
-            
-           
-            //cash = shares_everg * everg.getPrice();
+
+
+
+            //simulateBackTestEvolution(true, DateTime.Today - TimeSpan.FromDays(10), TimeSpan.FromDays(1));
+
+
+            cash = Access.getCashDB(DateTime.Today).value;
+            Hedging_Portfolio = getHedgingPortfolioFromBD(DateTime.Today);
             try
             {
                 cash = Access.getCashDB(DateTime.Today).value;
@@ -125,7 +123,7 @@ namespace Everglades.Models
 
         public void buy(IAsset asset, int number)
         {
-            double price = asset.getPrice();
+            double price = asset.getPriceEuro(DateTime.Today);
             if (price * number < cash)
             {
                 // manage C# portfolio
@@ -136,13 +134,17 @@ namespace Everglades.Models
                 if (asset is Equity) {
                     int asset_id = Access.GetIdFromName(asset.getName());
                     double total = Access.getPortfolioComposition(asset_id, DateTime.Today);
-                    AccessBD.Write.storePortfolioComposition(DateTime.Today, Access.GetIdFromName(asset.getName()), total + number);
+                    AccessBD.Write.storePortfolioComposition(DateTime.Today, asset_id, total + number);
                     AccessDB.setHedgingPortfolioValue(DateTime.Today, (Hedging_Portfolio.getPrice() + cash));
                     Write.storeCashValue(DateTime.Today, cash);
                 }
                 else if (asset is Currency)
                 {
-                    
+                    int cur_id = Access.getForexIdFromCurrency(((Currency)asset).getEnum());
+                    double total = Access.getPortfolioComposition(cur_id, DateTime.Today);
+                    Write.storePortfolioComposition(DateTime.Today, cur_id, total + number);
+                    AccessDB.setHedgingPortfolioValue(DateTime.Today, Hedging_Portfolio.getPrice() + cash);
+                    Write.storeCashValue(DateTime.Today, cash);
                 }
             }
             else
@@ -163,8 +165,16 @@ namespace Everglades.Models
             {
                 int asset_id = Access.GetIdFromName(asset.getName());
                 double total = Access.getPortfolioComposition(asset_id, DateTime.Today);
-                AccessBD.Write.storePortfolioComposition(DateTime.Today, Access.GetIdFromName(asset.getName()), total + number);
+                AccessBD.Write.storePortfolioComposition(DateTime.Today, asset_id, total - number);
                 AccessDB.setHedgingPortfolioValue(DateTime.Today, (Hedging_Portfolio.getPrice() + cash));
+                Write.storeCashValue(DateTime.Today, cash);
+            }
+            else if (asset is Currency)
+            {
+                int cur_id = Access.getForexIdFromCurrency(((Currency)asset).getEnum());
+                double total = Access.getPortfolioComposition(cur_id, DateTime.Today);
+                Write.storePortfolioComposition(DateTime.Today, cur_id, total - number);
+                AccessDB.setHedgingPortfolioValue(DateTime.Today, Hedging_Portfolio.getPrice() + cash);
                 Write.storeCashValue(DateTime.Today, cash);
             }
         }
@@ -184,14 +194,14 @@ namespace Everglades.Models
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
                 string assetname = item.Key.getName();
-                double difference = Hedging_Portfolio.assetList[item.Key] - item.Value * shares_everg;
+                double difference = item.Value * shares_everg - Hedging_Portfolio.assetList[item.Key];
                 if (difference > 0.5)
                 {
-                    list.Add(new Advice(difference, assetname, "sell " + Convert.ToInt32(difference).ToString() + " of " + assetname));
+                    list.Add(new Advice(difference / shares_everg, assetname, "buy " + Convert.ToInt32(difference).ToString() + " of " + assetname));
                 }
                 else if (difference < - 0.5)
                 {
-                    list.Add(new Advice(-difference, assetname, "buy " + Convert.ToInt32(-difference).ToString() + " of " + assetname));
+                    list.Add(new Advice(difference / shares_everg, assetname, "sell " + Convert.ToInt32(-difference).ToString() + " of " + assetname));
                 }
             }
             return list;
@@ -212,15 +222,15 @@ namespace Everglades.Models
             foreach (KeyValuePair<IAsset, double> item in deltas.assetList)
             {
                 IAsset asset = item.Key;
-                double difference = Hedging_Portfolio.assetList[item.Key] - item.Value * shares_everg;
+                double difference = item.Value * shares_everg - Hedging_Portfolio.assetList[item.Key];
                 int difference_int = Convert.ToInt32(difference);
                 if (difference > 0.5)
                 {
-                    sell(asset, difference_int);
+                    buy(asset, difference_int);
                 }
                 else if (difference < -0.5)
                 {
-                    buy(asset, -difference_int);
+                    sell(asset, -difference_int);
                 }
             }
             return list;
@@ -544,6 +554,22 @@ namespace Everglades.Models
                 }
                 date_prev = date;
             }
+            // save last result in BD
+            foreach (IAsset asset in hedge_simul.assetList.Keys) {
+                if (asset is Equity)
+                {
+                    int asset_id = Access.GetIdFromName(asset.getName());
+                    double quantity = hedge_simul.assetList[asset];
+                    Write.storePortfolioComposition(DateTime.Today, asset_id, Math.Round(quantity * shares_everg));
+                } 
+                else if (asset is Currency)
+                {
+                    int cur_id = Access.getForexIdFromCurrency(((Currency)asset).getEnum()); ;
+                    double quantity = hedge_simul.assetList[asset];
+                    Write.storePortfolioComposition(DateTime.Today, cur_id, Math.Round(quantity * shares_everg));
+                }
+            }
+            Write.storeCashValue(DateTime.Today, cash_t * shares_everg);
         }
 
 
@@ -566,7 +592,6 @@ namespace Everglades.Models
                         port.addAsset(ass, portcomp[id]);
                     }
                 }
-
                 //on ajoute la quantité de currencies
                 foreach (ICurrency ass in Assets_Currencies)
                 {
@@ -585,5 +610,53 @@ namespace Everglades.Models
             }
         }
 
+
+        public String hedgingPortfolioComposition()
+        {
+            string str = "[";
+            double equ = 0.0, vanilla = 0.0, exo = 0.0, cur = 0.0;
+            foreach (KeyValuePair<IAsset, double> item in Hedging_Portfolio.assetList)
+            {
+                if (item.Value != 0)
+                {
+                    double price = item.Value * item.Key.getPrice();
+                    if (price < 0)
+                    {
+                        price = -price;
+                    }
+                    if (item.Key is Equity)
+                    {
+                        equ += price;
+                    }
+                    else if (item.Key is AVanillaOption)
+                    {
+                        vanilla += price;
+                    }
+                    else if (item.Key is IDerivative)
+                    {
+                        exo += price;
+                    }
+                    else if (item.Key is ICurrency)
+                    {
+                        cur += price;
+                    }
+                }
+            }
+
+            if (this.cash == 0 && (Hedging_Portfolio.assetList.Keys.Count == 0 || (equ == 0 && vanilla == 0 && exo == 0)))
+            {
+                str += "{label: \"Empty\", data: 1}";
+            }
+            else
+            {
+                str += "{label: \"Cash\", data: " + XmlConvert.ToString(this.cash) + "},";
+                str += "{label: \"Equities\", data: " + XmlConvert.ToString(equ) + "},";
+                str += "{label: \"Vanilla Options\", data: " + XmlConvert.ToString(vanilla) + "},";
+                str += "{label: \"Exotic Options\", data: " + XmlConvert.ToString(exo) + "},";
+                str += "{label: \"Currencies\", data: " + XmlConvert.ToString(cur) + "}";
+            }
+            str += "]";
+            return str;
+        }
     }
 }
