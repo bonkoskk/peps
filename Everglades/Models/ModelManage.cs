@@ -88,7 +88,7 @@ namespace Everglades.Models
 
 
 
-            simulateBackTestEvolution(true, DateTime.Today - TimeSpan.FromDays(10), TimeSpan.FromDays(1));
+            //simulateBackTestEvolution(true, DateTime.Today - TimeSpan.FromDays(90), TimeSpan.FromDays(1));
 
 
             cash = Access.getCashDB(DateTime.Today).value;

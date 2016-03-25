@@ -19,14 +19,18 @@ namespace AccessBD
         public static double get_irate_from_currency(Currencies c, DateTime date) {
             using (var context = new qpcptfaw())
             {
+                int irateid;
                 if (c == Currencies.EUR)
                 {
-                    return 1;
+                    irateid = 1;
                 }
-                var currencies = from curr in context.Assets.OfType<ForexDB>()
-                                 where curr.forex == c
-                                 select curr;
-                int irateid = currencies.First().RateDBId;
+                else
+                {
+                    var currencies = from curr in context.Assets.OfType<ForexDB>()
+                                     where curr.forex == c
+                                     select curr;
+                    irateid = currencies.First().RateDBId;
+                }
                 return getInterestRate(irateid, date);
             }
         }
