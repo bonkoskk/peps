@@ -123,33 +123,42 @@ namespace AccessBD
             }
         }
 
-        public static void storeCholeskyMat(DateTime date, double[][] mat)
+        /*public static void storeCholeskyMat(DateTime date, double[][] mat)
         {
             using (var context = new qpcptfaw())
             {
+                double[] vol = null;
                 // si la date existe déjà dans la table des prix on la remplace
                 if (Access.ContainsCorrelKey(context, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
-                    var mats = from m in context.CorrelVol
+                    var mats = (from m in context.CorrelVol
                                where m.date == date
-                               select m;
-                    mats.First().matrix = mat;
-                    context.SaveChanges();
-                    return;
+                               select m).ToArray();
+                    if (mats.Length > 0) {
+                        vol = mats.First().vol;
+                        context.CorrelVol.Remove(mats.First());
+                    }
                 }
-                else
+                CorrelDB enti = new CorrelDB();
+                enti.date = date;
+                enti.vol = vol;
+                enti.matrix = new double[mat.Length][];
+                for (int i = 0; i < mat.Length; i++)
                 {
-                    // sinon on l'ajoute
-                    //PortfolioComposition p = new PortfolioComposition { AssetDBId = assetId, date = date, quantity = quantity };
-                    CorrelDB data = new CorrelDB { date = date, matrix = mat };
-                    context.CorrelVol.Add(data);
-                    context.SaveChanges();
-                    return;
+                    enti.matrix[i] = new double[mat.Length];
+                    for (int j = 0; j < mat.Length; j++)
+                    {
+                        enti.matrix[i][j] = mat[i][j];
+                    }
                 }
+                context.CorrelVol.Add(enti);
+                context.SaveChanges();
+                return;
+                
             }
-        }
+        }*/
 
-            public static void storeVolVect(DateTime date, double[] vol)
+            /*public static void storeVolVect(DateTime date, double[] vol)
         {
             using (var context = new qpcptfaw())
             {
@@ -174,7 +183,7 @@ namespace AccessBD
                 }
             }
 
-        }
+        }*/
 
             public static void storeCashValue(DateTime date, double value)
             {

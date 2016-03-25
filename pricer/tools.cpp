@@ -90,7 +90,7 @@ extern int compounded_returns(const gsl_vector* prices, gsl_vector* returns)
 	return 0;
 }
 
- // Based on John Hull's "Options, Futures and other derivatives" V7
+
 // chap.21 "Estimating volatilities and correlations"
 
 extern int historic_volatility(double& hist_vol, gsl_vector* prices)

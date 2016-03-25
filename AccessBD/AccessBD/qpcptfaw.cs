@@ -22,7 +22,7 @@ namespace AccessBD
 
         public qpcptfaw()
         {
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<qpcptfaw>());
+            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<qpcptfaw>());
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
