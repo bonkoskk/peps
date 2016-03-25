@@ -67,9 +67,9 @@ namespace Everglades.Models.HistoricCompute
                 for (int j = 0; j < asset_nb; j++)
                 {
                     var[i][j] = (1-lambda)*ComputationTools.WeightedSum(logret[i], logret[j], lambda);
-                    var[j][i] = var[i][j];
                 }
             }
+
             return var;
         }
 

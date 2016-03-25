@@ -38,6 +38,7 @@ namespace Everglades.Models
             qpcptfaw db = new qpcptfaw();
             //Access.Clear_Everglades_Prices();
             DBInitialisation.DBInit(db);
+            HistoricCompute.RiskMetrics.initRiskMetrics();
             timers.stop("Database initialization");
             /*
             for (int i = 1; i < 50 ; i++ )

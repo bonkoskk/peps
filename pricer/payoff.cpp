@@ -63,3 +63,26 @@ extern double payoff_call_asian(gsl_vector* simulations, struct simulations::Par
 
 	return 0;
 }
+
+extern double payoff_put_asian(gsl_vector* simulations, struct simulations::Params data, int J)
+{
+	double sum = gsl_vector_get(simulations, 0) / 2.0;
+	double S_temp;
+
+	for (int i = 1; i < J; i++)
+	{
+		S_temp = gsl_vector_get(simulations, i);
+		sum += S_temp;
+	}
+
+	sum += gsl_vector_get(simulations, J) / 2.0;
+
+	sum = data.K - sum / J;
+
+	if (sum > 0)
+	{
+		return sum;
+	}
+
+	return 0;
+}
