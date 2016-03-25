@@ -45,6 +45,7 @@ namespace Everglades.Models
             }
         }
 
+        /*
         public string portfolioComposition()
         {
             string str = "[";
@@ -93,6 +94,7 @@ namespace Everglades.Models
             str += "]";
             return str;
         }
+         */
 
         public String getName()
         {
