@@ -284,13 +284,14 @@
     <div id="tooltip"></div>
 
     <div class="advice-window">
-        <button type="button" class="btn btn-warning" id="apply-advice">Apply all advices</button>
         @if (hedging_advice.Count == 0)
         {
             <span>The hedge seems good</span>
         }
         else
         {
+            <button type="button" class="btn btn-warning" id="apply-advice">Apply all advices</button>
+            <div id="loading-advice"></div>
             <table id="table_closedpositions" class="table table-hover">
                 <thead>
                     <tr>

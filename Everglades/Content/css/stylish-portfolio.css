@@ -33,6 +33,11 @@ body {
     text-align: center;
 }
 
+#loading-advice {
+    background: url(../img/ajax-loader.gif) no-repeat center center scroll;
+    display: none;
+}
+
 #big_buttons {
     z-index: 100;
     position:absolute;
