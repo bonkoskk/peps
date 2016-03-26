@@ -43,8 +43,9 @@ body {
     z-index: 100;
     position:absolute;
     display:block;
-    right:5%;
-    top:5%;
+    width: 15%;
+    right:0%;
+    top:0%;
 }
 
 #update-button {
