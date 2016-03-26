@@ -13,11 +13,10 @@ namespace AccessBD
     [Table("CorrelMat")]
     public class CorrelDB
     {
-        [Key]
         public DateTime date { get; set; }
-
         public int indexX { get; set; }
         public int indexY { get; set; }
+
         public double value { get; set; }
     }
 }

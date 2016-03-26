@@ -1159,15 +1159,26 @@ namespace AccessBD
         }
 
 
-        public static Dictionary<DateTime, double[][]> GetLastVarMat()
+        public static Dictionary<DateTime, double[][]> GetLastVarMat(int nbasset)
         {
             using (var context = new qpcptfaw())
             {
-                var prices = from p in context.CorrelVol
+                DateTime date = context.CorrelVol.Max(p => p.date);
+                var cor = from p in context.CorrelVol
+                             where p.date == date
                              select p;
                 Dictionary<DateTime, double[][]> res = new Dictionary<DateTime, double[][]>();
-                CorrelDB c = prices.OrderByDescending(x => x.date).First();
-                //res.Add(c.date, c.matrix);
+                List<CorrelDB> list_cor = cor.ToList();
+                double[][] mat = new double[nbasset][];
+                for (int i = 0; i < nbasset; i++)
+                {
+                    mat[i] = new double[nbasset];
+                }
+                foreach (CorrelDB c in list_cor)
+                {
+                    mat[c.indexX][c.indexY] = c.value;
+                }
+                res.Add(date, mat);
                 return res;
             }
         }

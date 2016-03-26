@@ -123,40 +123,37 @@ namespace AccessBD
             }
         }
 
-        /*public static void storeCholeskyMat(DateTime date, double[][] mat)
+        public static void storeCholeskyMat(DateTime date, double[][] mat)
         {
             using (var context = new qpcptfaw())
             {
-                double[] vol = null;
                 // si la date existe déjà dans la table des prix on la remplace
                 if (Access.ContainsCorrelKey(context, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
-                    var mats = (from m in context.CorrelVol
+                    var mats = from m in context.CorrelVol
                                where m.date == date
-                               select m).ToArray();
-                    if (mats.Length > 0) {
-                        vol = mats.First().vol;
-                        context.CorrelVol.Remove(mats.First());
-                    }
-                }
-                CorrelDB enti = new CorrelDB();
-                enti.date = date;
-                enti.vol = vol;
-                enti.matrix = new double[mat.Length][];
-                for (int i = 0; i < mat.Length; i++)
-                {
-                    enti.matrix[i] = new double[mat.Length];
-                    for (int j = 0; j < mat.Length; j++)
+                               select m;
+                    foreach(var m in mats)
                     {
-                        enti.matrix[i][j] = mat[i][j];
+                        m.value = mat[m.indexX][m.indexY];
                     }
                 }
-                context.CorrelVol.Add(enti);
+                else
+                {
+                    List<CorrelDB> list_cov = new List<CorrelDB>();
+                    for (int i = 0; i < mat.Length; i++)
+                    {
+                        for (int j = 0; j < mat.Length; j++)
+                        {
+                            list_cov.Add(new CorrelDB() { date = date, indexX = i, indexY = j, value = mat[i][j] });
+                        }
+                    }
+                    foreach (CorrelDB c in list_cov) context.CorrelVol.Add(c);
+                }
                 context.SaveChanges();
-                return;
-                
+                return; 
             }
-        }*/
+        }
 
             /*public static void storeVolVect(DateTime date, double[] vol)
         {

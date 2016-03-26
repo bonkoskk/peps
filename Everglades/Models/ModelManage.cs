@@ -41,7 +41,7 @@ namespace Everglades.Models
 
 
             DBInitialisation.DBInit(db);
-            //HistoricCompute.RiskMetrics.initRiskMetrics();
+            HistoricCompute.RiskMetrics.initRiskMetrics(24);
             
             timers.stop("Database initialization");
             /*

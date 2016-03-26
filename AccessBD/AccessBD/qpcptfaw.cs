@@ -22,7 +22,7 @@ namespace AccessBD
 
         public qpcptfaw()
         {
-            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<qpcptfaw>());
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<qpcptfaw>());
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -30,6 +30,7 @@ namespace AccessBD
             modelBuilder.Entity<Price>().HasKey(t => new { t.AssetDBId, t.date });
             modelBuilder.Entity<RateDBValue>().HasKey(t => new { t.RateDBId, t.date });
             modelBuilder.Entity<PortfolioComposition>().HasKey(t => new { t.AssetDBId, t.date });
+            modelBuilder.Entity<CorrelDB>().HasKey(t => new { t.date, t.indexX, t.indexY });
         }
 
     }
