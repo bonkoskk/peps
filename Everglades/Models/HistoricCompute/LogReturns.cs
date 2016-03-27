@@ -11,7 +11,7 @@ namespace Everglades.Models.HistoricCompute
         {
             bool accessbd = false;
             Dictionary<DateTime, double> returns = new Dictionary<DateTime, double>();
-            DateTime first = prices.First().Key;
+            DateTime first = prices.Min(t=>t.Key);
             DateTime before;
             double price = 1;
             foreach (KeyValuePair<DateTime, double> kvp in prices)

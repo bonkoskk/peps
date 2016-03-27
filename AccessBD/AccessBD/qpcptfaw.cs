@@ -17,12 +17,12 @@ namespace AccessBD
         public DbSet<CashDB> Cash { get; set; }
         public DbSet<RateDB> InteresRatesType { get; set; }
         public DbSet<RateDBValue> Rates { get; set; }
-        public DbSet<CorrelDB> CorrelVol { get; set; }
+        public DbSet<CovDB> Covariance { get; set; }
         public DbSet<PortfolioComposition> PortCompositions { get; set; }
 
         public qpcptfaw()
         {
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<qpcptfaw>());
+            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<qpcptfaw>());
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -30,7 +30,7 @@ namespace AccessBD
             modelBuilder.Entity<Price>().HasKey(t => new { t.AssetDBId, t.date });
             modelBuilder.Entity<RateDBValue>().HasKey(t => new { t.RateDBId, t.date });
             modelBuilder.Entity<PortfolioComposition>().HasKey(t => new { t.AssetDBId, t.date });
-            modelBuilder.Entity<CorrelDB>().HasKey(t => new { t.date, t.indexX, t.indexY });
+            modelBuilder.Entity<CovDB>().HasKey(t => new { t.date, t.indexX, t.indexY });
         }
 
     }

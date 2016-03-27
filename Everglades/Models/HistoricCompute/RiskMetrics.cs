@@ -19,7 +19,7 @@ namespace Everglades.Models.HistoricCompute
             List<DateTime> list_dates = new List<DateTime>();
             int i = 0;
             DateTime date_local;
-            while (list_dates.Count() < T)
+            while (list_dates.Count() < days)
             {
                 date_local = date.AddDays(-i);
                 if (date_local.DayOfWeek != DayOfWeek.Saturday && date_local.DayOfWeek != DayOfWeek.Sunday)
@@ -90,7 +90,8 @@ namespace Everglades.Models.HistoricCompute
             Dictionary<DateTime, double>[] prices_mat = new Dictionary<DateTime, double>[asset_nb];
             Dictionary<DateTime, double>[] logret = new Dictionary<DateTime, double>[asset_nb];
 
-            List<DateTime> list_dates = new List<DateTime>(){date.AddDays(-2), date.AddDays(-1)};
+            List<DateTime> list_dates = getWorkingDaysBefore(date, 3);
+            list_dates.Remove(date);
 
             foreach (int id in _list_id)
             {
@@ -101,7 +102,7 @@ namespace Everglades.Models.HistoricCompute
             for (int i = 0; i < asset_nb; i++)
             {
                 varcurr[i] = new double[asset_nb];
-                for (int j = 0; j < asset_nb; j++)
+                for (int j = i; j < asset_nb; j++)
                 {
                     varcurr[i][j] = lambda * varprec[i][j] + (1 - lambda) * logret[i].First().Value * logret[j].First().Value;
                 }
@@ -117,7 +118,7 @@ namespace Everglades.Models.HistoricCompute
             //double[,] var0 = HistoricCompute.RiskMetrics.var0();
                 //double[,] var = HistoricCompute.RiskMetrics.var(var0, HistoricCompute.RiskMetrics.t0.AddDays(1));
             using(var context = new qpcptfaw()){
-                if (context.CorrelVol.Count() == 0)
+                if (context.Covariance.Count() == 0)
                 {
                     double[][] varprec;
                     double[][] var;

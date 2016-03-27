@@ -10,8 +10,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AccessBD
 {
-    [Table("CorrelMat")]
-    public class CorrelDB
+    [Table("Covariances")]
+    public class CovDB
     {
         public DateTime date { get; set; }
         public int indexX { get; set; }

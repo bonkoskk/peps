@@ -1002,7 +1002,7 @@ namespace AccessBD
 
         public static bool ContainsCorrelKey(qpcptfaw context, DateTime date)
         {
-            var prices = from p in context.CorrelVol
+            var prices = from p in context.Covariance
                          where p.date == date
                          select p;
             if (prices.Count() == 0) return false;
@@ -1163,18 +1163,18 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
-                DateTime date = context.CorrelVol.Max(p => p.date);
-                var cor = from p in context.CorrelVol
+                DateTime date = context.Covariance.Max(p => p.date);
+                var cor = from p in context.Covariance
                              where p.date == date
                              select p;
                 Dictionary<DateTime, double[][]> res = new Dictionary<DateTime, double[][]>();
-                List<CorrelDB> list_cor = cor.ToList();
+                List<CovDB> list_cor = cor.ToList();
                 double[][] mat = new double[nbasset][];
                 for (int i = 0; i < nbasset; i++)
                 {
                     mat[i] = new double[nbasset];
                 }
-                foreach (CorrelDB c in list_cor)
+                foreach (CovDB c in list_cor)
                 {
                     mat[c.indexX][c.indexY] = c.value;
                 }
@@ -1187,10 +1187,13 @@ namespace AccessBD
         {
             using (var context = new qpcptfaw())
             {
-                var mat = from m in context.CorrelVol
+                var mat = from m in context.Covariance
                           select m;
-                foreach(var m in mat) context.CorrelVol.Remove(m);
-                context.SaveChanges();
+                foreach (var m in mat)
+                {
+                    context.Covariance.Remove(m);
+                    context.SaveChanges();
+                }
             }
         }
 

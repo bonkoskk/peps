@@ -130,7 +130,7 @@ namespace AccessBD
                 // si la date existe déjà dans la table des prix on la remplace
                 if (Access.ContainsCorrelKey(context, date))//list_pair_db.Contains(new KeyValuePair<int, DateTime>(id, date)))
                 {
-                    var mats = from m in context.CorrelVol
+                    var mats = from m in context.Covariance
                                where m.date == date
                                select m;
                     foreach(var m in mats)
@@ -140,15 +140,15 @@ namespace AccessBD
                 }
                 else
                 {
-                    List<CorrelDB> list_cov = new List<CorrelDB>();
+                    List<CovDB> list_cov = new List<CovDB>();
                     for (int i = 0; i < mat.Length; i++)
                     {
-                        for (int j = 0; j < mat.Length; j++)
+                        for (int j = i; j < mat.Length; j++)
                         {
-                            list_cov.Add(new CorrelDB() { date = date, indexX = i, indexY = j, value = mat[i][j] });
+                            list_cov.Add(new CovDB() { date = date, indexX = i, indexY = j, value = mat[i][j] });
                         }
                     }
-                    foreach (CorrelDB c in list_cov) context.CorrelVol.Add(c);
+                    foreach (CovDB c in list_cov) context.Covariance.Add(c);
                 }
                 context.SaveChanges();
                 return; 
