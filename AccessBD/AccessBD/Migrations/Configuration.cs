@@ -9,8 +9,7 @@ namespace AccessBD.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
-            ContextKey = "AccessBD.qpcptfaw";
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(AccessBD.qpcptfaw context)
