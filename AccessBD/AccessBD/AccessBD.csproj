@@ -110,7 +110,7 @@
     <Compile Include="Access.cs" />
     <Compile Include="AssetDB.cs" />
     <Compile Include="CashDB.cs" />
-    <Compile Include="CorrelDB.cs" />
+    <Compile Include="CovDB.cs" />
     <Compile Include="CurrencyAsset.cs" />
     <Compile Include="DBInitialisation.cs" />
     <Compile Include="EquityDB.cs" />
@@ -121,6 +121,11 @@
     <Compile Include="HedgingPortfolio.cs" />
     <Compile Include="InterestRate.cs" />
     <Compile Include="LastConnectionDB.cs" />
+    <Compile Include="Migrations\201603271629336_Initial.cs" />
+    <Compile Include="Migrations\201603271629336_Initial.Designer.cs">
+      <DependentUpon>201603271629336_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="OptionDB.cs" />
     <Compile Include="PortfolioComposition.cs" />
     <Compile Include="Price.cs" />
@@ -173,6 +178,11 @@
       <Project>{3839aea2-4391-4d52-9811-e3fb8937eafa}</Project>
       <Name>QuandlCS</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201603271629336_Initial.resx">
+      <DependentUpon>201603271629336_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

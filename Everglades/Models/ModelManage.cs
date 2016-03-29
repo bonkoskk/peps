@@ -93,8 +93,7 @@ namespace Everglades.Models
             //simulateBackTestEvolution(true, DateTime.Today - TimeSpan.FromDays(10), TimeSpan.FromDays(1));
 
 
-            cash = Access.getCashDB(DateTime.Today).value;
-            Hedging_Portfolio = getHedgingPortfolioFromBD(DateTime.Today);
+            
             try
             {
                 cash = Access.getCashDB(DateTime.Today).value;
@@ -285,7 +284,7 @@ namespace Everglades.Models
             DateTime first = list_dates.First();
             List<IAsset> simulated_list = new List<IAsset>();
             List<ICurrency> underlying_list_cur = new List<ICurrency>();
-            double r = everg.getCurrency().getInterestRate(first);
+            double r = 0.03;
             foreach (IAsset ass in Assets)
             {
                 simulated_list.Add(new AssetSimulated(ass, list_dates, rand));

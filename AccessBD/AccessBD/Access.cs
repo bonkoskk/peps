@@ -453,7 +453,7 @@ namespace AccessBD
             using (var context = new qpcptfaw())
             {
                 int id = getForexIdFromCurrency(currency);
-                int limit = 5;
+                int limit = 7;
                 for(int i=0; i<limit; i++) {
                     var rates = from p1 in context.Prices
                                 where p1.AssetDBId == id && p1.date == date
