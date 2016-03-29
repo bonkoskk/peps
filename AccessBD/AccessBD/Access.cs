@@ -1183,6 +1183,29 @@ namespace AccessBD
             }
         }
 
+        public static Dictionary<DateTime, double[][]> GetVarMat(int nbasset, DateTime date)
+        {
+            using (var context = new qpcptfaw())
+            {
+                var cor = from p in context.Covariance
+                          where p.date == date
+                          select p;
+                Dictionary<DateTime, double[][]> res = new Dictionary<DateTime, double[][]>();
+                List<CovDB> list_cor = cor.ToList();
+                double[][] mat = new double[nbasset][];
+                for (int i = 0; i < nbasset; i++)
+                {
+                    mat[i] = new double[nbasset];
+                }
+                foreach (CovDB c in list_cor)
+                {
+                    mat[c.indexX][c.indexY] = c.value;
+                }
+                res.Add(date, mat);
+                return res;
+            }
+        }
+
         public static void ClearAllMatrix()
         {
             using (var context = new qpcptfaw())
