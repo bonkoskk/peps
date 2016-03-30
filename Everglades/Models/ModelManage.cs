@@ -439,14 +439,14 @@ namespace Everglades.Models
          * recalculate everglades price and hedging portfolio on the firstDate -> Today period
          * with a date every step, with currency management if with_currency is true
          */
-        public void simulateBackTestEvolution(bool with_currency, DateTime firstDate, TimeSpan step)
+        public void simulateBackTestEvolution(bool with_currency, DateTime firstDate, DateTime DateEnd, TimeSpan step)
         {
             firstDate = new DateTime(firstDate.Year, firstDate.Month, firstDate.Day);
             RandomNormal rand = new RandomNormal();
             DateTime current_date;
             // clean data from firstDate to today
             current_date = firstDate;
-            while (current_date <= DateTime.Today)
+            while (current_date <= DateEnd)
             {
                 try
                 {
@@ -461,7 +461,7 @@ namespace Everglades.Models
             // create list of date for calculus            
             current_date = firstDate;
             LinkedList<DateTime> list_dates = new LinkedList<DateTime>();
-            while (current_date <= DateTime.Today)
+            while (current_date <= DateEnd)
             {
                 list_dates.AddLast(current_date);
                 current_date = current_date + step;
@@ -558,16 +558,16 @@ namespace Everglades.Models
                 {
                     int asset_id = Access.GetIdFromName(asset.getName());
                     double quantity = hedge_simul.assetList[asset];
-                    Write.storePortfolioComposition(DateTime.Today, asset_id, Math.Round(quantity * shares_everg));
+                    Write.storePortfolioComposition(DateEnd, asset_id, Math.Round(quantity * shares_everg));
                 } 
                 else if (asset is Currency)
                 {
                     int cur_id = Access.getForexIdFromCurrency(((Currency)asset).getEnum()); ;
                     double quantity = hedge_simul.assetList[asset];
-                    Write.storePortfolioComposition(DateTime.Today, cur_id, Math.Round(quantity * shares_everg));
+                    Write.storePortfolioComposition(DateEnd, cur_id, Math.Round(quantity * shares_everg));
                 }
             }
-            Write.storeCashValue(DateTime.Today, cash_t * shares_everg);
+            Write.storeCashValue(DateEnd, cash_t * shares_everg);
         }
 
 

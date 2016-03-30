@@ -233,7 +233,13 @@ namespace Everglades.Models
                     dates.AddLast(priceDate);
                 }
             }
-            
+
+            // debug de cochon
+            if (nb_day_after > 92)
+            {
+                nb_day_after = 92;
+            }
+
             ModelManage.timers.start("Everglades historic data");
             // get assets names
             List<String> assetNames = new List<String>();
@@ -307,7 +313,7 @@ namespace Everglades.Models
                 {
                     cholesky = Last_Cholesky;
                     vol = Last_Vol;
-                }       
+                }
             }
             else
             {
