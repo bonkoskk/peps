@@ -238,7 +238,7 @@ namespace Everglades.Models
 
         public double getPnL() {
             double evprice = everg.getPrice();
-            return (cash + Hedging_Portfolio.getPrice() - shares_everg * evprice * 100.0) / (evprice * shares_everg);
+            return 100 * (cash + Hedging_Portfolio.getPrice() - shares_everg * evprice) / (evprice * shares_everg);
         }
 
         public Data getHedgeForOne(DateTime t1, DateTime t2, TimeSpan step)
