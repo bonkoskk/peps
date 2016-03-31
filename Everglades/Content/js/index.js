@@ -324,8 +324,8 @@ $(function () {
     });
 
     // function to buy derivative
-    $("#derivative-form").submit(function () {
-        event.preventDefault();
+    $("#derivative-form").submit(function (e) {
+        e.preventDefault();
         var data = "operation=buyDerivative&" + $("#derivative-form").serialize();
         $.ajax({
             type: "POST",
@@ -391,7 +391,7 @@ $(function () {
                 var data = JSON.parse(data);
                 draw_multi_graph("#simulation-graph-prices", [data["simulation-graph-prices-everg"], data["simulation-graph-prices-hedge"]],
                     ["Everglades", "Hedging portfolio"], 2);
-                draw_graph("#simulation-graph-trackingerror", data["simulation-graph-trackingerror"], "tracking error");
+                draw_graph("#simulation-graph-trackingerror", data["simulation-graph-trackingerror"], "relative error");
                 draw_multi_graph("#simulation-graph-cash", [data["simulation-graph-cash"], data["simulation-graph-soloport"]], ["cash", "couverture seule"], 2);
                 delete data["simulation-graph-prices-everg"];
                 delete data["simulation-graph-prices-hedge"];

@@ -23,6 +23,15 @@ namespace Everglades.Models
         private double[,] Last_Cholesky;
         private double[] Last_Vol;
 
+        private struct DataCache {
+            public DateTime t1;
+            public DateTime t2;
+            public TimeSpan step;
+            public Data dat; 
+        }
+
+        private DataCache dataCache;
+
         public Everglades(List<IAsset> underlying_list, List<ICurrency> underlying_list_cur)
         {
             wp = new Wrapping.WrapperEverglades();
@@ -90,15 +99,19 @@ namespace Everglades.Models
 
         public Data getPrice(DateTime t1, DateTime t2, TimeSpan step)
         {
-            Data data = new Data("everglades");
-            DateTime t = t1;
-            while (t < t2)
+            if (!(dataCache.t1 == t1 && dataCache.t2 == t2 && dataCache.step == step))
             {
-                data.add(new DataPoint(t, getPrice(t)));
-                t += step;
+                Data data = new Data("everglades");
+                DateTime t = t1;
+                while (t < t2)
+                {
+                    data.add(new DataPoint(t, getPrice(t)));
+                    t += step;
+                }
+                data.add(new DataPoint(t2, getPrice(t2)));
+                dataCache = new DataCache { t1 = t1, t2 = t2, step = step, dat = data };
             }
-            data.add(new DataPoint(t2, getPrice(t2)));
-            return data;
+            return dataCache.dat;
         }
 
         public double getPrice(DateTime t)
@@ -202,7 +215,6 @@ namespace Everglades.Models
 
         public Tuple<double, double[], bool> computePrice(DateTime t, bool with_currency_change = true)
         {
-            // !!!! currencies not expected to work with simulation
             bool simulation = !(underlying_list.First() is Equity);
 
             ModelManage.timers.start("Everglades pre-pricing");

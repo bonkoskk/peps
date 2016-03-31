@@ -116,6 +116,8 @@ namespace Everglades.Models
             derivatives.Add(new AmericanPut());
             derivatives.Add(new AsianCall());
             derivatives.Add(new AsianPut());
+            derivatives.Add(new QuantoCall());
+            derivatives.Add(new QuantoPut());
             timers.stop("ModelManage initialization");
         }
 
@@ -235,7 +237,8 @@ namespace Everglades.Models
         }
 
         public double getPnL() {
-            return cash + Hedging_Portfolio.getPrice() - shares_everg * everg.getPrice();
+            double evprice = everg.getPrice();
+            return (cash + Hedging_Portfolio.getPrice() - shares_everg * evprice * 100.0) / (evprice * shares_everg);
         }
 
         public Data getHedgeForOne(DateTime t1, DateTime t2, TimeSpan step)
@@ -439,24 +442,29 @@ namespace Everglades.Models
          * recalculate everglades price and hedging portfolio on the firstDate -> Today period
          * with a date every step, with currency management if with_currency is true
          */
-        public void simulateBackTestEvolution(bool with_currency, DateTime firstDate, DateTime DateEnd, TimeSpan step)
+        public void simulateBackTestEvolution(bool with_currency, DateTime firstDate, DateTime DateEnd, TimeSpan step, bool recover = false)
         {
             firstDate = new DateTime(firstDate.Year, firstDate.Month, firstDate.Day);
             RandomNormal rand = new RandomNormal();
             DateTime current_date;
             // clean data from firstDate to today
             current_date = firstDate;
-            while (current_date <= DateEnd)
+            if (!recover)
             {
-                try
+                while (current_date <= DateEnd)
                 {
-                    Access.Clear_Everglades_Price(current_date);
-                } catch (ArgumentException) { }
-                try
-                {
-                    Access.Clear_Portfolio_Price(current_date);
-                } catch (ArgumentException) { }
-                current_date = current_date + TimeSpan.FromDays(1);
+                    try
+                    {
+                        Access.Clear_Everglades_Price(current_date);
+                    }
+                    catch (ArgumentException) { }
+                    try
+                    {
+                        Access.Clear_Portfolio_Price(current_date);
+                    }
+                    catch (ArgumentException) { }
+                    current_date = current_date + TimeSpan.FromDays(1);
+                }
             }
             // create list of date for calculus            
             current_date = firstDate;
@@ -486,7 +494,14 @@ namespace Everglades.Models
                     evergvalue = compute.Item1;
                     hedge_simul = everg.getDeltaPortfolio(date, compute.Item2, with_currency);
                     portsolovalue = hedge_simul.getPrice(date);
-                    cash_t = evergvalue - portsolovalue;
+                    if (recover)
+                    {
+                        cash_t = AccessDB.getPortfolioValue(firstDate) / (double)shares_everg - portsolovalue;
+                    }
+                    else
+                    {
+                        cash_t = evergvalue - portsolovalue;
+                    }
                     portvalue = portsolovalue + cash_t;
                 }
                 else
@@ -656,5 +671,42 @@ namespace Everglades.Models
             str += "]";
             return str;
         }
+
+
+        protected struct DatCache
+        {
+            public DateTime t1;
+            public DateTime t2;
+            public TimeSpan step;
+            public String str;
+        };
+
+        private DatCache cacheHedge = new DatCache { t1 = DateTime.MinValue, t2 = DateTime.MinValue, step = TimeSpan.MinValue, str = "" };
+
+        public String getHedgeForOneString(DateTime t1, DateTime t2, TimeSpan step) {
+            if (!(t1 == cacheHedge.t1 && t2 == cacheHedge.t2 && step == cacheHedge.step))
+            {
+                cacheHedge.t1 = t1;
+                cacheHedge.t2 = t2;
+                cacheHedge.step = step;
+                cacheHedge.str = getHedgeForOne(t1, t2, step).ToString();
+            }
+            return cacheHedge.str;
+        }
+
+        private DatCache cacheEverg = new DatCache { t1 = DateTime.MinValue, t2 = DateTime.MinValue, step = TimeSpan.MinValue, str = "" };
+
+        public String evergGetPriceString(DateTime t1, DateTime t2, TimeSpan step)
+        {
+            if (!(t1 == cacheEverg.t1 && t2 == cacheEverg.t2 && step == cacheEverg.step))
+            {
+                cacheEverg.t1 = t1;
+                cacheEverg.t2 = t2;
+                cacheEverg.step = step;
+                cacheEverg.str = everg.getPrice(t1, t2, step).ToString();
+            }
+            return cacheEverg.str;
+        }
+
     }
 }

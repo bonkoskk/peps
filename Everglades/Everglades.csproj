@@ -180,6 +180,7 @@
     <Compile Include="Models\Advice.cs" />
     <Compile Include="Models\Assets\AmericanCall.cs" />
     <Compile Include="Models\Assets\AmericanPut.cs" />
+    <Compile Include="Models\Assets\AQuanto.cs" />
     <Compile Include="Models\Assets\AsianCall.cs" />
     <Compile Include="Models\Assets\AsianPut.cs" />
     <Compile Include="Models\Assets\AssetSimulated.cs" />
@@ -192,6 +193,8 @@
     <Compile Include="Models\Assets\Equity.cs" />
     <Compile Include="Models\Assets\AVanillaOption.cs" />
     <Compile Include="Models\Assets\Currency.cs" />
+    <Compile Include="Models\Assets\QuantoCall.cs" />
+    <Compile Include="Models\Assets\QuantoPut.cs" />
     <Compile Include="Models\DataBase\CacheDB.cs" />
     <Compile Include="Models\Data\Data.cs" />
     <Compile Include="Models\Data\DataPoint.cs" />
